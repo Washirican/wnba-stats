@@ -1,2 +1,0 @@
-# wnba-stats
-WNBA Stats
