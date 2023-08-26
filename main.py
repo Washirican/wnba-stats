@@ -11,15 +11,14 @@ import matplotlib.pyplot as plt
 
 HEADERS = {
         'Host': 'stats.wnba.com',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
-                      'Gecko/20100101 Firefox/72.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.54',
         'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'x-nba-stats-origin': 'stats',
         'x-nba-stats-token': 'true',
         'Connection': 'keep-alive',
-        'Referer': 'https://stats.wnba.com/',
+        'Referer': 'https://stats.wnba.com/player/204319/',
         'Pragma': 'no-cache',
         'Cache-Control': 'no-cache',
         }
@@ -60,17 +59,38 @@ def get_player_data(player_name):
 def get_player_seasons(player_id):
     """Get player career stats per player ID"""
     parameters = {
-        'LeagueID': '10',
-        'PerMode': 'PerGame',
-        'LastNGames': 0,
-        'MeasureType': 'Usage',
-        'PlayerID': player_id
-        }
+        "MeasureType": "Usage",
+        "PerMode": "PerGame",
+        "PlusMinus": "N",
+        "PaceAdjust": "N",
+        "Rank": "N",
+        "LeagueID": "10",
+        "Season": "2023",
+        "SeasonType": "Regular Season",
+        "PORound": 0,
+        "PlayerID": 204319,
+        "Outcome": 'null',
+        "Location": 'null',
+        "Month": 0,
+        "SeasonSegment": 'null',
+        "DateFrom": 'null',
+        "DateTo": 'null',
+        "OpponentTeamID": 0,
+        "VsConference": 'null',
+        "VsDivision": 'null',
+        "GameSegment": 'null',
+        "Period": 0,
+        "ShotClockRange": 'null',
+        "LastNGames": 0
+    },
 
     endpoint = 'playerdashboardbyyearoveryear'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
+    # FIXME (2023-08-26 by D. Rodriguez): Getting
+    #  Response 500 - Internal Server Error
     response = requests.get(request_url, headers=HEADERS, params=parameters)
+
     player_career_stats_dict = \
     json.loads(response.content.decode())['resultSets'][0]['rowSet']
 
