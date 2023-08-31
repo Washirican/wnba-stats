@@ -9,16 +9,18 @@ import requests
 import matplotlib.pyplot as plt
 
 
+
 HEADERS = {
         'Host': 'stats.wnba.com',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.54',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
+                      'Gecko/20100101 Firefox/72.0',
         'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
         'Accept-Encoding': 'gzip, deflate, br',
-        'X-Nba-Stats-Origin': 'stats',
-        'X-Nba-Stats-Token': 'true',
+        'x-nba-stats-origin': 'stats',
+        'x-nba-stats-token': 'true',
         'Connection': 'keep-alive',
-        'Referer': 'https://stats.wnba.com/player/204319/',
+        'Referer': 'https://stats.wnba.com/',
         'Pragma': 'no-cache',
         'Cache-Control': 'no-cache',
         }
@@ -84,7 +86,7 @@ def get_player_seasons(player_id):
         "LastNGames": 0
     },
 
-    endpoint = 'playerdashboardbyyearoveryear'
+    endpoint = 'playerprofilev2'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     # FIXME (2023-08-26 by D. Rodriguez): Getting
