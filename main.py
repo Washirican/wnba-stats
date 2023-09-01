@@ -38,7 +38,7 @@ def get_player_data(player_name):
 
     for player in players:
         # print(player[1])
-        if f'{player_name}' in player[1]:
+        if player_name in player[1].lower():
             # print(player[:])
             player_info = player
             return player_info
