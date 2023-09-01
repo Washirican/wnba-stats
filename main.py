@@ -1,3 +1,4 @@
+"""WNBA shotcharts"""
 #!/usr/bin/env python3
 
 
@@ -25,7 +26,7 @@ HEADERS = {
 def get_player_data(player_name):
     """Ger player id from Player Name (format: last_name, first_name)"""
     player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
-    player_list = requests.get(player_index_url)
+    player_list = requests.get(player_index_url, timeout=10)
 
     # Cleanup string
     dict_str = player_list.content.decode()[17:-1]
@@ -65,7 +66,7 @@ def get_player_seasons(player_id):
     endpoint = 'playerprofilev2'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    response = requests.get(request_url, headers=HEADERS, params=parameters)
+    response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
 
     # TODO This is actually a list!!
     player_career_stats_dict = \
@@ -80,6 +81,7 @@ def get_player_seasons(player_id):
 
 
 def get_player_gamelog(player_id, season_year, season_type):
+    """Get player game data."""
     parameters = {
         'DateFrom': '',
         'DateTo': '',
@@ -109,7 +111,7 @@ def get_player_gamelog(player_id, season_year, season_type):
     endpoint = 'playergamelogs'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    response = requests.get(request_url, headers=HEADERS, params=parameters)
+    response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
 
     gamelog_headers = json.loads(response.content.decode())['resultSets'][0]['headers']
     gamelog_data = json.loads(response.content.decode())['resultSets'][0]['rowSet']
@@ -131,6 +133,7 @@ def get_player_gamelog(player_id, season_year, season_type):
 
 
 def get_shotchart_data(player_id, season_year, game_id):
+    """Get player shot chart data."""
     parameters = {
         'AheadBehind': '',
         'CFID': '',
@@ -192,7 +195,7 @@ def get_shotchart_data(player_id, season_year, game_id):
     endpoint = 'shotchartdetail'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    response = requests.get(request_url, headers=HEADERS, params=parameters)
+    response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
     # clean_response = clean_data(response)
     # all_shot_data = clean_response['Shot_Chart_Detail']
 
@@ -221,6 +224,7 @@ def get_shotchart_data(player_id, season_year, game_id):
 
 def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
                     scoring_headline):
+    """Plot player shot chart data."""
     # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
     #  data directly from all_shots?
 
@@ -264,7 +268,7 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
 if __name__ == '__main__':
 
     player_name_user_input = input('Enter player name (Last, First): ')
-
+    
     # TODO Make player name case independent
     player_info = get_player_data(player_name_user_input.lower())
     player_id = player_info[0]
