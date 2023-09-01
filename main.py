@@ -61,45 +61,24 @@ def get_player_data(player_name):
 def get_player_seasons(player_id):
     """Get player career stats per player ID"""
     parameters = {
-        "MeasureType": "Usage",
-        "PerMode": "PerGame",
-        "PlusMinus": "N",
-        "PaceAdjust": "N",
-        "Rank": "N",
-        "LeagueID": "10",
-        "Season": "2023",
-        "SeasonType": "Regular Season",
-        "PORound": 0,
-        "PlayerID": 204319,
-        "Outcome": 'null',
-        "Location": 'null',
-        "Month": 0,
-        "SeasonSegment": 'null',
-        "DateFrom": 'null',
-        "DateTo": 'null',
-        "OpponentTeamID": 0,
-        "VsConference": 'null',
-        "VsDivision": 'null',
-        "GameSegment": 'null',
-        "Period": 0,
-        "ShotClockRange": 'null',
-        "LastNGames": 0
-    },
+        'LeagueID': '10',
+        'PerMode': 'PerGame',
+        'PlayerID': player_id
+        }
 
     endpoint = 'playerprofilev2'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    # FIXME (2023-08-26 by D. Rodriguez): Getting
-    #  Response 500 - Internal Server Error
     response = requests.get(request_url, headers=HEADERS, params=parameters)
 
+    # TODO This is actually a list!!
     player_career_stats_dict = \
     json.loads(response.content.decode())['resultSets'][0]['rowSet']
 
     player_career_seasons = []
 
     for season in player_career_stats_dict:
-        player_career_seasons.append(season[1])
+        player_career_seasons.append(season[1].split('-')[0])
 
     return player_career_seasons
 
@@ -290,6 +269,7 @@ if __name__ == '__main__':
 
     player_name_user_input = input('Enter player name (Last, First): ')
 
+    # TODO Make player name case independent
     player_info = get_player_data(player_name_user_input)
     player_id = player_info[0]
     player_name = player_info[1]
