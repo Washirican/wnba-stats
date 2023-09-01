@@ -266,7 +266,7 @@ if __name__ == '__main__':
     player_name_user_input = input('Enter player name (Last, First): ')
 
     # TODO Make player name case independent
-    player_info = get_player_data(player_name_user_input)
+    player_info = get_player_data(player_name_user_input.lower())
     player_id = player_info[0]
     player_name = player_info[1]
 
