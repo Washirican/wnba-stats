@@ -37,22 +37,17 @@ def get_player_data(player_name):
     teams = data['data']['teams']
     data_date = data['generated']
 
+    player_info = []
+
     for player in players:
-        # print(player[1])
         if player_name in player[1].lower():
-            # print(player[:])
             player_info = player
-            return player_info
-        # else:
-        # print(f'Player {first_name.title()} {last_name.title()} not found in database.')
+            break
 
-    # TODO (D. Rodriguez 2020-04-24): Break if team name not found
-    # for team in teams:
-    #     if str(team_id) in team[0]:
-    #         print(team[:5])
+    # if not player_info:
+    #     print(f'Player {player_name.title()} not found in players database.')
 
-    #
-    return 0
+    return player_info
 
 
 def get_player_seasons(player_id):
@@ -267,10 +262,14 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
 
 if __name__ == '__main__':
 
-    player_name_user_input = input('Enter player name (Last, First): ')
-    
-    # TODO Make player name case independent
-    player_info = get_player_data(player_name_user_input.lower())
+    player_info = []
+
+    while not player_info:
+        player_name_user_input = input('Enter player name (Last, First): ')
+        player_info = get_player_data(player_name_user_input.lower())
+        if not player_info:
+            print(f'Player {player_name_user_input.title()} not found in players database.')
+
     player_id = player_info[0]
     player_name = player_info[1]
 
