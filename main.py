@@ -34,8 +34,8 @@ def get_player_data(player_name):
     # Turns string into dictionary
     data = json.loads(dict_str)
     players = data['data']['players']
-    teams = data['data']['teams']
-    data_date = data['generated']
+    # teams = data['data']['teams']
+    # data_date = data['generated']
 
     player_info = []
 
@@ -43,9 +43,6 @@ def get_player_data(player_name):
         if player_name in player[1].lower():
             player_info = player
             break
-
-    # if not player_info:
-    #     print(f'Player {player_name.title()} not found in players database.')
 
     return player_info
 
@@ -63,13 +60,12 @@ def get_player_seasons(player_id):
 
     response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
 
-    # TODO This is actually a list!!
-    player_career_stats_dict = \
+    player_career_stats = \
     json.loads(response.content.decode())['resultSets'][0]['rowSet']
 
     player_career_seasons = []
 
-    for season in player_career_stats_dict:
+    for season in player_career_stats:
         player_career_seasons.append(season[1].split('-')[0])
 
     return player_career_seasons
@@ -268,13 +264,12 @@ if __name__ == '__main__':
         player_name_user_input = input('Enter player name (Last, First): ')
         player_info = get_player_data(player_name_user_input.lower())
         if not player_info:
-            print(f'Player {player_name_user_input.title()} not found in players database.')
+            print(f'Player {player_name_user_input.title()} was not found in players database. Make sure name is spelled correctly and try again.')
 
     player_id = player_info[0]
     player_name = player_info[1]
 
     all_seasons = get_player_seasons(player_id)
-
     for season in all_seasons:
         print(season)
 
