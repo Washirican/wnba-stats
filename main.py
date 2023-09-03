@@ -298,9 +298,11 @@ if __name__ == '__main__':
 
     scoring_headline = f"{gamelog_dict[game_date_user_input]['PTS']} pts " \
                        f"on {gamelog_dict[game_date_user_input]['FGM']}/" \
-                       f"{gamelog_dict[game_date_user_input]['FGA']} shooting " \
+                       f"{gamelog_dict[game_date_user_input]['FGA']} (" \
+                       f"{round(gamelog_dict[game_date_user_input]['FGM']/gamelog_dict[game_date_user_input]['FGA']*100, 2)}%) shooting " \
                        f"{gamelog_dict[game_date_user_input]['FG3M']}/" \
-                       f"{gamelog_dict[game_date_user_input]['FG3A']} from three"
+                       f"{gamelog_dict[game_date_user_input]['FG3A']} (" \
+                       f"{round(gamelog_dict[game_date_user_input]['FG3M']/gamelog_dict[game_date_user_input]['FG3A']*100, 2)}%) from three" \
 
     all_shots = get_shotchart_data(player_id, season_year_user_input, game_id)
 
