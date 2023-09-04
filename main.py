@@ -1,26 +1,25 @@
 """WNBA shotcharts"""
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 
 import json
 import requests
 import matplotlib.pyplot as plt
 
-
 HEADERS = {
-        'Host': 'stats.wnba.com',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
-                      'Gecko/20100101 Firefox/72.0',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'x-nba-stats-origin': 'stats',
-        'x-nba-stats-token': 'true',
-        'Connection': 'keep-alive',
-        'Referer': 'https://stats.wnba.com/',
-        'Pragma': 'no-cache',
-        'Cache-Control': 'no-cache',
-        }
+    'Host': 'stats.wnba.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
+                  'Gecko/20100101 Firefox/72.0',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'x-nba-stats-origin': 'stats',
+    'x-nba-stats-token': 'true',
+    'Connection': 'keep-alive',
+    'Referer': 'https://stats.wnba.com/',
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache',
+    }
 
 
 def get_player_data(player_name):
@@ -58,10 +57,13 @@ def get_player_seasons(player_id):
     endpoint = 'playerprofilev2'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
+    response = requests.get(request_url,
+                            headers=HEADERS,
+                            params=parameters,
+                            timeout=10)
 
     player_career_stats = \
-    json.loads(response.content.decode())['resultSets'][0]['rowSet']
+        json.loads(response.content.decode())['resultSets'][0]['rowSet']
 
     player_career_seasons = []
 
@@ -102,10 +104,15 @@ def get_player_gamelog(player_id, season_year, season_type):
     endpoint = 'playergamelogs'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
+    response = requests.get(request_url,
+                            headers=HEADERS,
+                            params=parameters,
+                            timeout=10)
 
-    gamelog_headers = json.loads(response.content.decode())['resultSets'][0]['headers']
-    gamelog_data = json.loads(response.content.decode())['resultSets'][0]['rowSet']
+    gamelog_headers = json.loads(response.content.decode())['resultSets'][0][
+        'headers']
+    gamelog_data = json.loads(response.content.decode())['resultSets'][0][
+        'rowSet']
 
     gamelog = []
 
@@ -186,9 +193,10 @@ def get_shotchart_data(player_id, season_year, game_id):
     endpoint = 'shotchartdetail'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-    response = requests.get(request_url, headers=HEADERS, params=parameters, timeout=10)
-    # clean_response = clean_data(response)
-    # all_shot_data = clean_response['Shot_Chart_Detail']
+    response = requests.get(request_url,
+                            headers=HEADERS,
+                            params=parameters,
+                            timeout=10)
 
     all_shot_data = json.loads(response.content.decode())['resultSets'][0]
 
@@ -249,7 +257,7 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
     ax.scatter(x_miss, y_miss, marker='x', c='red')
     ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
 
-    plt.title(f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} ' 
+    plt.title(f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} '
               f'{game_date}')
     ax.axes.xaxis.set_visible(False)
     ax.axes.yaxis.set_visible(False)
@@ -265,7 +273,9 @@ if __name__ == '__main__':
         player_selection = input('Enter player name (Last, First): ')
         player_info = get_player_data(player_selection.lower())
         if not player_info:
-            print(f'Player {player_selection.title()} was not found in players database. Make sure name is spelled correctly and try again.')
+            print(f'Player {player_selection.title()} was not found in '
+                  f'players database. Make sure name is spelled correctly'
+                  f' and try again.')
 
     player_id = player_info[0]
     player_name = player_info[1]
@@ -306,11 +316,16 @@ if __name__ == '__main__':
     scoring_headline = f"{gamelog_dict[game_date]['PTS']} pts " \
                        f"on {gamelog_dict[game_date]['FGM']}/" \
                        f"{gamelog_dict[game_date]['FGA']} (" \
-                       f"{round(gamelog_dict[game_date]['FGM']/gamelog_dict[game_date]['FGA']*100, 1)}%) shooting " \
+                       f"{round(gamelog_dict[game_date]['FGM'] / gamelog_dict[game_date]['FGA'] * 100, 1)}%) shooting " \
                        f"{gamelog_dict[game_date]['FG3M']}/" \
                        f"{gamelog_dict[game_date]['FG3A']} (" \
-                       f"{round(gamelog_dict[game_date]['FG3M']/gamelog_dict[game_date]['FG3A']*100, 1)}%) from three" \
-
+                       f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
+ \
     all_shots = get_shotchart_data(player_id, season_selection, game_id)
 
-    plot_shortchart(all_shots, player_name, team_name, match, game_date, scoring_headline)
+    plot_shortchart(all_shots,
+                    player_name,
+                    team_name,
+                    match,
+                    game_date,
+                    scoring_headline)
