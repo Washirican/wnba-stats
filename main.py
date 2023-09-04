@@ -320,7 +320,7 @@ if __name__ == '__main__':
                        f"{gamelog_dict[game_date]['FG3M']}/" \
                        f"{gamelog_dict[game_date]['FG3A']} (" \
                        f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
- \
+
     all_shots = get_shotchart_data(player_id, season_selection, game_id)
 
     plot_shortchart(all_shots,
