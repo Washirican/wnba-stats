@@ -249,7 +249,8 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
     ax.scatter(x_miss, y_miss, marker='x', c='red')
     ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
 
-    plt.title(f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} {game_date}')
+    plt.title(f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} ' 
+              f'{game_date}')
     ax.axes.xaxis.set_visible(False)
     ax.axes.yaxis.set_visible(False)
 
@@ -261,10 +262,10 @@ if __name__ == '__main__':
     player_info = []
 
     while not player_info:
-        player_name_user_input = input('Enter player name (Last, First): ')
-        player_info = get_player_data(player_name_user_input.lower())
+        player_selection = input('Enter player name (Last, First): ')
+        player_info = get_player_data(player_selection.lower())
         if not player_info:
-            print(f'Player {player_name_user_input.title()} was not found in players database. Make sure name is spelled correctly and try again.')
+            print(f'Player {player_selection.title()} was not found in players database. Make sure name is spelled correctly and try again.')
 
     player_id = player_info[0]
     player_name = player_info[1]
@@ -273,37 +274,43 @@ if __name__ == '__main__':
     for season in all_seasons:
         print(season)
 
-    season_year_user_input = input('Enter season: ')
+    season_selection = input('Enter season: ')
 
     gamelog_dict, gamelog_list = get_player_gamelog(player_id,
-                                                    season_year_user_input,
+                                                    season_selection,
                                                     'Regular Season')
 
-    # TODO (D. Rodriguez, 2020-04-27): Print games in table format
     game_count = 0
+    print("ID Game Date  Match       Player Headline")
     for game in gamelog_list:
         game_count += 1
-        print(game_count, game['GAME_DATE'][:10], game['MATCHUP'], f"({game['PTS']} pts, "
-                                                       f"on {game['FGM']}/"
-                                                       f"{game['FGA']} "
-                                                       f"shooting)")
+        print("{:2}".format(game_count),
+              game['GAME_DATE'][:10],
+              "{:11}".format(game['MATCHUP']),
+              f"{game['PTS']} pts, "
+              f"on {game['FGM']}/"
+              f"{game['FGA']} "
+              f"shooting"
+              )
 
-    game_date_user_input = input('Game date: ')
+    game_selection = int(input('Game ID: ')) - 1
 
-    game_id = gamelog_dict[game_date_user_input]['GAME_ID']
-    matchup = gamelog_dict[game_date_user_input]['MATCHUP']
-    game_date = gamelog_dict[game_date_user_input]['GAME_DATE'][:10]
-    player_name = gamelog_dict[game_date_user_input]['PLAYER_NAME']
-    team_name = gamelog_dict[game_date_user_input]['TEAM_ABBREVIATION']
+    game_date = gamelog_list[game_selection]["GAME_DATE"][:10]
 
-    scoring_headline = f"{gamelog_dict[game_date_user_input]['PTS']} pts " \
-                       f"on {gamelog_dict[game_date_user_input]['FGM']}/" \
-                       f"{gamelog_dict[game_date_user_input]['FGA']} (" \
-                       f"{round(gamelog_dict[game_date_user_input]['FGM']/gamelog_dict[game_date_user_input]['FGA']*100, 1)}%) shooting " \
-                       f"{gamelog_dict[game_date_user_input]['FG3M']}/" \
-                       f"{gamelog_dict[game_date_user_input]['FG3A']} (" \
-                       f"{round(gamelog_dict[game_date_user_input]['FG3M']/gamelog_dict[game_date_user_input]['FG3A']*100, 1)}%) from three" \
+    game_id = gamelog_dict[game_date]['GAME_ID']
+    match = gamelog_dict[game_date]['MATCHUP']
+    game_date = gamelog_dict[game_date]['GAME_DATE'][:10]
+    player_name = gamelog_dict[game_date]['PLAYER_NAME']
+    team_name = gamelog_dict[game_date]['TEAM_ABBREVIATION']
 
-    all_shots = get_shotchart_data(player_id, season_year_user_input, game_id)
+    scoring_headline = f"{gamelog_dict[game_date]['PTS']} pts " \
+                       f"on {gamelog_dict[game_date]['FGM']}/" \
+                       f"{gamelog_dict[game_date]['FGA']} (" \
+                       f"{round(gamelog_dict[game_date]['FGM']/gamelog_dict[game_date]['FGA']*100, 1)}%) shooting " \
+                       f"{gamelog_dict[game_date]['FG3M']}/" \
+                       f"{gamelog_dict[game_date]['FG3A']} (" \
+                       f"{round(gamelog_dict[game_date]['FG3M']/gamelog_dict[game_date]['FG3A']*100, 1)}%) from three" \
 
-    plot_shortchart(all_shots, player_name, team_name, matchup, game_date, scoring_headline)
+    all_shots = get_shotchart_data(player_id, season_selection, game_id)
+
+    plot_shortchart(all_shots, player_name, team_name, match, game_date, scoring_headline)
