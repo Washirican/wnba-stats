@@ -317,7 +317,7 @@ if __name__ == '__main__':
     scoring_headline = f"{gamelog_dict[game_date]['PTS']} pts " \
                        f"on {gamelog_dict[game_date]['FGM']}/" \
                        f"{gamelog_dict[game_date]['FGA']} (" \
-                       f"{round(gamelog_dict[game_date]['FGM'] / gamelog_dict[game_date]['FGA'] * 100, 1)}%) shooting " \
+                       f"{round(gamelog_dict[game_date]['FGM'] / gamelog_dict[game_date]['FGA'] * 100, 1)}%) shooting, " \
                        f"{gamelog_dict[game_date]['FG3M']}/" \
                        f"{gamelog_dict[game_date]['FG3A']} (" \
                        f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
