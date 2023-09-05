@@ -224,8 +224,9 @@ def get_shotchart_data(player_id, season_year, game_id):
 def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
                     scoring_headline):
     """Plot player shot chart data."""
-    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
-    #  data directly from all_shots?
+    
+    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read 
+    # data directly from all_shots?
 
     x_all = []
     y_all = []
@@ -247,8 +248,8 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
             x_miss.append(shot['LOC_X'])
             y_miss.append(shot['LOC_Y'])
 
-    # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker
-    #  while hovering
+    # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker 
+    # while hovering
 
     im = plt.imread('shotchart-blue.png')
     fig, ax = plt.subplots()
