@@ -76,16 +76,11 @@ def get_player_seasons(player_id):
 def get_player_gamelog(player_id, season_year, season_type):
     """Get player game data."""
     parameters = {
-        'DateFrom': '',
-        'DateTo': '',
-        'GameSegment': '',
         'LastNGames': '0',
         'LeagueID': '10',
-        'Location': '',
         'MeasureType': 'Base',
         'Month': '0',
         'OpponentTeamID': '0',
-        'Outcome': '',
         'PORound': '0',
         'PaceAdjust': 'N',
         'PerMode': 'Totals',
@@ -95,10 +90,7 @@ def get_player_gamelog(player_id, season_year, season_type):
         'Rank': 'N',
         'Season': season_year,
         'SeasonSegment': '',
-        'SeasonType': season_type,
-        'ShotClockRange': '',
-        'VsConference': '',
-        'VsDivision': ''
+        'SeasonType': season_type
         }
 
     endpoint = 'playergamelogs'
