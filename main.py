@@ -22,7 +22,7 @@ HEADERS = {
     }
 
 
-def get_player_data(player_name):
+def get_players_list():
     """Ger player id from Player Name (format: last_name, first_name)"""
     player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
     player_list = requests.get(player_index_url, timeout=10)
@@ -31,15 +31,21 @@ def get_player_data(player_name):
     dict_str = player_list.content.decode()[17:-1]
 
     # Turns string into dictionary
-    data = json.loads(dict_str)
-    players = data['data']['players']
+    all_player_data = json.loads(dict_str)
+    players = all_player_data['data']['players']
     # teams = data['data']['teams']
     # data_date = data['generated']
 
+    return players
+
+
+def get_player_info(players_list, player_selection):
+    """Get individual player details"""
+
     player_info = []
 
-    for player in players:
-        if player_name in player[1].lower():
+    for player in players_list:
+        if player_selection.lower() in player[1].lower():
             player_info = player
             break
 
@@ -222,15 +228,13 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
 
 
 if __name__ == '__main__':
+    players_list = get_players_list()
 
     player_info = []
 
     while not player_info:
         player_selection = input('Enter player name (Last, First): ')
-        # TODO (2023-09-07 by D. Rodriguez):
-        #  Revise this so that is does not make http request every
-        #  time. Learn how to save player list after one request.
-        player_info = get_player_data(player_selection.lower())
+        player_info = get_player_info(players_list, player_selection.lower())
         if not player_info:
             print(f'Player {player_selection.title()} was not found in '
                   f'players database. Make sure name is spelled correctly'
@@ -280,7 +284,7 @@ if __name__ == '__main__':
                        f"{gamelog_dict[game_date]['FG3M']}/" \
                        f"{gamelog_dict[game_date]['FG3A']} (" \
                        f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
- \
+
     all_shots = get_shotchart_data(player_id, season_selection, game_id)
 
     plot_shortchart(all_shots,
