@@ -180,7 +180,7 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
                     scoring_headline):
     """Plot player shot chart data."""
 
-    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
+    # TODO Cleanup variable quantity, maybe read
     #  data directly from all_shots?
 
     x_all = []
@@ -203,7 +203,7 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
             x_miss.append(shot['LOC_X'])
             y_miss.append(shot['LOC_Y'])
 
-    # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker
+    # TODO Add shot info to each shot marker
     #  while hovering
 
     im = plt.imread('shotchart-blue.png')
@@ -227,6 +227,8 @@ if __name__ == '__main__':
 
     while not player_info:
         player_selection = input('Enter player name (Last, First): ')
+        # TODO Revise this so that is does not make http request every 
+        # time. Learn how to save player list after one request.
         player_info = get_player_data(player_selection.lower())
         if not player_info:
             print(f'Player {player_selection.title()} was not found in '
