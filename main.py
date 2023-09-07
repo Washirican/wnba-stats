@@ -19,7 +19,7 @@ HEADERS = {
     'Referer': 'https://stats.wnba.com/',
     'Pragma': 'no-cache',
     'Cache-Control': 'no-cache',
-    }
+}
 
 
 def get_player_data(player_name):
@@ -52,7 +52,7 @@ def get_player_seasons(player_id):
         'LeagueID': '10',
         'PerMode': 'PerGame',
         'PlayerID': player_id
-        }
+    }
 
     endpoint = 'playerprofilev2'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -91,7 +91,7 @@ def get_player_gamelog(player_id, season_year, season_type):
         'Season': season_year,
         'SeasonSegment': '',
         'SeasonType': season_type
-        }
+    }
 
     endpoint = 'playergamelogs'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -143,7 +143,7 @@ def get_shotchart_data(player_id, season_year, game_id):
         'StartPeriod': '1',
         'StartRange': '0',
         'TeamID': '0',
-        }
+    }
 
     endpoint = 'shotchartdetail'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -179,8 +179,8 @@ def get_shotchart_data(player_id, season_year, game_id):
 def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
                     scoring_headline):
     """Plot player shot chart data."""
-    
-    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read 
+
+    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
     #  data directly from all_shots?
 
     x_all = []
@@ -203,7 +203,7 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
             x_miss.append(shot['LOC_X'])
             y_miss.append(shot['LOC_Y'])
 
-    # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker 
+    # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker
     #  while hovering
 
     im = plt.imread('shotchart-blue.png')
