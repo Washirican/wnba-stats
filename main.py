@@ -227,6 +227,23 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
     plt.show()
 
 
+class Player:
+    def __init__(self, name):
+        self.name = name
+
+    def team(self):
+        """Get player current team"""
+        pass
+
+    def drafted(self):
+        """Get player drafted year."""
+        pass
+
+    def seasons_played(self):
+        """Gte player's seasons played."""
+        pass
+
+
 if __name__ == '__main__':
     players_list = get_players_list()
 
