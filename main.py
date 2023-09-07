@@ -19,7 +19,7 @@ HEADERS = {
     'Referer': 'https://stats.wnba.com/',
     'Pragma': 'no-cache',
     'Cache-Control': 'no-cache',
-}
+    }
 
 
 def get_player_data(player_name):
@@ -52,7 +52,7 @@ def get_player_seasons(player_id):
         'LeagueID': '10',
         'PerMode': 'PerGame',
         'PlayerID': player_id
-    }
+        }
 
     endpoint = 'playerprofilev2'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -91,7 +91,7 @@ def get_player_gamelog(player_id, season_year, season_type):
         'Season': season_year,
         'SeasonSegment': '',
         'SeasonType': season_type
-    }
+        }
 
     endpoint = 'playergamelogs'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -143,7 +143,7 @@ def get_shotchart_data(player_id, season_year, game_id):
         'StartPeriod': '1',
         'StartRange': '0',
         'TeamID': '0',
-    }
+        }
 
     endpoint = 'shotchartdetail'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -179,8 +179,8 @@ def get_shotchart_data(player_id, season_year, game_id):
 def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
                     scoring_headline):
     """Plot player shot chart data."""
-
-    # TODO Cleanup variable quantity, maybe read
+    # TODO (2023-09-07 by D. Rodriguez):
+    #  Cleanup variable quantity, maybe read
     #  data directly from all_shots?
 
     x_all = []
@@ -202,8 +202,8 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
         else:
             x_miss.append(shot['LOC_X'])
             y_miss.append(shot['LOC_Y'])
-
-    # TODO Add shot info to each shot marker
+    # TODO (2023-09-07 by D. Rodriguez):
+    #  Add shot info to each shot marker
     #  while hovering
 
     im = plt.imread('shotchart-blue.png')
@@ -227,8 +227,9 @@ if __name__ == '__main__':
 
     while not player_info:
         player_selection = input('Enter player name (Last, First): ')
-        # TODO Revise this so that is does not make http request every 
-        # time. Learn how to save player list after one request.
+        # TODO (2023-09-07 by D. Rodriguez):
+        #  Revise this so that is does not make http request every
+        #  time. Learn how to save player list after one request.
         player_info = get_player_data(player_selection.lower())
         if not player_info:
             print(f'Player {player_selection.title()} was not found in '
@@ -279,7 +280,7 @@ if __name__ == '__main__':
                        f"{gamelog_dict[game_date]['FG3M']}/" \
                        f"{gamelog_dict[game_date]['FG3A']} (" \
                        f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
-
+ \
     all_shots = get_shotchart_data(player_id, season_selection, game_id)
 
     plot_shortchart(all_shots,
