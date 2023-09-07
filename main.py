@@ -248,11 +248,12 @@ if __name__ == '__main__':
 
     game_count = 0
     print("ID Game Date  Match       Player Headline")
+    print("----------------------------------------------------")
     for game in gamelog_list:
         game_count += 1
-        print("{:2}".format(game_count),
-              game['GAME_DATE'][:10],
-              "{:11}".format(game['MATCHUP']),
+        print(f"{game_count:2}",
+              f"{game['GAME_DATE'][:10]}",
+              f"{game['MATCHUP']:11}",
               f"{game['PTS']} pts, "
               f"on {game['FGM']}/"
               f"{game['FGA']} "
