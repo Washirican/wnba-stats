@@ -25,18 +25,22 @@ HEADERS = {
 def get_players_list():
     """Ger player id from Player Name (format: last_name, first_name)"""
     player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
-    player_list = requests.get(player_index_url, timeout=10)
+    response = requests.get(player_index_url, timeout=10)
 
     # Cleanup string
-    dict_str = player_list.content.decode()[17:-1]
+    # dict_str = player_list.content.decode()[17:-1]
 
     # Turns string into dictionary
-    all_player_data = json.loads(dict_str)
-    players = all_player_data['data']['players']
+    # all_player_data = json.loads(dict_str)
+
+    all_players = json.loads(
+        response.content.decode()[17:-1])['data']['players']
+
+    # all_players = all_player_data['data']['players']
     # teams = data['data']['teams']
     # data_date = data['generated']
 
-    return players
+    return all_players
 
 
 def get_player_info(players_list, player_selection):
@@ -228,8 +232,12 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
 
 
 class Player:
-    def __init__(self, name):
+    """Player class."""
+    def __init__(self, name, player_id, team, year_drafted):
         self.name = name
+        self.player_id = player_id
+        self.team = team
+        self.year_drafted = year_drafted
 
     def team(self):
         """Get player current team"""
@@ -242,6 +250,47 @@ class Player:
     def seasons_played(self):
         """Gte player's seasons played."""
         pass
+
+
+class Team:
+    """Team class"""
+    def __init__(self, name):
+        self.time_zone = None
+        self.state = None
+        self.city = None
+        self.abbreviation = None
+        self.team_id = None
+        self.name = name
+
+    def get_team_info(self):
+        """Fill team information."""
+        all_teams = get_teams_list()
+
+        # FIXME (2023-09-07 by D. Rodriguez): Update class attributes
+        for key, values in all_teams.items():
+            # print(f"{values['id']}  {values['c']} {values['n']}")
+            if player_team == values['n'].lower():
+                print(f"{values['id']}  {values['c']} {values['n']}")
+                self.team_id = values['id'].lower()
+                self.abbreviation = values['a'].lower()
+                self.city = values['c'].lower()
+                self.state = values['s'].lower()
+                self.time_zone = values['tz'].lower()
+
+
+def get_teams_list():
+    """Get teams dictionary"""
+    url = 'https://www.wnba.com/wp-json/api/v1/teams.json'
+    response = requests.get(url)
+    all_teams = json.loads(response.content.decode())
+
+    for key, values in all_teams.items():
+        # print(f"{values['id']}  {values['c']} {values['n']}")
+        if player_team == values['n'].lower():
+            print(f"{values['id']}  {values['c']} {values['n']}")
+        
+        
+    return all_teams
 
 
 if __name__ == '__main__':
@@ -258,7 +307,8 @@ if __name__ == '__main__':
                   f' and try again.')
 
     player_id = player_info[0]
-    player_name = player_info[1]
+    player_name = player_info[1].lower()
+    player_team = player_info[6]
 
     all_seasons = get_player_seasons(player_id)
     for season in all_seasons:
