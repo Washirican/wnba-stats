@@ -284,12 +284,10 @@ def get_teams_list():
     response = requests.get(url)
     all_teams = json.loads(response.content.decode())
 
-    for key, values in all_teams.items():
-        # print(f"{values['id']}  {values['c']} {values['n']}")
-        if player_team == values['n'].lower():
-            print(f"{values['id']}  {values['c']} {values['n']}")
-        
-        
+    # for key, values in all_teams.items():
+    #     print(f"{values['id']}  {values['c']} {values['n']}")
+        # if player_team == values['n'].lower():
+        #     print(f"{values['id']}  {values['c']} {values['n']}")
     return all_teams
 
 
