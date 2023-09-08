@@ -255,22 +255,11 @@ class Player:
 class Team:
     """Team class"""
     def __init__(self, name):
-        self.time_zone = None
-        self.state = None
-        self.city = None
-        self.abbreviation = None
-        self.team_id = None
-        self.name = name
-
-    def get_team_info(self):
-        """Fill team information."""
         all_teams = get_teams_list()
 
         # FIXME (2023-09-07 by D. Rodriguez): Update class attributes
         for key, values in all_teams.items():
-            # print(f"{values['id']}  {values['c']} {values['n']}")
-            if player_team == values['n'].lower():
-                print(f"{values['id']}  {values['c']} {values['n']}")
+            if name == values['n'].lower():
                 self.team_id = values['id'].lower()
                 self.abbreviation = values['a'].lower()
                 self.city = values['c'].lower()
@@ -279,15 +268,11 @@ class Team:
 
 
 def get_teams_list():
-    """Get teams dictionary"""
+    """Get teams."""
     url = 'https://www.wnba.com/wp-json/api/v1/teams.json'
     response = requests.get(url)
     all_teams = json.loads(response.content.decode())
 
-    # for key, values in all_teams.items():
-    #     print(f"{values['id']}  {values['c']} {values['n']}")
-        # if player_team == values['n'].lower():
-        #     print(f"{values['id']}  {values['c']} {values['n']}")
     return all_teams
 
 
