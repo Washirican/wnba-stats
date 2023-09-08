@@ -234,6 +234,8 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
 class Player:
     """Player class."""
     def __init__(self, name, player_id, team, year_drafted):
+        all_players = get_players_list()
+
         self.name = name
         self.player_id = player_id
         self.team = team
@@ -277,13 +279,13 @@ def get_teams_list():
 
 
 if __name__ == '__main__':
-    players_list = get_players_list()
+    all_players = get_players_list()
 
     player_info = []
 
     while not player_info:
         player_selection = input('Enter player name (Last, First): ')
-        player_info = get_player_info(players_list, player_selection.lower())
+        player_info = get_player_info(all_players, player_selection.lower())
         if not player_info:
             print(f'Player {player_selection.title()} was not found in '
                   f'players database. Make sure name is spelled correctly'
@@ -293,8 +295,8 @@ if __name__ == '__main__':
     player_name = player_info[1].lower()
     player_team = player_info[6]
 
-    all_seasons = get_player_seasons(player_id)
-    for season in all_seasons:
+    player_seasons = get_player_seasons(player_id)
+    for season in player_seasons:
         print(season)
 
     season_selection = input('Enter season: ')
