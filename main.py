@@ -233,20 +233,20 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
 
 class Player:
     """Player class."""
-    def __init__(self, name, player_id, team, year_drafted):
+    def __init__(self, name):
         all_players = get_players_list()
 
-        self.name = name
-        self.player_id = player_id
-        self.team = team
-        self.year_drafted = year_drafted
+        for player in all_players:
+            if name.lower() == player[1].lower():
+                self.player_id = player[0]
+                self.name = player[1]
+                self.active = player[2]
+                self.year_drafted = player[3]
+                self.last_season = player[4]
+                break
 
     def team(self):
         """Get player current team"""
-        pass
-
-    def drafted(self):
-        """Get player drafted year."""
         pass
 
     def seasons_played(self):
@@ -259,7 +259,6 @@ class Team:
     def __init__(self, name):
         all_teams = get_teams_list()
 
-        # FIXME (2023-09-07 by D. Rodriguez): Update class attributes
         for key, values in all_teams.items():
             if name == values['n'].lower():
                 self.team_id = values['id'].lower()
@@ -267,6 +266,7 @@ class Team:
                 self.city = values['c'].lower()
                 self.state = values['s'].lower()
                 self.time_zone = values['tz'].lower()
+                break
 
 
 def get_teams_list():
