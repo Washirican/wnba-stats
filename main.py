@@ -10,10 +10,20 @@ if __name__ == '__main__':
 
     player = Player(player_selection)
 
-    player_seasons = player.get_career_seasons()
+    player_seasons = player.get_seasons_played()
 
     for season in player_seasons:
         print(season)
+
+    player_season_totals_headers, player_season_totals_data = player.get_season_totals_regular_season()
+
+    print(*player_season_totals_headers, sep='\t')
+
+    for season in player_season_totals_data:
+        print(*season, sep='\t\t')
+
+    for row in zip(player_season_totals_headers, player_season_totals_data[0]):
+        print(' '.join(row))
 
     season_selection = input('Enter season: ')
 

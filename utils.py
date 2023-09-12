@@ -5,6 +5,7 @@ import requests
 import matplotlib.pyplot as plt
 
 
+# TODO (2023-09-12 by D. Rodriguez): Move this to Player class?
 def get_players_list():
     """Ger player id from Player Name (format: last_name, first_name)"""
     player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
@@ -16,6 +17,7 @@ def get_players_list():
     return player_list
 
 
+# TODO (2023-09-12 by D. Rodriguez): Move this to Team class?
 def get_teams_list():
     """Get teams."""
     team_index_url = 'https://www.wnba.com/wp-json/api/v1/teams.json'
@@ -45,8 +47,8 @@ class Player:
             print("Player not found in database.")
             return
 
-    def get_career_seasons(self):
-        """Get player career played seasons"""
+    def get_seasons_played(self):
+        """Get seasons played."""
         headers = {
             'Host': 'stats.wnba.com',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
@@ -75,15 +77,51 @@ class Player:
                                 params=parameters,
                                 timeout=10)
 
-        player_career_stats = \
+        season_totals_regular_season = \
             json.loads(response.content.decode())['resultSets'][0]['rowSet']
 
-        career_seasons = []
+        seasons_played = []
 
-        for season in player_career_stats:
-            career_seasons.append(season[1].split('-')[0])
+        for season in season_totals_regular_season:
+            seasons_played.append(season[1].split('-')[0])
 
-        return career_seasons
+        return seasons_played
+
+    def get_season_totals_regular_season(self):
+        """Get regular seasons Per Game totals."""
+        headers = {
+            'Host': 'stats.wnba.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
+                          'Gecko/20100101 Firefox/72.0',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'x-nba-stats-origin': 'stats',
+            'x-nba-stats-token': 'true',
+            'Connection': 'keep-alive',
+            'Referer': 'https://stats.wnba.com/',
+            'Pragma': 'no-cache',
+            'Cache-Control': 'no-cache',
+        }
+        parameters = {
+            'LeagueID': '10',
+            'PerMode': 'PerGame',
+            'PlayerID': self.player_id
+        }
+
+        endpoint = 'playerprofilev2'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        response = requests.get(request_url,
+                                headers=headers,
+                                params=parameters,
+                                timeout=10)
+
+        # TODO (2023-09-12 by D. Rodriguez): Return a dictionary
+        data_headers = json.loads(response.content.decode())['resultSets'][0]['headers']
+        data_set = json.loads(response.content.decode())['resultSets'][0]['rowSet']
+
+        return data_headers, data_set
 
     def get_season_gamelog(self, season):
         """Get player season gamelog."""
@@ -148,7 +186,7 @@ class Player:
         gamelog_list.reverse()
         return gamelog_dict, gamelog_list
 
-    # TODO (2023-09-12 by D. Rodriguez): Add get_shotchart metho here or
+    # TODO (2023-09-12 by D. Rodriguez): Add get_shotchart method here or
     #  in a new Game class?
     def get_shotchart_data(self):
         """Get game shotchart data."""
@@ -170,7 +208,7 @@ class Team:
                 break
 
     def get_roster(self):
-        """"Get team roster for a specific season."""
+        """Get team roster for a specific season or current roster (?)."""
         pass
 
 
