@@ -33,8 +33,6 @@ def get_players_list():
     # Turns string into dictionary
     all_player_data = json.loads(dict_str)
     players = all_player_data['data']['players']
-    # teams = data['data']['teams']
-    # data_date = data['generated']
 
     return players
 
@@ -169,15 +167,6 @@ def get_shotchart_data(player_id, season_year, game_id):
 
     for shot in row_set:
         all_shot_data_list.append(dict(zip(headers, shot)))
-    #
-    # for shot in all_shot_data:
-    #     rows = []
-    #     for raw_row in row_set:
-    #         row = {}
-    #         for i in range(len(headers)):
-    #             row[headers[i]] = raw_row[i]
-    #         rows.append(row)
-    #     all_shot_data_list[name] = rows
 
     return all_shot_data_list
 
