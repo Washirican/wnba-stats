@@ -231,6 +231,15 @@ def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
     plt.show()
 
 
+def get_teams_list():
+    """Get teams."""
+    url = 'https://www.wnba.com/wp-json/api/v1/teams.json'
+    response = requests.get(url)
+    all_teams = json.loads(response.content.decode())
+
+    return all_teams
+
+
 class Player:
     """Player class."""
     def __init__(self, name):
@@ -243,14 +252,13 @@ class Player:
                 self.active = player[2]
                 self.year_drafted = player[3]
                 self.last_season = player[4]
+                self.current_team = player[6]
                 break
 
-    def team(self):
-        """Get player current team"""
-        pass
+        self.seasons_played = get_player_seasons(self.player_id)
 
-    def seasons_played(self):
-        """Gte player's seasons played."""
+    def get_season_gamelog(self, season):
+        """Get player current team"""
         pass
 
 
@@ -267,15 +275,6 @@ class Team:
                 self.state = values['s'].lower()
                 self.time_zone = values['tz'].lower()
                 break
-
-
-def get_teams_list():
-    """Get teams."""
-    url = 'https://www.wnba.com/wp-json/api/v1/teams.json'
-    response = requests.get(url)
-    all_teams = json.loads(response.content.decode())
-
-    return all_teams
 
 
 if __name__ == '__main__':
