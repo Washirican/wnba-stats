@@ -254,12 +254,57 @@ class Player:
                 self.last_season = player[4]
                 self.current_team = player[6]
                 break
-
+        # TODO (2023-09-11 by D. Rodriguez): Make this a class method
         self.seasons_played = get_player_seasons(self.player_id)
 
     def get_season_gamelog(self, season):
         """Get player current team"""
-        pass
+        parameters = {
+            'LastNGames': '0',
+            'LeagueID': '10',
+            'MeasureType': 'Base',
+            'Month': '0',
+            'OpponentTeamID': '0',
+            'PORound': '0',
+            'PaceAdjust': 'N',
+            'PerMode': 'Totals',
+            'Period': '0',
+            'PlayerID': self.player_id,
+            'PlusMinus': 'N',
+            'Rank': 'N',
+            'Season': season,
+            'SeasonSegment': '',
+            'SeasonType': 'Regular Season'
+        }
+
+        endpoint = 'playergamelogs'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        response = requests.get(request_url,
+                                headers=HEADERS,
+                                params=parameters,
+                                timeout=10)
+
+        gamelog_headers = \
+        json.loads(response.content.decode())['resultSets'][0][
+            'headers']
+        gamelog_data = json.loads(response.content.decode())['resultSets'][0][
+            'rowSet']
+
+        gamelog = []
+
+        for game in gamelog_data:
+            gamelog.append(dict(zip(gamelog_headers, game)))
+
+        gamelog_dict = {}
+        gamelog_list = []
+
+        for game in gamelog:
+            gamelog_dict[game['GAME_DATE'][:10]] = game
+            gamelog_list.append(game)
+
+        gamelog_list.reverse()
+        return gamelog_dict, gamelog_list
 
 
 class Team:
