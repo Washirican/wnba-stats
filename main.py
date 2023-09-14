@@ -2,13 +2,14 @@
 # !/usr/bin/env python3
 
 from utils import Player, Team
+from tabulate import tabulate
 
 
 if __name__ == '__main__':
 
-    player_selection = input('Enter player name (Last, First): ')
+    player_name_input = input('Enter player name (Last, First): ')
 
-    player = Player(player_selection)
+    player = Player(player_name_input)
 
     player_seasons = player.get_seasons_played()
 
@@ -17,13 +18,13 @@ if __name__ == '__main__':
 
     player_season_totals_headers, player_season_totals_data = player.get_season_totals_regular_season()
 
-    print(*player_season_totals_headers, sep='\t')
+    # Print tabulated career totals per season
+    print(tabulate(player_season_totals_data, headers=player_season_totals_headers))
 
-    for season in player_season_totals_data:
-        print(*season, sep='\t\t')
-
-    # FIXME (2023-09-13 by D. Rodriguez): TypeError: sequence item 1: expected str instance, int found
-    # for row in zip(player_season_totals_headers, player_season_totals_data[0]):
+    # FIXME (2023-09-13 by D. Rodriguez): TypeError: sequence item 1:
+    #  expected str instance, int found for row in
+    #  zip(player_season_totals_headers,
+    # player_season_totals_data[0]):
     #     print(' '.join(row))
 
     season_selection = input('Enter season: ')

@@ -31,21 +31,19 @@ class Player:
     """Player class."""
     def __init__(self, name=None):
         all_players = get_players_list()
-        # TODO (2023-09-12 by D. Rodriguez): Validate parameters and
-        #  handle name not found on players list
-        try:
-            for player in all_players:
-                if name.lower() == player[1].lower():
-                    self.player_id = player[0]
-                    self.name = player[1]
-                    self.active = player[2]
-                    self.year_drafted = player[3]
-                    self.last_season = player[4]
-                    self.current_team = player[6]
-                    break
-        except ValueError:
-            print("Player not found in database.")
-            return
+        # TODO (2023-09-12 by D. Rodriguez): Handle name not found on
+        #  players list
+        for player in all_players:
+            if name.lower() == player[1].lower():
+                self.player_id = player[0]
+                self.name = player[1]
+                self.active = player[2]
+                self.year_drafted = player[3]
+                self.last_season = player[4]
+                self.current_team = player[6]
+                break
+        else:
+            print(f"Player {name.title()} was not found in players database." )
 
     def get_seasons_played(self):
         """Get seasons played."""
