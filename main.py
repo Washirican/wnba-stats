@@ -22,8 +22,9 @@ if __name__ == '__main__':
     for season in player_season_totals_data:
         print(*season, sep='\t\t')
 
-    for row in zip(player_season_totals_headers, player_season_totals_data[0]):
-        print(' '.join(row))
+    # FIXME (2023-09-13 by D. Rodriguez): TypeError: sequence item 1: expected str instance, int found
+    # for row in zip(player_season_totals_headers, player_season_totals_data[0]):
+    #     print(' '.join(row))
 
     season_selection = input('Enter season: ')
 
