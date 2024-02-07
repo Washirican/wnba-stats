@@ -2,7 +2,7 @@
 # !/usr/bin/env python3
 
 from tabulate import tabulate
-from operator import itemgetter 
+from operator import itemgetter
 from utils import Player, Team
 
 
@@ -13,13 +13,13 @@ if __name__ == '__main__':
     player_seasons = player.get_seasons_played()
 
     # for season in player_seasons:
-        # print(season)
+    # print(season)
 
     player_season_totals_headers, player_season_totals_data = player.get_season_totals_regular_season()
-    
-    # TODO: Revise to print only select data for headers and season data. 
+
+    # TODO: Revise to print only select data for headers and season data.
     # Look into using itemgetter(*b)(a)
-    
+
     # Print tabulated career totals per season
     print(tabulate(player_season_totals_data,
           headers=player_season_totals_headers))
