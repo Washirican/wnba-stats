@@ -1,31 +1,28 @@
 """WNBA shotcharts"""
 # !/usr/bin/env python3
 
-from utils import Player, Team
 from tabulate import tabulate
+from operator import itemgetter 
+from utils import Player, Team
 
 
 if __name__ == '__main__':
 
     player_name_input = input('Enter player name (Last, First): ')
-
     player = Player(player_name_input)
-
     player_seasons = player.get_seasons_played()
 
-    for season in player_seasons:
-        print(season)
+    # for season in player_seasons:
+        # print(season)
 
     player_season_totals_headers, player_season_totals_data = player.get_season_totals_regular_season()
-
+    
+    # TODO: Revise to print only select data for headers and season data. 
+    # Look into using itemgetter(*b)(a)
+    
     # Print tabulated career totals per season
-    print(tabulate(player_season_totals_data, headers=player_season_totals_headers))
-
-    # FIXME (2023-09-13 by D. Rodriguez): TypeError: sequence item 1:
-    #  expected str instance, int found for row in
-    #  zip(player_season_totals_headers,
-    # player_season_totals_data[0]):
-    #     print(' '.join(row))
+    print(tabulate(player_season_totals_data,
+          headers=player_season_totals_headers))
 
     season_selection = input('Enter season: ')
 
