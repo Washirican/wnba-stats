@@ -18,12 +18,12 @@ if __name__ == '__main__':
 
     # FIXME: Revise to print only select data for headers and season data.
     # Look into using itemgetter(*b)(a)
-    data_ids = [1, 4, 6, 27, 21, 20]
-    itemgetter(data_ids)(player_season_totals_headers)
+    data_ids = [1, 4, 6, 26, 21, 20]
+    itemgetter(*data_ids)(player_season_totals_headers)
 
     # Print tabulated career totals per season
-    print(tabulate(player_season_totals_data,
-                   headers=player_season_totals_headers))
+    print(tabulate(itemgetter(*data_ids)(player_season_totals_data),
+                   headers=itemgetter(*data_ids)(player_season_totals_headers)))
 
     season_selection = input('Enter season: ')
 
