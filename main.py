@@ -19,11 +19,14 @@ if __name__ == '__main__':
     # FIXME: Revise to print only select data for headers and season data.
     # Look into using itemgetter(*b)(a)
     data_ids = [1, 4, 6, 26, 21, 20]
-    itemgetter(*data_ids)(player_season_totals_headers)
+    player_season_totals_headers_select = itemgetter(
+        *data_ids)(player_season_totals_headers)
+    player_season_totals_data_select = itemgetter(
+        *data_ids)(player_season_totals_data)
 
     # Print tabulated career totals per season
-    print(tabulate(itemgetter(*data_ids)(player_season_totals_data),
-                   headers=itemgetter(*data_ids)(player_season_totals_headers)))
+    print(tabulate(player_season_totals_data,
+                   headers=player_season_totals_headers))
 
     season_selection = input('Enter season: ')
 
@@ -60,8 +63,8 @@ if __name__ == '__main__':
                        f"{gamelog_dict[game_date]['FG3M']}/" \
                        f"{gamelog_dict[game_date]['FG3A']} (" \
                        f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
- \
-        # TODO (2023-09-12 by D. Rodriguez): Move this to utils? Is it better
+
+    # TODO (2023-09-12 by D. Rodriguez): Move this to utils? Is it better
     #  to handle games in the Player class or a new Games class?
     # all_shots = get_shotchart_data(player_id, season_selection, game_id)
     #
