@@ -1,9 +1,8 @@
-"""WNBA shotcharts"""
 # !/usr/bin/env python3
 
 from tabulate import tabulate
 from operator import itemgetter
-from utils import Player, Team
+from utils import Player
 
 if __name__ == '__main__':
 
@@ -11,26 +10,21 @@ if __name__ == '__main__':
     player = Player(player_name_input)
     player_seasons = player.get_seasons_played()
 
-    # for season in player_seasons:
-    # print(season)
+    season_totals_headers, season_totals_data = player.get_season_totals()
 
-    player_season_totals_headers, player_season_totals_data = player.get_season_totals_regular_season()
+    select_data_ids = [1, 4, 6, 26, 21, 20]
 
-    # FIXME: Revise to print only select data for headers and season data.
-    # Look into using itemgetter(*b)(a)
-    data_ids = [1, 4, 6, 26, 21, 20]
-    player_season_totals_headers_select = itemgetter(
-        *data_ids)(player_season_totals_headers)
-    player_season_totals_data_select = itemgetter(
-        *data_ids)(player_season_totals_data)
+    season_totals = [[each_list[i] for i in select_data_ids] for each_list in season_totals_data]
 
     # Print tabulated career totals per season
-    print(tabulate(player_season_totals_data,
-                   headers=player_season_totals_headers))
+    print(tabulate(season_totals,
+                   headers=itemgetter(*select_data_ids)(season_totals_headers)))
 
     season_selection = input('Enter season: ')
+    if len(season_selection.split('-')) > 1:
+        season_selection = season_selection.split('-')[0]
 
-    gamelog_dict, gamelog_list = player.get_season_gamelog(season_selection)
+    gamelog_dict, gamelog_list = player.get_game_list(season_selection)
 
     game_count = 0
     print("ID Game Date  Match       Player Headline")

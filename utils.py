@@ -29,12 +29,25 @@ def get_teams_list():
 
 class Player:
     """Player class."""
-    def __init__(self, name=None):
+    def __init__(self, name=None, league_id=None):
+        """ Class initialization. """
+        # Defaults to Regular Season if not specified
+        if league_id:
+            self.league_id = league_id
+        else:
+            self.league_id = 10
+        
+        # Defaults to Regular Season if not specified
+        if name:
+            self.name = name
+        else:
+            print("WARNING: Please provide a player name.")
+
         all_players = get_players_list()
-        # TODO (2023-09-12 by D. Rodriguez): Handle name not found on
-        #  players list
+        # FIXME (2023-09-12 by D. Rodriguez): Handle name not found on players list
+        # FIXME (2024-02-19): Get this to another method that fills player data
         for player in all_players:
-            if name.lower() == player[1].lower():
+            if self.name.lower() == player[1].lower():
                 self.player_id = player[0]
                 self.name = player[1]
                 self.active = player[2]
@@ -43,7 +56,7 @@ class Player:
                 self.current_team = player[6]
                 break
         else:
-            print(f"Player {name.title()} was not found in players database." )
+            print(f"Player {self.name.title()} was not found in players database." )
 
     def get_seasons_played(self):
         """Get seasons played."""
@@ -62,7 +75,7 @@ class Player:
             'Cache-Control': 'no-cache',
         }
         parameters = {
-            'LeagueID': '10',
+            'LeagueID': self.league_id,
             'PerMode': 'PerGame',
             'PlayerID': self.player_id
         }
@@ -85,7 +98,7 @@ class Player:
 
         return seasons_played
 
-    def get_season_totals_regular_season(self):
+    def get_season_totals(self):
         """Get regular seasons Per Game totals."""
         headers = {
             'Host': 'stats.wnba.com',
@@ -102,7 +115,7 @@ class Player:
             'Cache-Control': 'no-cache',
         }
         parameters = {
-            'LeagueID': '10',
+            'LeagueID': self.league_id,
             'PerMode': 'PerGame',
             'PlayerID': self.player_id
         }
@@ -121,7 +134,7 @@ class Player:
 
         return data_headers, data_set
 
-    def get_season_gamelog(self, season):
+    def get_game_list(self, season):
         """Get player season gamelog."""
         headers = {
             'Host': 'stats.wnba.com',
@@ -139,7 +152,7 @@ class Player:
         }
         parameters = {
             'LastNGames': '0',
-            'LeagueID': '10',
+            'LeagueID': self.league_id,
             'MeasureType': 'Base',
             'Month': '0',
             'OpponentTeamID': '0',
@@ -194,6 +207,8 @@ class Player:
 class Team:
     """Team class"""
     def __init__(self, name):
+        """Look up team details given a team name."""
+        self.name = name
         all_teams = get_teams_list()
 
         for key, values in all_teams.items():
