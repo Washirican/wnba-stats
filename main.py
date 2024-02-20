@@ -3,6 +3,7 @@
 from tabulate import tabulate
 from operator import itemgetter
 from utils import Player
+import utils
 
 if __name__ == '__main__':
 
@@ -12,9 +13,11 @@ if __name__ == '__main__':
 
     season_totals_headers, season_totals_data = player.get_season_totals()
 
+    # Define indices for season data to print
     select_data_ids = [1, 4, 6, 26, 21, 20]
 
-    season_totals = [[each_list[i] for i in select_data_ids] for each_list in season_totals_data]
+    season_totals = [[each_list[i] for i in select_data_ids]
+                     for each_list in season_totals_data]
 
     # Print tabulated career totals per season
     print(tabulate(season_totals,
@@ -59,12 +62,13 @@ if __name__ == '__main__':
                        f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
 
     # TODO (2023-09-12 by D. Rodriguez): Move this to utils? Is it better
-    #  to handle games in the Player class or a new Games class?
-    # all_shots = get_shotchart_data(player_id, season_selection, game_id)
-    #
-    # plot_shortchart(all_shots,
-    #                 player_name,
-    #                 team_name,
-    #                 match,
-    #                 game_date,
-    #                 scoring_headline)
+    # TODO (2024-02-19): Handle games in the Player class or a new Games class?
+    all_shots = utils.get_shotchart_data(
+        player.player_id, season_selection, game_id)
+
+    utils.plot_shortchart(all_shots,
+                          player_name,
+                          team_name,
+                          match,
+                          game_date,
+                          scoring_headline)
