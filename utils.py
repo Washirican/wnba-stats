@@ -319,10 +319,10 @@ class Player:
         gamelog_list.reverse()
         return gamelog_dict, gamelog_list
 
-    # TODO (2023-09-12 by D. Rodriguez): Add get_shotchart method here or
+    # TODO (2023-09-12 by D. Rodriguez): Add get_shot_chart method here or
     #  in a new Game class?
-    def get_shotchart_data(self):
-        """Get game shotchart data."""
+    def get_shot_chart_data(self):
+        """Get game shot_chart data."""
         pass
 
 
@@ -354,5 +354,6 @@ class Game:
     def __init__(self):
         pass
 
-    def get_shotchart(self):
+    def get_shot_chart(self):
+        """Gets player shot chart data for a single game."""
         pass

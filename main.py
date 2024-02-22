@@ -32,8 +32,6 @@ if __name__ == '__main__':
                    headers=itemgetter(*data_ids)(season_totals_headers)))
 
     season_selection = input('Enter season: ')
-    if len(season_selection.split('-')) > 1:
-        season_selection = season_selection.split('-')[0]
 
     gamelog_dict, gamelog_list = player.get_game_list(season_selection)
 
