@@ -1,9 +1,14 @@
 # !/usr/bin/env python3
+"""
+Plot WNBA Shot Charts.
+"""
+
+from operator import itemgetter
 
 from tabulate import tabulate
-from operator import itemgetter
-from utils import Player
+
 import utils
+from utils import Player
 
 if __name__ == '__main__':
 
@@ -14,14 +19,15 @@ if __name__ == '__main__':
     season_totals_headers, season_totals_data = player.get_season_totals()
 
     # Define indices for season data to print
-    select_data_ids = [1, 4, 6, 26, 21, 20]
+    data_ids = [1, 4, 6, 26, 21, 20]
 
-    season_totals = [[each_list[i] for i in select_data_ids]
+    # FIXME (2024-02-22): Print only one year for season.
+    season_totals = [[each_list[i] for i in data_ids]
                      for each_list in season_totals_data]
 
     # Print tabulated career totals per season
     print(tabulate(season_totals,
-                   headers=itemgetter(*select_data_ids)(season_totals_headers)))
+                   headers=itemgetter(*data_ids)(season_totals_headers)))
 
     season_selection = input('Enter season: ')
     if len(season_selection.split('-')) > 1:
@@ -29,12 +35,12 @@ if __name__ == '__main__':
 
     gamelog_dict, gamelog_list = player.get_game_list(season_selection)
 
-    game_count = 0
+    GAME_COUNT = 0
     print("ID Game Date  Match       Player Headline")
     print("----------------------------------------------------")
     for game in gamelog_list:
-        game_count += 1
-        print(f"{game_count:2}",
+        GAME_COUNT += 1
+        print(f"{GAME_COUNT:2}",
               f"{game['GAME_DATE'][:10]}",
               f"{game['MATCHUP']:11}",
               f"{game['PTS']} pts, "
@@ -53,22 +59,26 @@ if __name__ == '__main__':
     player_name = gamelog_dict[game_date]['PLAYER_NAME']
     team_name = gamelog_dict[game_date]['TEAM_ABBREVIATION']
 
-    scoring_headline = f"{gamelog_dict[game_date]['PTS']} pts " \
-                       f"on {gamelog_dict[game_date]['FGM']}/" \
-                       f"{gamelog_dict[game_date]['FGA']} (" \
-                       f"{round(gamelog_dict[game_date]['FGM'] / gamelog_dict[game_date]['FGA'] * 100, 1)}%) shooting, " \
-                       f"{gamelog_dict[game_date]['FG3M']}/" \
-                       f"{gamelog_dict[game_date]['FG3A']} (" \
-                       f"{round(gamelog_dict[game_date]['FG3M'] / gamelog_dict[game_date]['FG3A'] * 100, 1)}%) from three" \
+    points = gamelog_dict[game_date]['PTS']
+    fg_made = gamelog_dict[game_date]['FGM']
+    fg_attempted = gamelog_dict[game_date]['FGA']
+    threes_made = gamelog_dict[game_date]['FG3M']
+    threes_attempted = gamelog_dict[game_date]['FG3A']
+
+    scoring_headline = f"{points} pts " \
+        f"on {fg_made}/{fg_attempted} " \
+        f"({round(fg_made / fg_attempted * 100, 1)}%) shooting, " \
+        f"{threes_made}/{threes_attempted} " \
+        f"({round(threes_made / threes_attempted * 100, 1)}%) from three"
 
     # TODO (2023-09-12 by D. Rodriguez): Move this to utils? Is it better
     # TODO (2024-02-19): Handle games in the Player class or a new Games class?
-    all_shots = utils.get_shotchart_data(
+    all_shots = utils.get_shot_chart_data(
         player.player_id, season_selection, game_id)
 
-    utils.plot_shortchart(all_shots,
-                          player_name,
-                          team_name,
-                          match,
-                          game_date,
-                          scoring_headline)
+    utils.plot_short_chart(all_shots,
+                           player_name,
+                           team_name,
+                           match,
+                           game_date,
+                           scoring_headline)

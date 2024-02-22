@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-
+"""
+WNBA Shot Charts
+"""
 import json
-import requests
+
 import matplotlib.pyplot as plt
+import requests
+
 HEADERS = {
     'Host': 'stats.wnba.com',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
@@ -42,7 +46,7 @@ def get_teams_list():
     return team_list
 
 
-def get_shotchart_data(player_id, season_year, game_id):
+def get_shot_chart_data(player_id, season_year, game_id):
     """Get player shot chart data."""
     parameters = {
         'ContextMeasure': 'FGA',
@@ -96,7 +100,7 @@ def get_shotchart_data(player_id, season_year, game_id):
     return all_shot_data_list
 
 
-def plot_shortchart(all_shots, player_name, team_name, matchup, game_date,
+def plot_short_chart(all_shots, player_name, team_name, matchup, game_date,
                     scoring_headline):
     """Plot player shot chart data."""
 
