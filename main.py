@@ -21,9 +21,11 @@ if __name__ == '__main__':
     # Define indices for season data to print
     data_ids = [1, 4, 6, 26, 21, 20]
 
-    # FIXME (2024-02-22): Print only one year for season.
     season_totals = [[each_list[i] for i in data_ids]
                      for each_list in season_totals_data]
+
+    for i, s in enumerate(season_totals):
+        season_totals[i][0] = season_totals[i][0].split('-')[0]
 
     # Print tabulated career totals per season
     print(tabulate(season_totals,
