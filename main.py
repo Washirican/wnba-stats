@@ -53,17 +53,17 @@ if __name__ == '__main__':
 
     game_date = gamelog_list[game_selection]["GAME_DATE"][:10]
 
-    game_id = gamelog_dict[game_date]['GAME_ID']
-    match = gamelog_dict[game_date]['MATCHUP']
-    game_date = gamelog_dict[game_date]['GAME_DATE'][:10]
-    player_name = gamelog_dict[game_date]['PLAYER_NAME']
-    team_name = gamelog_dict[game_date]['TEAM_ABBREVIATION']
+    game_id = gamelog_list[game_selection]['GAME_ID']
+    match = gamelog_list[game_selection]['MATCHUP']
+    game_date = gamelog_list[game_selection]['GAME_DATE'][:10]
+    player_name = gamelog_list[game_selection]['PLAYER_NAME']
+    team_name = gamelog_list[game_selection]['TEAM_ABBREVIATION']
 
-    points = gamelog_dict[game_date]['PTS']
-    fg_made = gamelog_dict[game_date]['FGM']
-    fg_attempted = gamelog_dict[game_date]['FGA']
-    threes_made = gamelog_dict[game_date]['FG3M']
-    threes_attempted = gamelog_dict[game_date]['FG3A']
+    points = gamelog_list[game_selection]['PTS']
+    fg_made = gamelog_list[game_selection]['FGM']
+    fg_attempted = gamelog_list[game_selection]['FGA']
+    threes_made = gamelog_list[game_selection]['FG3M']
+    threes_attempted = gamelog_list[game_selection]['FG3A']
 
     scoring_headline = f"{points} pts " \
         f"on {fg_made}/{fg_attempted} " \
