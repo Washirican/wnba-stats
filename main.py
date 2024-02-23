@@ -11,8 +11,10 @@ from utils import Game, Player
 
 if __name__ == '__main__':
 
-    player_name_input = input('Enter player name (Last, First): ')
+    # player_name_input = input('Enter player name (Last, First): ')
+    player_name_input = "wilson, a'ja"
     player = Player(player_name_input)
+    player.get_player_details()
     player_seasons = player.get_seasons_played()
 
     season_totals_headers, season_totals_data = player.get_season_totals()
@@ -69,7 +71,7 @@ if __name__ == '__main__':
         f"{threes_made}/{threes_attempted} " \
         f"({round(threes_made / threes_attempted * 100, 1)}%) from three"
 
-    game = Game(player.player_id, season_selection, game_id)
+    game = Game(player.id, season_selection, game_id)
     game.get_shot_chart_data()
     game.plot_short_chart(player_name,
                           team_name,

@@ -3,6 +3,7 @@
 WNBA Shot Charts
 """
 import json
+import logging
 
 import matplotlib.pyplot as plt
 import requests
@@ -25,6 +26,13 @@ HEADERS = {
 TEAM_INDEX_URL = 'https://www.wnba.com/wp-json/api/v1/teams.json'
 PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
 
+# Create a custom logger
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(levelname)s: %(asctime)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+logging.disable(logging.CRITICAL)
+
 
 # TODO (2023-09-12 by D. Rodriguez): Move this to Team class?
 def get_teams_list():
@@ -38,27 +46,33 @@ def get_teams_list():
 class Player:
     """Player class."""
 
-    def __init__(self, name=None, league_id=None):
+    def __init__(self, name=None):
         """ Class initialization. """
-        # Defaults to Regular Season if not specified
-        if league_id:
-            self.league_id = league_id
-        else:
-            self.league_id = 10
-
+        logging.debug('Name: %s', name)
         if name:
-            self.name = name
+            self.name = name.title()
         else:
             print("WARNING: Please provide a player name.")
 
-        response = requests.get(PLAYER_INDEX_URL, timeout=10)
+        self.id = None
+        self.active = None
+        self.year_drafted = None
+        self.last_season = None
+        self.current_team = None
 
-        self.all_players = json.loads(
-            response.content.decode()[17:-1])['data']['players']
+        logging.debug('Self.Name: %s', self.name)
 
-        for player in self.all_players:
+    def get_player_details(self):
+        """
+        Get player details.
+        """
+        r = requests.get(PLAYER_INDEX_URL, timeout=10)
+
+        all_players = json.loads(r.content.decode()[17:-1])['data']['players']
+
+        for player in all_players:
             if self.name.lower() == player[1].lower():
-                self.player_id = player[0]
+                self.id = player[0]
                 self.name = player[1]
                 self.active = player[2]
                 self.year_drafted = player[3]
@@ -66,103 +80,63 @@ class Player:
                 self.current_team = player[6]
                 break
         else:
-            print(
-                f"Player {self.name.title()} was not found in players database.")
+            print(f"Player {self.name.title()} was not found in database.")
 
-    def get_seasons_played(self):
+    def get_seasons_played(self, league_id=None):
         """Get seasons played."""
-        headers = {
-            'Host': 'stats.wnba.com',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
-                          'Gecko/20100101 Firefox/72.0',
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'x-nba-stats-origin': 'stats',
-            'x-nba-stats-token': 'true',
-            'Connection': 'keep-alive',
-            'Referer': 'https://stats.wnba.com/',
-            'Pragma': 'no-cache',
-            'Cache-Control': 'no-cache',
-        }
+        # Defaults to Regular Season if not specified
+        if league_id:
+            self.league_id = league_id
+        else:
+            self.league_id = 10
         parameters = {
             'LeagueID': self.league_id,
             'PerMode': 'PerGame',
-            'PlayerID': self.player_id
+            'PlayerID': self.id
         }
 
         endpoint = 'playerprofilev2'
         request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        response = requests.get(request_url,
-                                headers=headers,
-                                params=parameters,
-                                timeout=10)
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
 
-        season_totals_regular_season = \
-            json.loads(response.content.decode())['resultSets'][0]['rowSet']
+        season_totals = json.loads(r.content.decode())[
+            'resultSets'][0]['rowSet']
 
         seasons_played = []
 
-        for season in season_totals_regular_season:
+        for season in season_totals:
             seasons_played.append(season[1].split('-')[0])
 
         return seasons_played
 
     def get_season_totals(self):
         """Get regular seasons Per Game totals."""
-        headers = {
-            'Host': 'stats.wnba.com',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
-                          'Gecko/20100101 Firefox/72.0',
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'x-nba-stats-origin': 'stats',
-            'x-nba-stats-token': 'true',
-            'Connection': 'keep-alive',
-            'Referer': 'https://stats.wnba.com/',
-            'Pragma': 'no-cache',
-            'Cache-Control': 'no-cache',
-        }
         parameters = {
             'LeagueID': self.league_id,
             'PerMode': 'PerGame',
-            'PlayerID': self.player_id
+            'PlayerID': self.id
         }
 
         endpoint = 'playerprofilev2'
         request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        response = requests.get(request_url,
-                                headers=headers,
-                                params=parameters,
-                                timeout=10)
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
 
         # TODO (2023-09-12 by D. Rodriguez): Return a dictionary
-        data_headers = json.loads(response.content.decode())[
-            'resultSets'][0]['headers']
-        data_set = json.loads(response.content.decode())[
-            'resultSets'][0]['rowSet']
+        headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        return data_headers, data_set
+        return headers, data
 
     def get_game_list(self, season):
         """Get player season gamelog."""
-        headers = {
-            'Host': 'stats.wnba.com',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
-                          'Gecko/20100101 Firefox/72.0',
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'x-nba-stats-origin': 'stats',
-            'x-nba-stats-token': 'true',
-            'Connection': 'keep-alive',
-            'Referer': 'https://stats.wnba.com/',
-            'Pragma': 'no-cache',
-            'Cache-Control': 'no-cache',
-        }
         parameters = {
             'LastNGames': '0',
             'LeagueID': self.league_id,
@@ -173,7 +147,7 @@ class Player:
             'PaceAdjust': 'N',
             'PerMode': 'Totals',
             'Period': '0',
-            'PlayerID': self.player_id,
+            'PlayerID': self.id,
             'PlusMinus': 'N',
             'Rank': 'N',
             'Season': season,
@@ -184,21 +158,18 @@ class Player:
         endpoint = 'playergamelogs'
         request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        response = requests.get(request_url,
-                                headers=headers,
-                                params=parameters,
-                                timeout=10)
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
 
-        gamelog_headers = \
-            json.loads(response.content.decode())['resultSets'][0][
-                'headers']
-        gamelog_data = json.loads(response.content.decode())['resultSets'][0][
-            'rowSet']
+        headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
         gamelog = []
 
-        for game in gamelog_data:
-            gamelog.append(dict(zip(gamelog_headers, game)))
+        for game in data:
+            gamelog.append(dict(zip(headers, game)))
 
         gamelog_dict = {}
         gamelog_list = []
@@ -219,6 +190,7 @@ class Player:
 
 class Team:
     """Team class"""
+    # FIXME (2024-02-23): Test and fix this method.
 
     def __init__(self, name):
         """Look up team details given a team name."""
@@ -280,17 +252,17 @@ class Game:
         endpoint = 'shotchartdetail'
         request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        response = requests.get(request_url,
-                                headers=HEADERS,
-                                params=parameters,
-                                timeout=10)
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
 
-        all_shot_data = json.loads(response.content.decode())['resultSets'][0]
+        all_shots = json.loads(r.content.decode())['resultSets'][0]
 
-        headers = all_shot_data['headers']
-        row_set = all_shot_data['rowSet']
+        headers = all_shots['headers']
+        data = all_shots['rowSet']
 
-        for shot in row_set:
+        for shot in data:
             self.all_shot_data_list.append(dict(zip(headers, shot)))
 
     def plot_short_chart(self, player_name, team_name, matchup, game_date,
