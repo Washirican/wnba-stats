@@ -8,7 +8,7 @@ from operator import itemgetter
 from tabulate import tabulate
 
 import utils
-from utils import Player
+from utils import Player, Game
 
 if __name__ == '__main__':
 
@@ -71,13 +71,9 @@ if __name__ == '__main__':
         f"{threes_made}/{threes_attempted} " \
         f"({round(threes_made / threes_attempted * 100, 1)}%) from three"
 
-    # TODO (2023-09-12 by D. Rodriguez): Move this to utils? Is it better
-    # TODO (2024-02-19): Handle games in the Player class or a new Games class?
-    all_shots = utils.get_shot_chart_data(
-        player.player_id, season_selection, game_id)
-
-    utils.plot_short_chart(all_shots,
-                           player_name,
+    game = Game(player.player_id, season_selection, game_id)
+    game.get_shot_chart_data()
+    game.plot_short_chart(player_name,
                            team_name,
                            match,
                            game_date,
