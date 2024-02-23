@@ -22,12 +22,14 @@ HEADERS = {
     'Cache-Control': 'no-cache',
 }
 
+TEAM_INDEX_URL = 'https://www.wnba.com/wp-json/api/v1/teams.json'
+PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
+
 
 # TODO (2023-09-12 by D. Rodriguez): Move this to Team class?
 def get_teams_list():
     """Get teams."""
-    team_index_url = 'https://www.wnba.com/wp-json/api/v1/teams.json'
-    response = requests.get(team_index_url)
+    response = requests.get(TEAM_INDEX_URL)
     team_list = json.loads(response.content.decode())
 
     return team_list
@@ -49,8 +51,7 @@ class Player:
         else:
             print("WARNING: Please provide a player name.")
 
-        player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
-        response = requests.get(player_index_url, timeout=10)
+        response = requests.get(PLAYER_INDEX_URL, timeout=10)
 
         self.all_players = json.loads(
             response.content.decode()[17:-1])['data']['players']
@@ -67,7 +68,6 @@ class Player:
         else:
             print(
                 f"Player {self.name.title()} was not found in players database.")
-
 
     def get_seasons_played(self):
         """Get seasons played."""
