@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     season_totals = [[each_list[i] for i in data_ids]
                      for each_list in season_totals_data]
-
+    # Change season year range to single year: "2023-24" to "2023"
     for i, s in enumerate(season_totals):
         season_totals[i][0] = season_totals[i][0].split('-')[0]
 
