@@ -7,8 +7,7 @@ from operator import itemgetter
 
 from tabulate import tabulate
 
-import utils
-from utils import Player, Game
+from utils import Game, Player
 
 if __name__ == '__main__':
 
@@ -74,7 +73,7 @@ if __name__ == '__main__':
     game = Game(player.player_id, season_selection, game_id)
     game.get_shot_chart_data()
     game.plot_short_chart(player_name,
-                           team_name,
-                           match,
-                           game_date,
-                           scoring_headline)
+                          team_name,
+                          match,
+                          game_date,
+                          scoring_headline)

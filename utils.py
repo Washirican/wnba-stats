@@ -23,18 +23,6 @@ HEADERS = {
 }
 
 
-# TODO (2023-09-12 by D. Rodriguez): Move this to Player class?
-def get_players_list():
-    """Ger player id from Player Name (format: last_name, first_name)"""
-    player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
-    response = requests.get(player_index_url, timeout=10)
-
-    player_list = json.loads(
-        response.content.decode()[17:-1])['data']['players']
-
-    return player_list
-
-
 # TODO (2023-09-12 by D. Rodriguez): Move this to Team class?
 def get_teams_list():
     """Get teams."""
@@ -56,16 +44,18 @@ class Player:
         else:
             self.league_id = 10
 
-        # Defaults to Regular Season if not specified
         if name:
             self.name = name
         else:
             print("WARNING: Please provide a player name.")
 
-        all_players = get_players_list()
-        # FIXME (2023-09-12 by D. Rodriguez): Handle name not found on players list
-        # FIXME (2024-02-19): Get this to another method that fills player data
-        for player in all_players:
+        player_index_url = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
+        response = requests.get(player_index_url, timeout=10)
+
+        self.all_players = json.loads(
+            response.content.decode()[17:-1])['data']['players']
+
+        for player in self.all_players:
             if self.name.lower() == player[1].lower():
                 self.player_id = player[0]
                 self.name = player[1]
@@ -77,6 +67,7 @@ class Player:
         else:
             print(
                 f"Player {self.name.title()} was not found in players database.")
+
 
     def get_seasons_played(self):
         """Get seasons played."""
