@@ -18,7 +18,7 @@ if __name__ == '__main__':
     season_totals_headers, season_totals_data = player.get_season_totals()
 
     # Define indices for season data to print
-    data_ids = [1, 4, 6, 26, 21, 20]
+    data_ids = [1, 4, 6, 26, 20, 21]
 
     season_totals = [[each_list[i] for i in data_ids]
                      for each_list in season_totals_data]
