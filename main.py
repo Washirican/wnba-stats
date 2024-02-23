@@ -11,8 +11,7 @@ from utils import Game, Player
 
 if __name__ == '__main__':
 
-    # player_name_input = input('Enter player name (Last, First): ')
-    player_name_input = "wilson, a'ja"
+    player_name_input = input('Enter player name (Last, First): ')
     player = Player(player_name_input)
     player.get_player_details()
     player_seasons = player.get_seasons_played()
