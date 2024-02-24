@@ -45,7 +45,7 @@ def get_teams_list():
 
 class Player:
     """Player class."""
-
+    # LEARN (2024-02-23): Learn about class decorators for initialization
     def __init__(self, name=None):
         """ Class initialization. """
         logging.debug('Name: %s', name)
@@ -62,6 +62,7 @@ class Player:
 
         logging.debug('Self.Name: %s', self.name)
 
+    # TODO (2024-02-23): Move this to a decorator?
     def get_player_details(self):
         """
         Get player details.
