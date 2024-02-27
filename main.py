@@ -58,6 +58,7 @@ if __name__ == '__main__':
     player_name = gamelog_list[game_selection]['PLAYER_NAME']
     team_name = gamelog_list[game_selection]['TEAM_ABBREVIATION']
 
+    # FIXME (2024-02-27): Fix divide by zero error when no shot attempts
     points = gamelog_list[game_selection]['PTS']
     fg_made = gamelog_list[game_selection]['FGM']
     fg_attempted = gamelog_list[game_selection]['FGA']
