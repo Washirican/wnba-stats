@@ -58,18 +58,27 @@ if __name__ == '__main__':
     player_name = gamelog_list[game_selection]['PLAYER_NAME']
     team_name = gamelog_list[game_selection]['TEAM_ABBREVIATION']
 
-    # FIXME (2024-02-27): Fix divide by zero error when no shot attempts
     points = gamelog_list[game_selection]['PTS']
     fg_made = gamelog_list[game_selection]['FGM']
     fg_attempted = gamelog_list[game_selection]['FGA']
     threes_made = gamelog_list[game_selection]['FG3M']
     threes_attempted = gamelog_list[game_selection]['FG3A']
 
+    if fg_attempted != 0:
+        fg_percentage = round(fg_made / fg_attempted * 100, 1)
+    else:
+        fg_percentage = str(0)
+
+    if threes_attempted != 0:
+        three_percentage = round(threes_made / threes_attempted * 100, 1)
+    else:
+        three_percentage = str(0)
+
     scoring_headline = f"{points} pts " \
         f"on {fg_made}/{fg_attempted} " \
-        f"({round(fg_made / fg_attempted * 100, 1)}%) shooting, " \
+        f"({fg_percentage}%) shooting, " \
         f"{threes_made}/{threes_attempted} " \
-        f"({round(threes_made / threes_attempted * 100, 1)}%) from three"
+        f"({three_percentage}%) from three"
 
     game = Game(player.id, season_selection, game_id)
     game.get_shot_chart_data()
