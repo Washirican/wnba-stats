@@ -67,12 +67,12 @@ if __name__ == '__main__':
     if fg_attempted != 0:
         fg_percentage = round(fg_made / fg_attempted * 100, 1)
     else:
-        fg_percentage = str(0)
+        fg_percentage = fg_attempted
 
     if threes_attempted != 0:
         three_percentage = round(threes_made / threes_attempted * 100, 1)
     else:
-        three_percentage = str(0)
+        three_percentage = threes_attempted
 
     scoring_headline = f"{points} pts " \
         f"on {fg_made}/{fg_attempted} " \

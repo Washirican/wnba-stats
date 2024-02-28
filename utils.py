@@ -7,6 +7,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import requests
+from matplotlib.transforms import nonsingular
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -34,18 +35,10 @@ logging.basicConfig(level=logging.DEBUG,
 logging.disable(logging.CRITICAL)
 
 
-# TODO (2023-09-12 by D. Rodriguez): Move this to Team class?
-def get_teams_list():
-    """Get teams."""
-    response = requests.get(TEAM_INDEX_URL)
-    team_list = json.loads(response.content.decode())
-
-    return team_list
-
-
 class Player:
     """Player class."""
     # LEARN (2024-02-23): Learn about class decorators for initialization
+
     def __init__(self, name=None):
         """ Class initialization. """
         logging.debug('Name: %s', name)
@@ -59,6 +52,7 @@ class Player:
         self.year_drafted = None
         self.last_season = None
         self.current_team = None
+        self.league_id = None
 
         logging.debug('Self.Name: %s', self.name)
 
@@ -196,10 +190,26 @@ class Team:
     def __init__(self, name):
         """Look up team details given a team name."""
         self.name = name
-        all_teams = get_teams_list()
+        logging.debug('Name: %s', name)
 
-        for key, values in all_teams.items():
-            if name == values['n'].lower():
+        self.team_id = None
+        self.abbreviation = None
+        self.city = None
+        self.state = None
+        self.time_zone = None
+
+    def get_team_details(self):
+        """
+        Gets team details.
+        """
+        r = requests.get(TEAM_INDEX_URL,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+        team_list = json.loads(r.content.decode())
+
+        for key, values in team_list.items():
+            if self.name == values['n'].lower():
                 self.team_id = values['id'].lower()
                 self.abbreviation = values['a'].lower()
                 self.city = values['c'].lower()
