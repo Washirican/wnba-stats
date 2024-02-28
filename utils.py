@@ -204,7 +204,6 @@ class Team:
         """
         r = requests.get(TEAM_INDEX_URL,
                          headers=HEADERS,
-                         params=parameters,
                          timeout=10)
         team_list = json.loads(r.content.decode())
 
