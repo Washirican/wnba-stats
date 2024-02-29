@@ -203,12 +203,13 @@ class Team:
         Gets team details.
         """
         r = requests.get(TEAM_INDEX_URL,
-                         headers=HEADERS,
                          timeout=10)
-        # FIXME (2024-02-28): Fix request
+        
         team_list = json.loads(r.content.decode())
 
         for key, values in team_list.items():
+            logging.debug('Key: %s, Value: %s', key, values)
+
             if self.name == values['n'].lower():
                 self.team_id = values['id'].lower()
                 self.abbreviation = values['a'].lower()
