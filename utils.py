@@ -32,7 +32,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 
 
 class Player:
@@ -205,6 +205,7 @@ class Team:
         r = requests.get(TEAM_INDEX_URL,
                          headers=HEADERS,
                          timeout=10)
+        # FIXME (2024-02-28): Fix request
         team_list = json.loads(r.content.decode())
 
         for key, values in team_list.items():
@@ -221,6 +222,7 @@ class Team:
         pass
 
 
+# LEARN (2024-02-28): How to fix issue with too many instance attributes
 class Game:
     """"Game class"""
 
