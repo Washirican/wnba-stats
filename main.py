@@ -18,6 +18,7 @@ if __name__ == '__main__':
 
     season_totals_headers, season_totals_data = player.get_season_totals()
 
+    # TODO (2024-02-29): Move this to get_season_totals() method
     # Define indices for season data to print
     data_ids = [1, 4, 6, 26, 20, 21]
 
@@ -30,11 +31,13 @@ if __name__ == '__main__':
     # Print tabulated career totals per season
     print(tabulate(season_totals,
                    headers=itemgetter(*data_ids)(season_totals_headers)))
+    # TODO (2024-02-29): ^^^^^^
 
     season_selection = input('Enter season: ')
 
     gamelog_dict, gamelog_list = player.get_game_list(season_selection)
 
+    # TODO (2024-02-29): Move this to get_game_list() method
     GAME_COUNT = 0
     print("ID Game Date  Match       Player Headline")
     for game in gamelog_list:
@@ -47,6 +50,7 @@ if __name__ == '__main__':
               f"{game['FGA']} "
               f"shooting"
               )
+    # TODO (2024-02-29): ^^^^^^^^^
 
     game_selection = int(input('Game ID: ')) - 1
 
@@ -91,6 +95,7 @@ if __name__ == '__main__':
     team = Team(player.current_team)
     team.get_team_details()
 
+    # TODO (2024-02-29): Move this to get_roster() method
     headers, data = team.get_roster(2023)
 
     # Define indices for data to print
@@ -100,3 +105,4 @@ if __name__ == '__main__':
 
     # Print tabulated data
     print(tabulate(select_data, headers=itemgetter(*data_ids)(headers)))
+    # TODO (2024-02-29): ^^^^^^^^^^^^^^^^^^^^
