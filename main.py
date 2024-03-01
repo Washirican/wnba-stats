@@ -7,7 +7,7 @@ from operator import itemgetter
 
 from tabulate import tabulate
 
-from utils import Game, Player
+from utils import Game, Player, Team
 
 if __name__ == '__main__':
 
@@ -87,3 +87,16 @@ if __name__ == '__main__':
                           match,
                           game_date,
                           scoring_headline)
+
+    team = Team(player.current_team)
+    team.get_team_details()
+
+    headers, data = team.get_roster(2023)
+
+    # Define indices for data to print
+    data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
+
+    select_data = [[each_list[i] for i in data_ids] for each_list in data]
+
+    # Print tabulated data
+    print(tabulate(select_data, headers=itemgetter(*data_ids)(headers)))

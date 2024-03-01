@@ -7,7 +7,6 @@ import logging
 
 import matplotlib.pyplot as plt
 import requests
-from matplotlib.transforms import nonsingular
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -32,7 +31,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 
 class Player:
@@ -185,42 +184,60 @@ class Player:
 
 class Team:
     """Team class"""
-    # FIXME (2024-02-23): Test and fix this method.
 
     def __init__(self, name):
         """Look up team details given a team name."""
         self.name = name
         logging.debug('Name: %s', name)
 
-        self.team_id = None
+        self.id = None
         self.abbreviation = None
         self.city = None
         self.state = None
         self.time_zone = None
+        self.season = None
+        self.league_id = None
 
     def get_team_details(self):
-        """
-        Gets team details.
-        """
+        """ Gets team details. """
         r = requests.get(TEAM_INDEX_URL,
                          timeout=10)
-        
+
         team_list = json.loads(r.content.decode())
 
         for key, values in team_list.items():
-            logging.debug('Key: %s, Value: %s', key, values)
-
             if self.name == values['n'].lower():
-                self.team_id = values['id'].lower()
+                self.id = values['id'].lower()
                 self.abbreviation = values['a'].lower()
                 self.city = values['c'].lower()
                 self.state = values['s'].lower()
                 self.time_zone = values['tz'].lower()
                 break
 
-    def get_roster(self):
+    def get_roster(self, season):
         """Get team roster for a specific season or current roster (?)."""
-        pass
+        if season:
+            self.season = season
+        else:
+            self.season = 2024
+
+        parameters = {
+            'LeagueID': 10,
+            'Season': self.season,
+            'TeamID': self.id
+        }
+
+        endpoint = 'commonteamroster'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+        headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+
+        return headers, data
 
 
 # LEARN (2024-02-28): How to fix issue with too many instance attributes
