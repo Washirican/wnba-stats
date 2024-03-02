@@ -16,28 +16,17 @@ if __name__ == '__main__':
     player.get_player_details()
     player_seasons = player.get_seasons_played()
 
-    season_totals_headers, season_totals_data = player.get_season_totals()
-
-    # TODO (2024-02-29): Move this to get_season_totals() method
-    # Define indices for season data to print
-    data_ids = [1, 4, 6, 26, 20, 21]
-
-    season_totals = [[each_list[i] for i in data_ids]
-                     for each_list in season_totals_data]
-    # Change season year range to single year: "2023-24" to "2023"
-    for i, s in enumerate(season_totals):
-        season_totals[i][0] = season_totals[i][0].split('-')[0]
+    season_headers, season_data = player.get_season_totals()
 
     # Print tabulated career totals per season
-    print(tabulate(season_totals,
-                   headers=itemgetter(*data_ids)(season_totals_headers)))
-    # TODO (2024-02-29): ^^^^^^
+    print(tabulate(season_data, headers=season_headers))
 
     season_selection = input('Enter season: ')
 
+    # TODO (2024-03-02): Revise function to return headers and data
     gamelog_dict, gamelog_list = player.get_game_list(season_selection)
 
-    # TODO (2024-02-29): Move this to get_game_list() method
+    # TODO (2024-03-02): Use tabulate to print headers and data
     GAME_COUNT = 0
     print("ID Game Date  Match       Player Headline")
     for game in gamelog_list:
@@ -50,7 +39,6 @@ if __name__ == '__main__':
               f"{game['FGA']} "
               f"shooting"
               )
-    # TODO (2024-02-29): ^^^^^^^^^
 
     game_selection = int(input('Game ID: ')) - 1
 
@@ -95,14 +83,5 @@ if __name__ == '__main__':
     team = Team(player.current_team)
     team.get_team_details()
 
-    # TODO (2024-02-29): Move this to get_roster() method
-    headers, data = team.get_roster(2023)
-
-    # Define indices for data to print
-    data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
-
-    select_data = [[each_list[i] for i in data_ids] for each_list in data]
-
-    # Print tabulated data
-    print(tabulate(select_data, headers=itemgetter(*data_ids)(headers)))
-    # TODO (2024-02-29): ^^^^^^^^^^^^^^^^^^^^
+    roster_headers, roster_data = team.get_roster(2023)
+    print(tabulate(roster_data, headers=roster_headers))

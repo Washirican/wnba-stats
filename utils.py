@@ -4,6 +4,7 @@ WNBA Shot Charts
 """
 import json
 import logging
+from operator import itemgetter
 
 import matplotlib.pyplot as plt
 import requests
@@ -123,11 +124,22 @@ class Player:
                          params=parameters,
                          timeout=10)
 
-        # TODO (2023-09-12 by D. Rodriguez): Return a dictionary
         headers = json.loads(r.content.decode())['resultSets'][0]['headers']
         data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        return headers, data
+        # Define indices for season data to print
+        data_ids = [1, 4, 6, 26, 20, 21]
+
+        select_data = [[each_list[i] for i in data_ids]
+                     for each_list in data]
+
+        # Change in-place season year range to single year: "2023-24" to "2023"
+        for i, s in enumerate(select_data):
+            select_data[i][0] = select_data[i][0].split('-')[0]
+
+        select_headers = itemgetter(*data_ids)(headers)
+
+        return select_headers, select_data
 
     def get_game_list(self, season):
         """Get player season gamelog."""
@@ -237,7 +249,13 @@ class Team:
         headers = json.loads(r.content.decode())['resultSets'][0]['headers']
         data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        return headers, data
+        # Define indices for data to print
+        data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
+
+        select_data = [[each_list[i] for i in data_ids] for each_list in data]
+        select_headers = itemgetter(*data_ids)(headers)
+
+        return select_headers, select_data
 
 
 # LEARN (2024-02-28): How to fix issue with too many instance attributes
