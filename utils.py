@@ -185,7 +185,22 @@ class Player:
             gamelog_list.append(game)
 
         gamelog_list.reverse()
-        return gamelog_dict, gamelog_list
+
+        # Return gamelist_headers (tuple) and gamelist_data (list of lists)
+        game_list_headers = ('Game ID', 'Game Date', 'Match', 'Player Headline')
+        game_list_data = []
+
+        GAME_COUNT = 0
+        for game in gamelog_list:
+            scoring_headline = f"{game['PTS']} pts, on {game['FGM']}/{game['FGA']} shooting"
+            game_list_data.append([GAME_COUNT,
+                                          game['GAME_DATE'][:10],
+                                          game['MATCHUP'][:11],
+                                          scoring_headline])
+
+            GAME_COUNT += 1
+
+        return game_list_headers, game_list_data, gamelog_list
 
     # TODO (2023-09-12 by D. Rodriguez): Add get_shot_chart method here or
     #  in a new Game class?

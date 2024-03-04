@@ -3,8 +3,6 @@
 Plot WNBA Shot Charts.
 """
 
-from operator import itemgetter
-
 from tabulate import tabulate
 
 from utils import Game, Player, Team
@@ -23,22 +21,10 @@ if __name__ == '__main__':
 
     season_selection = input('Enter season: ')
 
-    # TODO (2024-03-02): Revise function to return headers and data
-    gamelog_dict, gamelog_list = player.get_game_list(season_selection)
+    game_list_headers, game_list_data, gamelog_list = player.get_game_list(season_selection)
 
-    # TODO (2024-03-02): Use tabulate to print headers and data
-    GAME_COUNT = 0
-    print("ID Game Date  Match       Player Headline")
-    for game in gamelog_list:
-        GAME_COUNT += 1
-        print(f"{GAME_COUNT:2}",
-              f"{game['GAME_DATE'][:10]}",
-              f"{game['MATCHUP']:11}",
-              f"{game['PTS']} pts, "
-              f"on {game['FGM']}/"
-              f"{game['FGA']} "
-              f"shooting"
-              )
+    # Print tabulated season game list for selected player and season
+    print(tabulate(game_list_data, headers=game_list_headers))
 
     game_selection = int(input('Game ID: ')) - 1
 
@@ -84,4 +70,5 @@ if __name__ == '__main__':
     team.get_team_details()
 
     roster_headers, roster_data = team.get_roster(2023)
+    # Print tabulated team roster for selected season
     print(tabulate(roster_data, headers=roster_headers))
