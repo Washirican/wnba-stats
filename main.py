@@ -21,56 +21,35 @@ if __name__ == '__main__':
 
     season_selection = input('Enter season: ')
 
-    # TODO (2024-03-03): Make game_log_list a class attribute
-    game_list_headers, game_list_data, gamelog_list = player.get_game_list(season_selection)
+    game_list_headers, game_list_data, gamelog_list = player.get_game_list(
+        season_selection)
 
     # Print tabulated season game list for selected player and season
     print(tabulate(game_list_data, headers=game_list_headers))
 
     game_selection = int(input('Game ID: ')) - 1
 
-    # TODO (2024-03-03): Create a method to get this data
-    # game_date = gamelog_list[game_selection]["GAME_DATE"][:10]
+    # NOTE (2024-03-04): This is working but look into getting single
+    # game data from Game class instead of player class.
 
-    game_id = gamelog_list[game_selection]['GAME_ID']
-    match = gamelog_list[game_selection]['MATCHUP']
-    game_date = gamelog_list[game_selection]['GAME_DATE'][:10]
-    player_name = gamelog_list[game_selection]['PLAYER_NAME']
-    team_name = gamelog_list[game_selection]['TEAM_ABBREVIATION']
-
-    points = gamelog_list[game_selection]['PTS']
-    fg_made = gamelog_list[game_selection]['FGM']
-    fg_attempted = gamelog_list[game_selection]['FGA']
-    threes_made = gamelog_list[game_selection]['FG3M']
-    threes_attempted = gamelog_list[game_selection]['FG3A']
-
-    if fg_attempted != 0:
-        fg_percentage = round(fg_made / fg_attempted * 100, 1)
-    else:
-        fg_percentage = fg_attempted
-
-    if threes_attempted != 0:
-        three_percentage = round(threes_made / threes_attempted * 100, 1)
-    else:
-        three_percentage = threes_attempted
-
-    scoring_headline = f"{points} pts " \
-        f"on {fg_made}/{fg_attempted} " \
-        f"({fg_percentage}%) shooting, " \
-        f"{threes_made}/{threes_attempted} " \
-        f"({three_percentage}%) from three"
+    # LEARN (2024-03-04): How to pass class parameters to another class.
+    # I.E., pass game list from Player to Game class.
+    game_id, player_name, team_name, match, game_date, scoring_headline = player.get_single_game_data(
+        game_selection)
 
     game = Game(player.id, season_selection, game_id)
     game.get_shot_chart_data()
+
     game.plot_short_chart(player_name,
                           team_name,
                           match,
                           game_date,
                           scoring_headline)
 
-    team = Team(player.current_team)
+    team = Team(team_name)
     team.get_team_details()
 
-    roster_headers, roster_data = team.get_roster(2023)
+    # TODO (2024-03-04): Get season year from Game or Player class.
+    roster_headers, roster_data = team.get_roster(game_date[:4])
     # Print tabulated team roster for selected season
     print(tabulate(roster_data, headers=roster_headers))

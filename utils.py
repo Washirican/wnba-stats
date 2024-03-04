@@ -179,7 +179,6 @@ class Player:
             gamelog.append(dict(zip(headers, game)))
 
         gamelog_dict = {}
-        # gamelog_list = []
 
         for game in gamelog:
             gamelog_dict[game['GAME_DATE'][:10]] = game
@@ -205,6 +204,40 @@ class Player:
 
         return game_list_headers, game_list_data, self.gamelog_list
 
+    def get_single_game_data(self, game_selection):
+        """
+        Get single game data for a plater.
+        """
+        game_id =  self.gamelog_list[ game_selection]['GAME_ID']
+        match =  self.gamelog_list[game_selection]['MATCHUP']
+        game_date = self.gamelog_list[game_selection]['GAME_DATE'][:10]
+        player_name =  self.gamelog_list[game_selection]['PLAYER_NAME']
+        team_name =  self.gamelog_list[game_selection]['TEAM_ABBREVIATION']
+
+        points =  self.gamelog_list[game_selection]['PTS']
+        fg_made =  self.gamelog_list[game_selection]['FGM']
+        fg_attempted =  self.gamelog_list[game_selection]['FGA']
+        threes_made =  self.gamelog_list[game_selection]['FG3M']
+        threes_attempted =  self.gamelog_list[game_selection]['FG3A']
+
+        if fg_attempted != 0:
+            fg_percentage = round(fg_made / fg_attempted * 100, 1)
+        else:
+            fg_percentage = fg_attempted
+
+        if threes_attempted != 0:
+            three_percentage = round(threes_made / threes_attempted * 100, 1)
+        else:
+            three_percentage = threes_attempted
+
+        scoring_headline = f"{points} pts " \
+            f"on {fg_made}/{fg_attempted} " \
+            f"({fg_percentage}%) shooting, " \
+            f"{threes_made}/{threes_attempted} " \
+            f"({three_percentage}%) from three"
+
+        return game_id, player_name, team_name, match, game_date, scoring_headline
+
     # TODO (2023-09-12 by D. Rodriguez): Add get_shot_chart method here or
     #  in a new Game class?
     def get_shot_chart_data(self):
@@ -217,7 +250,7 @@ class Team:
 
     def __init__(self, name):
         """Look up team details given a team name."""
-        self.name = name
+        self.name = name.lower()
         logging.debug('Name: %s', name)
 
         self.id = None
@@ -236,7 +269,7 @@ class Team:
         team_list = json.loads(r.content.decode())
 
         for key, values in team_list.items():
-            if self.name == values['n'].lower():
+            if self.name == values['a'].lower():
                 self.id = values['id'].lower()
                 self.abbreviation = values['a'].lower()
                 self.city = values['c'].lower()
