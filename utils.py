@@ -53,6 +53,7 @@ class Player:
         self.last_season = None
         self.current_team = None
         self.league_id = None
+        self.gamelog_list = []
 
         logging.debug('Self.Name: %s', self.name)
 
@@ -131,7 +132,7 @@ class Player:
         data_ids = [1, 4, 6, 26, 20, 21]
 
         select_data = [[each_list[i] for i in data_ids]
-                     for each_list in data]
+                       for each_list in data]
 
         # Change in-place season year range to single year: "2023-24" to "2023"
         for i, s in enumerate(select_data):
@@ -178,29 +179,31 @@ class Player:
             gamelog.append(dict(zip(headers, game)))
 
         gamelog_dict = {}
-        gamelog_list = []
+        # gamelog_list = []
 
         for game in gamelog:
             gamelog_dict[game['GAME_DATE'][:10]] = game
-            gamelog_list.append(game)
+            self.gamelog_list.append(game)
 
-        gamelog_list.reverse()
+        self.gamelog_list.reverse()
 
-        # Return gamelist_headers (tuple) and gamelist_data (list of lists)
-        game_list_headers = ('Game ID', 'Game Date', 'Match', 'Player Headline')
+        # Return game_list_headers (tuple) and game_list_data (list of lists)
+        game_list_headers = ('Game ID', 'Game Date',
+                             'Match', 'Player Headline')
         game_list_data = []
 
         GAME_COUNT = 0
-        for game in gamelog_list:
-            scoring_headline = f"{game['PTS']} pts, on {game['FGM']}/{game['FGA']} shooting"
+        for game in self.gamelog_list:
+            scoring_headline = f"{game['PTS']} pts, on {
+                game['FGM']}/{game['FGA']} shooting"
             game_list_data.append([GAME_COUNT,
-                                          game['GAME_DATE'][:10],
-                                          game['MATCHUP'][:11],
-                                          scoring_headline])
+                                   game['GAME_DATE'][:10],
+                                   game['MATCHUP'][:11],
+                                   scoring_headline])
 
             GAME_COUNT += 1
 
-        return game_list_headers, game_list_data, gamelog_list
+        return game_list_headers, game_list_data, self.gamelog_list
 
     # TODO (2023-09-12 by D. Rodriguez): Add get_shot_chart method here or
     #  in a new Game class?
