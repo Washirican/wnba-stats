@@ -21,14 +21,16 @@ if __name__ == '__main__':
 
     season_selection = input('Enter season: ')
 
+    # TODO (2024-03-03): Make game_log_list a class attribute
     game_list_headers, game_list_data, gamelog_list = player.get_game_list(season_selection)
 
     # Print tabulated season game list for selected player and season
     print(tabulate(game_list_data, headers=game_list_headers))
 
-    game_selection = int(input('Game ID: ')) - 1
+    game_selection = int(input('Game ID: '))
 
-    game_date = gamelog_list[game_selection]["GAME_DATE"][:10]
+    # TODO (2024-03-03): Create a method to get this data
+    # game_date = gamelog_list[game_selection]["GAME_DATE"][:10]
 
     game_id = gamelog_list[game_selection]['GAME_ID']
     match = gamelog_list[game_selection]['MATCHUP']
