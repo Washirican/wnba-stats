@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # Print tabulated season game list for selected player and season
     print(tabulate(game_list_data, headers=game_list_headers))
 
-    game_selection = int(input('Game ID: '))
+    game_selection = int(input('Game ID: ')) - 1
 
     # TODO (2024-03-03): Create a method to get this data
     # game_date = gamelog_list[game_selection]["GAME_DATE"][:10]

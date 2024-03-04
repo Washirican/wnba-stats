@@ -192,7 +192,7 @@ class Player:
                              'Match', 'Player Headline')
         game_list_data = []
 
-        GAME_COUNT = 0
+        GAME_COUNT = 1
         for game in self.gamelog_list:
             scoring_headline = f"{game['PTS']} pts, on {
                 game['FGM']}/{game['FGA']} shooting"
