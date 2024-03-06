@@ -32,14 +32,14 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.DEBUG)
 
 
 class Player:
     """Player class."""
     # LEARN (2024-02-23): Learn about class decorators for initialization
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, league_id=None):
         """ Class initialization. """
         logging.debug('Name: %s', name)
         if name:
@@ -47,21 +47,14 @@ class Player:
         else:
             print("WARNING: Please provide a player name.")
 
-        self.id = None
-        self.active = None
-        self.year_drafted = None
-        self.last_season = None
-        self.current_team = None
-        self.league_id = None
-        self.gamelog_list = []
+        # Defaults to Regular Season if not specified
+        if league_id:
+            self.league_id = league_id
+        else:
+            self.league_id = 10
 
-        logging.debug('Self.Name: %s', self.name)
-
-    # TODO (2024-02-23): Move this to a decorator?
-    def get_player_details(self):
-        """
-        Get player details.
-        """
+        # LEARN (2024-03-05): Move this to another method and call it here?
+         # Get player details on Class initialization
         r = requests.get(PLAYER_INDEX_URL, timeout=10)
 
         all_players = json.loads(r.content.decode()[17:-1])['data']['players']
@@ -77,44 +70,14 @@ class Player:
                 break
         else:
             print(f"Player {self.name.title()} was not found in database.")
-
-    def get_seasons_played(self, league_id=None):
-        """Get seasons played."""
-        # Defaults to Regular Season if not specified
-        if league_id:
-            self.league_id = league_id
-        else:
-            self.league_id = 10
-        parameters = {
-            'LeagueID': self.league_id,
-            'PerMode': 'PerGame',
-            'PlayerID': self.id
-        }
-
-        endpoint = 'playerprofilev2'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
-
-        season_totals = json.loads(r.content.decode())[
-            'resultSets'][0]['rowSet']
-
-        seasons_played = []
-
-        for season in season_totals:
-            seasons_played.append(season[1].split('-')[0])
-
-        return seasons_played
+        self.season_totals = []
 
     def get_season_totals(self):
         """Get regular seasons Per Game totals."""
         parameters = {
             'LeagueID': self.league_id,
             'PerMode': 'PerGame',
-            'PlayerID': self.id
+            'PlayerID': self.id,
         }
 
         endpoint = 'playerprofilev2'
@@ -131,22 +94,206 @@ class Player:
         # Define indices for season data to print
         data_ids = [1, 4, 6, 26, 20, 21]
 
-        select_data = [[each_list[i] for i in data_ids]
+        self.season_totals = [[each_list[i] for i in data_ids]
                        for each_list in data]
 
         # Change in-place season year range to single year: "2023-24" to "2023"
-        for i, s in enumerate(select_data):
-            select_data[i][0] = select_data[i][0].split('-')[0]
+        for i, s in enumerate(self.season_totals):
+            self.season_totals[i][0] = self.season_totals[i][0].split('-')[0]
 
+        select_headers = itemgetter(*data_ids)(headers)
+
+        return select_headers, self.season_totals
+
+
+class Team:
+    """Team class"""
+    # TODO (2024-03-05): Handle inactive players
+    def __init__(self, player):
+        """Look up team details given a team name."""
+
+        logging.debug('Team class initialization')
+
+        self.player = player
+        self.name = self.player.current_team.lower()
+
+        logging.debug('Player Name: %s', self.player.name)
+        logging.debug('Current Team Name: %s', self.player.current_team)
+
+
+        r = requests.get(TEAM_INDEX_URL,
+                         timeout=10)
+
+        team_list = json.loads(r.content.decode())
+
+        for val in team_list.values():
+            if self.name == val['a'].lower() or self.name == val['n'].lower():
+                self.id = val['id'].lower()
+                self.abbreviation = val['a'].lower()
+                self.city = val['c'].lower()
+                self.state = val['s'].lower()
+                self.time_zone = val['tz'].lower()
+                break
+
+    def get_roster(self, season=None):
+        """Get team roster for a specific season or current roster (?)."""
+
+        logging.debug('Team class get_roster()')
+
+        if season:
+            self.season = season
+            logging.debug('Season given. Getting roster for %s season', self.season)
+        else:
+            # Set to last season played if inactive player
+            self.season = self.player.season_totals[-1][0]
+
+            logging.debug('Last season played. Getting roster for %s season', self.season)
+
+        parameters = {
+            'LeagueID': 10,
+            'Season': self.season,
+            'TeamID': self.id
+        }
+
+        endpoint = 'commonteamroster'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+        headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+
+        # Define indices for data to print
+        data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
+
+        select_data = [[each_list[i] for i in data_ids] for each_list in data]
         select_headers = itemgetter(*data_ids)(headers)
 
         return select_headers, select_data
 
-    def get_game_list(self, season):
+
+# LEARN (2024-02-28): How to fix issue with too many instance attributes
+class Game:
+    """"Game class"""
+
+    def __init__(self, player, team, season_year=None):
+        """Class initialization."""
+
+        logging.debug('Team class initialization')
+
+        self.player = player
+        self.team = team
+
+        logging.debug('Player Name: %s', self.player.name)
+        logging.debug('Team Name: %s', self.team.name)
+
+        if season_year:
+            self.season = season_year
+            logging.debug('Season given. Getting roster for %s season', self.season)
+        else:
+            # Set to last season played if inactive player
+            self.season = self.player.season_totals[-1][0]
+            logging.debug('Last season played. Getting roster for %s season', self.season)
+
+        self.game_id = None
+
+        self.all_shot_data_list = []
+        self.gamelog_list = []
+        self.player_name = None
+        self.team_name = None
+        self.matchup = None
+        self.game_date = None
+        self.scoring_headline = None
+
+
+    def get_shot_chart_data(self):
+        """Gets player shot chart data for a single game."""
+        parameters = {
+            'ContextMeasure': 'FGA',
+            'EndPeriod': '1',
+            'EndRange': '0',
+            'GameID': self.game_id,
+            'GroupQuantity': '0',
+            'LastNGames': '0',
+            'LeagueID': '10',
+            'Month': '0',
+            'OpponentTeamID': '0',
+            'PORound': '0',
+            'Period': '0',
+            'PlayerID': self.player.id,
+            'RangeType': '0',
+            'Season': self.season,
+            'SeasonType': 'Regular Season',
+            'StartPeriod': '1',
+            'StartRange': '0',
+            'TeamID': '0',
+        }
+
+        endpoint = 'shotchartdetail'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+
+        all_shots = json.loads(r.content.decode())['resultSets'][0]
+
+        headers = all_shots['headers']
+        data = all_shots['rowSet']
+
+        for shot in data:
+            self.all_shot_data_list.append(dict(zip(headers, shot)))
+
+    def plot_short_chart(self):
+        """Plot player shot chart data."""
+        # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
+        # data directly from all_shots?
+
+        x_all = []
+        y_all = []
+
+        x_made = []
+        y_made = []
+
+        x_miss = []
+        y_miss = []
+
+        for shot in self.all_shot_data_list:
+            x_all.append(shot['LOC_X'])
+            y_all.append(shot['LOC_Y'])
+
+            if shot['SHOT_MADE_FLAG']:
+                x_made.append(shot['LOC_X'])
+                y_made.append(shot['LOC_Y'])
+            else:
+                x_miss.append(shot['LOC_X'])
+                y_miss.append(shot['LOC_Y'])
+
+        # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker
+        # while hovering
+
+        im = plt.imread('shotchart-blue.png')
+        fig, ax = plt.subplots()
+        ax.imshow(im, extent=[-260, 260, -65, 424])
+
+        ax.scatter(x_miss, y_miss, marker='x', c='red')
+        ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
+
+        plt.title(f'{self.player.name} ({self.team.name})\n{self.scoring_headline}\n{self.matchup} '
+                  f'{self.game_date}')
+        ax.axes.xaxis.set_visible(False)
+        ax.axes.yaxis.set_visible(False)
+
+        plt.show()
+
+    def get_game_list(self):
         """Get player season gamelog."""
         parameters = {
             'LastNGames': '0',
-            'LeagueID': self.league_id,
+            'LeagueID': self.player.league_id,
             'MeasureType': 'Base',
             'Month': '0',
             'OpponentTeamID': '0',
@@ -154,10 +301,10 @@ class Player:
             'PaceAdjust': 'N',
             'PerMode': 'Totals',
             'Period': '0',
-            'PlayerID': self.id,
+            'PlayerID': self.player.id,
             'PlusMinus': 'N',
             'Rank': 'N',
-            'Season': season,
+            'Season': self.season,
             'SeasonSegment': '',
             'SeasonType': 'Regular Season'
         }
@@ -202,17 +349,17 @@ class Player:
 
             GAME_COUNT += 1
 
-        return game_list_headers, game_list_data, self.gamelog_list
+        return game_list_headers, game_list_data
 
     def get_single_game_data(self, game_selection):
         """
         Get single game data for a plater.
         """
-        game_id =  self.gamelog_list[ game_selection]['GAME_ID']
-        match =  self.gamelog_list[game_selection]['MATCHUP']
-        game_date = self.gamelog_list[game_selection]['GAME_DATE'][:10]
-        player_name =  self.gamelog_list[game_selection]['PLAYER_NAME']
-        team_name =  self.gamelog_list[game_selection]['TEAM_ABBREVIATION']
+        self.game_id =  self.gamelog_list[ game_selection]['GAME_ID']
+        self.match =  self.gamelog_list[game_selection]['MATCHUP']
+        self.game_date = self.gamelog_list[game_selection]['GAME_DATE'][:10]
+        self.player_name =  self.gamelog_list[game_selection]['PLAYER_NAME']
+        self.team_name =  self.gamelog_list[game_selection]['TEAM_ABBREVIATION']
 
         points =  self.gamelog_list[game_selection]['PTS']
         fg_made =  self.gamelog_list[game_selection]['FGM']
@@ -230,185 +377,8 @@ class Player:
         else:
             three_percentage = threes_attempted
 
-        scoring_headline = f"{points} pts " \
+        self.scoring_headline = f"{points} pts " \
             f"on {fg_made}/{fg_attempted} " \
             f"({fg_percentage}%) shooting, " \
             f"{threes_made}/{threes_attempted} " \
             f"({three_percentage}%) from three"
-
-        return game_id, player_name, team_name, match, game_date, scoring_headline
-
-    # TODO (2023-09-12 by D. Rodriguez): Add get_shot_chart method here or
-    #  in a new Game class?
-    def get_shot_chart_data(self):
-        """Get game shot_chart data."""
-        pass
-
-
-class Team:
-    """Team class"""
-
-    def __init__(self, name):
-        """Look up team details given a team name."""
-        self.name = name.lower()
-        logging.debug('Name: %s', name)
-
-        self.id = None
-        self.abbreviation = None
-        self.city = None
-        self.state = None
-        self.time_zone = None
-        self.season = None
-        self.league_id = None
-
-    def get_team_details(self):
-        """ Gets team details. """
-        r = requests.get(TEAM_INDEX_URL,
-                         timeout=10)
-
-        team_list = json.loads(r.content.decode())
-
-        for key, values in team_list.items():
-            if self.name == values['a'].lower():
-                self.id = values['id'].lower()
-                self.abbreviation = values['a'].lower()
-                self.city = values['c'].lower()
-                self.state = values['s'].lower()
-                self.time_zone = values['tz'].lower()
-                break
-
-    def get_roster(self, season):
-        """Get team roster for a specific season or current roster (?)."""
-        if season:
-            self.season = season
-        else:
-            self.season = 2024
-
-        parameters = {
-            'LeagueID': 10,
-            'Season': self.season,
-            'TeamID': self.id
-        }
-
-        endpoint = 'commonteamroster'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
-        headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
-
-        # Define indices for data to print
-        data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
-
-        select_data = [[each_list[i] for i in data_ids] for each_list in data]
-        select_headers = itemgetter(*data_ids)(headers)
-
-        return select_headers, select_data
-
-
-# LEARN (2024-02-28): How to fix issue with too many instance attributes
-class Game:
-    """"Game class"""
-
-    def __init__(self, player_id=None, season_year=None, game_id=None):
-        """Class initialization."""
-        self.player_id = player_id
-        self.season_year = season_year
-        self.game_id = game_id
-        self.all_shot_data_list = []
-        self.player_name = None
-        self.team_name = None
-        self.matchup = None
-        self.game_date = None
-        self.scoring_headline = None
-
-    def get_shot_chart_data(self):
-        """Gets player shot chart data for a single game."""
-        parameters = {
-            'ContextMeasure': 'FGA',
-            'EndPeriod': '1',
-            'EndRange': '0',
-            'GameID': self.game_id,
-            'GroupQuantity': '0',
-            'LastNGames': '0',
-            'LeagueID': '10',
-            'Month': '0',
-            'OpponentTeamID': '0',
-            'PORound': '0',
-            'Period': '0',
-            'PlayerID': self.player_id,
-            'RangeType': '0',
-            'Season': self.season_year,
-            'SeasonType': 'Regular Season',
-            'StartPeriod': '1',
-            'StartRange': '0',
-            'TeamID': '0',
-        }
-
-        endpoint = 'shotchartdetail'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
-
-        all_shots = json.loads(r.content.decode())['resultSets'][0]
-
-        headers = all_shots['headers']
-        data = all_shots['rowSet']
-
-        for shot in data:
-            self.all_shot_data_list.append(dict(zip(headers, shot)))
-
-    def plot_short_chart(self, player_name, team_name, matchup, game_date,
-                         scoring_headline):
-        """Plot player shot chart data."""
-        self.player_name = player_name
-        self.team_name = team_name
-        self.matchup = matchup
-        self.game_date = game_date
-        self.scoring_headline = scoring_headline
-
-        # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
-        # data directly from all_shots?
-
-        x_all = []
-        y_all = []
-
-        x_made = []
-        y_made = []
-
-        x_miss = []
-        y_miss = []
-
-        for shot in self.all_shot_data_list:
-            x_all.append(shot['LOC_X'])
-            y_all.append(shot['LOC_Y'])
-
-            if shot['SHOT_MADE_FLAG']:
-                x_made.append(shot['LOC_X'])
-                y_made.append(shot['LOC_Y'])
-            else:
-                x_miss.append(shot['LOC_X'])
-                y_miss.append(shot['LOC_Y'])
-
-        # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker
-        # while hovering
-
-        im = plt.imread('shotchart-blue.png')
-        fig, ax = plt.subplots()
-        ax.imshow(im, extent=[-260, 260, -65, 424])
-
-        ax.scatter(x_miss, y_miss, marker='x', c='red')
-        ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
-
-        plt.title(f'{self.player_name} ({self.team_name})\n{self.scoring_headline}\n{self.matchup} '
-                  f'{self.game_date}')
-        ax.axes.xaxis.set_visible(False)
-        ax.axes.yaxis.set_visible(False)
-
-        plt.show()
