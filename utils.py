@@ -282,7 +282,7 @@ class Game:
         ax.scatter(x_miss, y_miss, marker='x', c='red')
         ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
 
-        plt.title(f'{self.player.name} ({self.team.name})\n{self.scoring_headline}\n{self.matchup} '
+        plt.title(f'{self.player_name} ({self.team_name})\n{self.scoring_headline}\n{self.matchup} '
                   f'{self.game_date}')
         ax.axes.xaxis.set_visible(False)
         ax.axes.yaxis.set_visible(False)
