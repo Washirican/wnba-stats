@@ -4,12 +4,11 @@ WNBA Shot Charts
 """
 import json
 import logging
+from datetime import datetime
 from operator import itemgetter
 
 import matplotlib.pyplot as plt
 import requests
-
-from datetime import datetime
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -34,7 +33,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 
 
 class Player:
@@ -100,7 +99,9 @@ class Player:
                        for each_list in data]
 
         # Change in-place season year range to single year: "2023-24" to "2023"
+        # TODO (2024-03-08): Do this in another way without using enumerate
         for i, s in enumerate(self.season_totals):
+            logging.debug('i: %s, s: %s', i, s)
             self.season_totals[i][0] = self.season_totals[i][0].split('-')[0]
 
         select_headers = itemgetter(*data_ids)(headers)
@@ -111,7 +112,7 @@ class Player:
 class Team:
     """Team class"""
     # TODO (2024-03-05): Handle inactive players
-    def __init__(self, season_data=None, season=None):
+    def __init__(self, season_data, season):
         """Look up team details given a team name."""
 
         logging.info('Team class initialization')
@@ -173,7 +174,7 @@ class Game:
         """Class initialization."""
 
         logging.debug('Team class initialization')
-
+        self.match = None
         self.player = player
         self.team = team
 
