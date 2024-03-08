@@ -9,6 +9,8 @@ from operator import itemgetter
 import matplotlib.pyplot as plt
 import requests
 
+from datetime import datetime
+
 HEADERS = {
     'Host': 'stats.wnba.com',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
@@ -32,7 +34,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-# logging.disable(logging.DEBUG)
+logging.disable(logging.CRITICAL)
 
 
 class Player:
@@ -109,17 +111,15 @@ class Player:
 class Team:
     """Team class"""
     # TODO (2024-03-05): Handle inactive players
-    def __init__(self, player):
+    def __init__(self, season_data=None, season=None):
         """Look up team details given a team name."""
 
-        logging.debug('Team class initialization')
+        logging.info('Team class initialization')
 
-        self.player = player
-        self.name = self.player.current_team.lower()
+        self.name = [sublist for sublist in season_data if season in sublist][0][1].lower()
+        self.season = season
 
-        logging.debug('Player Name: %s', self.player.name)
-        logging.debug('Current Team Name: %s', self.player.current_team)
-
+        logging.debug('Team Name, Season: %s, %s', self.name, self.season)
 
         r = requests.get(TEAM_INDEX_URL,
                          timeout=10)
@@ -135,19 +135,10 @@ class Team:
                 self.time_zone = val['tz'].lower()
                 break
 
-    def get_roster(self, season=None):
+    def get_roster(self):
         """Get team roster for a specific season or current roster (?)."""
 
         logging.debug('Team class get_roster()')
-
-        if season:
-            self.season = season
-            logging.debug('Season given. Getting roster for %s season', self.season)
-        else:
-            # Set to last season played if inactive player
-            self.season = self.player.season_totals[-1][0]
-
-            logging.debug('Last season played. Getting roster for %s season', self.season)
 
         parameters = {
             'LeagueID': 10,
@@ -191,11 +182,11 @@ class Game:
 
         if season_year:
             self.season = season_year
-            logging.debug('Season given. Getting roster for %s season', self.season)
+            logging.debug('Getting roster for current %s season', self.season)
         else:
-            # Set to last season played if inactive player
-            self.season = self.player.season_totals[-1][0]
-            logging.debug('Last season played. Getting roster for %s season', self.season)
+            # Set to current season played if no season given
+            self.season = datetime.now().year
+            logging.debug('Getting roster for current %s season', self.season)
 
         self.game_id = None
 
