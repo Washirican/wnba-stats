@@ -3,6 +3,7 @@
 WNBA Shot Charts
 """
 import json
+import sqlite3
 import logging
 from datetime import datetime
 from operator import itemgetter
@@ -34,6 +35,50 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%d-%b-%y %H:%M:%S')
 
 # logging.disable(logging.CRITICAL)
+
+
+class Database:
+    """Database class."""
+    def __init__(self, db_location):
+        """
+        Initialize the Database class with a database location.
+        :param db_location: Path to the SQLite database file
+        """
+        self.connection = sqlite3.connect(db_location)
+        self.cursor = self.connection.cursor()
+
+    def execute(self, query, params=None):
+        """
+        Execute a single SQL query.
+        :param query: SQL query to execute
+        :param params: Optional parameters for the query
+        """
+        if params:
+            self.cursor.execute(query, params)
+        else:
+            self.cursor.execute(query)
+
+    def create_table(self, table_name, columns):
+        """
+        Create a database table if it does not exist already.
+        :param table_name: Name of the table
+        :param columns: List of column names and data types (e.g., [('id', 'INTEGER PRIMARY KEY'), ('name', 'TEXT')])
+        """
+        column_definitions = ', '.join([f"{col[0]} {col[1]}" for col in columns])
+        create_query = f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions})"
+        self.execute(create_query)
+
+    def commit(self):
+        """
+        Commit changes to the database.
+        """
+        self.connection.commit()
+
+    def close(self):
+        """
+        Close the SQLite connection.
+        """
+        self.connection.close()
 
 
 class Player:

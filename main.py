@@ -3,20 +3,18 @@
 Plot WNBA Shot Charts.
 """
 
-from matplotlib.backend_tools import ToolSetCursor
-from tabulate import tabulate
-
-from utils import Game, Player, Team
-
-import sqlite3
-
 import json
 import logging
+import sqlite3
 from datetime import datetime
 from operator import itemgetter
 
 import matplotlib.pyplot as plt
 import requests
+from matplotlib.backend_tools import ToolSetCursor
+from tabulate import tabulate
+
+from utils import Game, Player, Team
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -42,16 +40,26 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%d-%b-%y %H:%M:%S')
 
 player_name_input = 'Loyd, Jewell' #input('Enter player name (Last, First): ')
-r = requests.get(PLAYER_INDEX_URL, timeout=10)
 
-# LEARN (2024-04-05): Explore request response and determine tables and columns for DB
+# LEARN (2024-04-05): Exploring API data formats
+r = requests.get(PLAYER_INDEX_URL, timeout=10)
 all_players = json.loads(r.content.decode()[17:-1])
 
 for k, v in all_players['data'].items():
     print(f'Key: {k}\nValue:{v}\n')
 
-for item in all_players['data']['teams']:
+for item in all_players['data']['seasons']:
     print(item)
+
+r = requests.get(TEAM_INDEX_URL,timeout=10)
+all_teams = json.loads(r.content.decode())
+
+for k, v in all_teams.items():
+    print(f'Key: {k}\nValue:{v}\n')
+
+for team_dict in all_teams.values():
+    for k, v in team_dict.items():
+        print(f'Key:{k}\nValue:{v}\n')
 
 
 # LEARN (2024-04-05): ==================================================
@@ -65,9 +73,9 @@ cur = conn.cursor()
 # FIXME (2024-04-05): Create DB tables based on request data
 # Create a table for general data set information
 # TODO (2024-04-05): Check if table exist before creating it
-cur.execute('CREATE TABLE data_info (generated DATETIME, seasons_count INTEGER, teams_count INTEGER, players_count INTEGER)')
+cur.execute('CREATE TABLE dataset_info (generated DATETIME, seasons_count INTEGER, teams_count INTEGER, players_count INTEGER)')
 # Insert data into the general data information table
-cur.execute('INSERT INTO data_info VALUES (?, ?, ?, ?)', (all_players['generated'], all_players['seasons_count'], all_players['teams_count'], all_players['players_count']))
+cur.execute('INSERT INTO dataset_info VALUES (?, ?, ?, ?)', (all_players['generated'], all_players['seasons_count'], all_players['teams_count'], all_players['players_count']))
 
 # TODO (2024-04-05): Create table for Season data
 # TODO (2024-04-05): Check if table exist before creating it
@@ -77,15 +85,16 @@ cur.execute('INSERT INTO data_info VALUES (?, ?, ?, ?)', (all_players['generated
 # Create table for Teams data
 # FIXME (2024-04-05): Add list of team colors to DB
 # TODO (2024-04-05): Check if table exist before creating it
-cur.execute('CREATE TABLE teams (team_id INTEGER, team_initials STRING, team_name_lower STRING, team_city STRING, team_name_title STRING, conference INTEGER, unknown_0 INTEGER, unknown_1 INTEGER, last_season INTEGER, unknown_2 INTEGER)')
+cur.execute('CREATE TABLE teams (team_id INTEGER PRIMARY KEY, team_abbreviation STRING, team_name STRING, team_city STRING, team_state STRING, time_zone STRING, primary_color STRING, secondary_color STRING, url STRING)')
 
 # TODO (2024-04-05): Insert data into the Teams data table
-for team in all_players['data']['teams']:
-    cur.execute('INSERT INTO teams VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (team[0], team[1], team[2], team[3], team[4], team[5], team[6], team[7], team[8], team[9]))
+for team_dict in all_teams.values():
+    cur.execute('INSERT INTO teams VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', (team_dict['id'], team_dict['a'], team_dict['n'], team_dict['c'], team_dict['s'], team_dict['tz'], team_dict['pc'], team_dict['sc'], team_dict['url']))
+
 
 # Create table for Player data
 # TODO (2024-04-05): Check if table exist before creating it
-cur.execute('CREATE TABLE players (player_id INTEGER, player_name STRING, active_flag INTEGER, rookie_season INTEGER, last_season INTEGER, unknown INTEGER, current_team STRING)')
+cur.execute('CREATE TABLE players (player_id INTEGER PRIMARY KEY, player_name STRING, active_flag INTEGER, rookie_season INTEGER, last_season INTEGER, unknown INTEGER, current_team STRING)')
 
 # Insert data into the Players data table
 for player in all_players['data']['players']:
