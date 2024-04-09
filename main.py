@@ -14,7 +14,7 @@ import requests
 from matplotlib.backend_tools import ToolSetCursor
 from tabulate import tabulate
 
-from utils import Game, Player, Team
+from utils import Game, Player, Team, Database
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -40,83 +40,6 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%d-%b-%y %H:%M:%S')
 
 
-def initial_db_setup(database):
-    """Initial SQLite3 database and table creation."""
-    # Create SQLite3 database.
-    # TODO (2024-04-05): Check if database exists before creating it
-    conn = sqlite3.connect(database)
-    cur = conn.cursor()
-
-    # Create a table for general data set information
-    # TODO (2024-04-05): Check if table exist before creating it
-    cur.execute("""
-                CREATE TABLE dataset_info
-                (
-                date_generated DATETIME PRIMARY KEY,
-                seasons_count INTEGER,
-                teams_count INTEGER,
-                players_count INTEGER
-                )
-                """)
-
-    # Create table for Player data
-    # TODO (2024-04-05): Check if table exist before creating it
-    cur.execute("""
-                CREATE TABLE players
-                (
-                player_id INTEGER PRIMARY KEY,
-                player_name STRING,
-                active_flag INTEGER,
-                rookie_season INTEGER,
-                last_season INTEGER,
-                unknown INTEGER,
-                current_team STRING
-                )
-                """)
-
-    # Create table for Teams data
-    # FIXME (2024-04-05): Add list of team colors to DB
-    # TODO (2024-04-05): Check if table exist before creating it
-    cur.execute("""
-                CREATE TABLE teams
-                (
-                team_id INTEGER PRIMARY KEY,
-                team_abbreviation STRING,
-                team_name STRING,
-                team_city STRING,
-                team_state STRING,
-                time_zone STRING,
-                primary_color STRING,
-                secondary_color STRING,
-                url STRING
-                )
-                """)
-
-    # Commit changes and close the connection
-    conn.commit()
-    conn.close()
-
-
-def execute_sql(database, sql):
-    """Connect to database and execute SQL command"""
- # Create SQLite3 database.
-    # TODO (2024-04-05): Check if database exists before creating it
-    conn = sqlite3.connect(database)
-    cur = conn.cursor()
-
-    # FIXME (2024-04-09): Check if SQL executed successfully
-    try:
-        cur.execute(sql)
-    except OperationalError as e:
-        print(f"Could not complete transaction {e}")
-
-
-    # TODO (2024-04-09): Close database connection if SQL fails
-    # Commit changes and close the connection
-    conn.commit()
-    conn.close()
-
-
 if __name__ == "__main__":
 
     # Create database and tables. Only need to run it once.
@@ -125,100 +48,119 @@ if __name__ == "__main__":
     # input('Enter player name (Last, First): ')
     player_name_input = 'Loyd, Jewell'
 
-    # LEARN (2024-04-05): Exploring API data formats
+    # Request Players data
     r = requests.get(PLAYER_INDEX_URL, timeout=10)
     all_players = json.loads(r.content.decode()[17:-1])
 
-    for k, v in all_players['data'].items():
-        print(f'Key: {k}\nValue:{v}\n')
-
-    for item in all_players['data']['seasons']:
-        print(item)
-
+    # Request Team data
     r = requests.get(TEAM_INDEX_URL, timeout=10)
     all_teams = json.loads(r.content.decode())
 
-    for k, v in all_teams.items():
-        print(f'Key: {k}\nValue:{v}\n')
+    # LEARN (2024-04-09):  Exploring API data formats
+    # for k, v in all_players['data'].items():
+    #     print(f'Key: {k}\nValue:{v}\n')
 
-    for team_dict in all_teams.values():
-        for k, v in team_dict.items():
-            print(f'Key:{k}\nValue:{v}\n')
+    # for item in all_players['data']['seasons']:
+    #     print(item)
 
-    # LEARN (2024-04-05): ==================================================
+    # for k, v in all_teams.items():
+    #     print(f'Key: {k}\nValue:{v}\n')
+
+    # for team_dict in all_teams.values():
+    #     for k, v in team_dict.items():
+    #         print(f'Key:{k}\nValue:{v}\n')
+
+    # LEARN (2024-04-05): ==============================================
+
+    db = Database('data4.db')
+    db.create_tables()
 
     # Insert data into the general data information table
-    sql = f"""INSERT INTO dataset_info
-                VALUES (
-                    '{all_players['generated']}',
-                    '{all_players['seasons_count']}',
-                    '{all_players['teams_count']}',
-                    '{all_players['players_count']}'
-                    )"""
-    execute_sql('wnba_data.db', sql)
+    sql = 'INSERT INTO dataset_info VALUES (?, ?, ?, ?)'
+    data = [(all_players['generated'], all_players['seasons_count'],
+             all_players['teams_count'], all_players['players_count'])]
 
+    db.execute_many(sql, data)
+
+    # execute_sql('wnba_data.db', sql, data)
    # TODO (2024-04-05): Create table for Season data
    # TODO (2024-04-05): Check if table exist before creating it
 
    # TODO (2024-04-05): Insert data into the Seasons data table
 
    # TODO (2024-04-05): Insert data into the Teams data table
+    sql = 'INSERT INTO teams VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    data = []
     for team_dict in all_teams.values():
-        sql = f"""INSERT INTO teams
-                    VALUES (
-                        '{team_dict['id']}',
-                        '{team_dict['a']}',
-                        '{team_dict['n']}',
-                        '{team_dict['c']}',
-                        '{team_dict['s']}',
-                        '{team_dict['tz']}',
-                        '{team_dict['pc']}',
-                        '{team_dict['sc']}',
-                        '{team_dict['url']}'
-                )"""
-        execute_sql('wnba_data.db', sql)
+        # FIXME (2024-04-09): Why is this giving an error?
+        data.append((team_dict['id'],
+                     team_dict['a'],
+                     team_dict['n'],
+                     team_dict['c'],
+                    team_dict['s'],
+                    team_dict['tz'],
+                    team_dict['pc'],
+                    team_dict['sc'],
+                    team_dict['url']))
+
+    db.execute_many(sql, data)
+
+    # execute_sql('wnba_data.db', sql, data)
 
     # Insert data into the Players data table
+    sql = 'INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?)'
+    data = []
     for player in all_players['data']['players']:
-        sql = f"""INSERT INTO players
-                    VALUES (
-                        '{player[0]}',
-                        '{player[1]}',
-                        '{player[2]}',
-                        '{player[3]}',
-                        '{player[4]}',
-                        '{player[5]}',
-                        '{player[6]}'
-                )"""
-        execute_sql('wnba_data.db', sql)
+        # FIXME (2024-04-09): Why is this giving an error?
+        data.append(
+            (player[0],
+             player[1],
+             player[2],
+             player[3],
+             player[4],
+             player[5],
+             player[6])
+        )
+    db.execute_many(sql, data)
+
+    # execute_sql('wnba_data.db', sql, data)
 
     # TODO (2024-04-05): Create tables/columns for Teams, Games, etc.
 
-    player = Player(player_name_input)
+    sql = 'SELECT * FROM players WHERE player_name = (?)'
+    data = (player_name_input, )
 
-    season_headers, season_data = player.get_season_totals()
+    # FIXME (2024-04-09): Fix query return
+    player = db.execute(sql, data)
 
-    # Print tabulated career totals per season
-    print(tabulate(season_data, headers=season_headers, tablefmt="pretty"))
 
-    season_selection = input('Enter season: ')
+    # INCOMPLETE (2024-04-09): Need to revise code below to use Database
 
-    # TODO (2024-03-08): Get team player was on in selected season
-    team = Team(season_data,  season_selection)
+    # player = Player(player_name_input)
 
-    roster_headers, roster_data = team.get_roster()
-    # Print tabulated team roster for selected season
-    print(tabulate(roster_data, headers=roster_headers, tablefmt="pretty"))
+    # season_headers, season_data = player.get_season_totals()
 
-    game = Game(player, team, season_selection)
+    # # Print tabulated career totals per season
+    # print(tabulate(season_data, headers=season_headers, tablefmt="pretty"))
 
-    game_list_headers, game_list_data = game.get_game_list()
+    # season_selection = input('Enter season: ')
 
-    # Print tabulated season game list for selected player and season
-    print(tabulate(game_list_data, headers=game_list_headers, tablefmt="pretty"))
+    # # TODO (2024-03-08): Get team player was on in selected season
+    # team = Team(season_data,  season_selection)
 
-    game_selection = int(input('Game ID: ')) - 1
+    # roster_headers, roster_data = team.get_roster()
+    # # Print tabulated team roster for selected season
+    # print(tabulate(roster_data, headers=roster_headers, tablefmt="pretty"))
 
-    game.get_single_game_data(game_selection)
-    game.get_shot_chart_data()
-    game.plot_short_chart()
+    # game = Game(player, team, season_selection)
+
+    # game_list_headers, game_list_data = game.get_game_list()
+
+    # # Print tabulated season game list for selected player and season
+    # print(tabulate(game_list_data, headers=game_list_headers, tablefmt="pretty"))
+
+    # game_selection = int(input('Game ID: ')) - 1
+
+    # game.get_single_game_data(game_selection)
+    # game.get_shot_chart_data()
+    # game.plot_short_chart()
