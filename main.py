@@ -52,7 +52,7 @@ def initial_db_setup(database):
     cur.execute("""
                 CREATE TABLE dataset_info
                 (
-                generated DATETIME,
+                date_generated DATETIME PRIMARY KEY,
                 seasons_count INTEGER,
                 teams_count INTEGER,
                 players_count INTEGER
@@ -104,8 +104,14 @@ def execute_sql(database, sql):
     conn = sqlite3.connect(database)
     cur = conn.cursor()
 
-    cur.execute(sql)
+    # FIXME (2024-04-09): Check if SQL executed successfully
+    try:
+        cur.execute(sql)
+    except OperationalError as e:
+        print(f"Could not complete transaction {e}")
 
+
+    # TODO (2024-04-09): Close database connection if SQL fails
     # Commit changes and close the connection
     conn.commit()
     conn.close()
@@ -143,12 +149,12 @@ if __name__ == "__main__":
 
     # Insert data into the general data information table
     sql = f"""INSERT INTO dataset_info
-    VALUES (
-        '{all_players['generated']}',
-        '{all_players['seasons_count']}',
-        '{all_players['teams_count']}',
-        '{all_players['players_count']}'
-        )"""
+                VALUES (
+                    '{all_players['generated']}',
+                    '{all_players['seasons_count']}',
+                    '{all_players['teams_count']}',
+                    '{all_players['players_count']}'
+                    )"""
     execute_sql('wnba_data.db', sql)
 
    # TODO (2024-04-05): Create table for Season data
@@ -157,28 +163,33 @@ if __name__ == "__main__":
    # TODO (2024-04-05): Insert data into the Seasons data table
 
    # TODO (2024-04-05): Insert data into the Teams data table
-   for team_dict in all_teams.values():
+    for team_dict in all_teams.values():
         sql = f"""INSERT INTO teams
-        VALUES (
-            '{team_dict['id']}',
-            '{ team_dict['a']}',
-            team_dict['n'],
-            team_dict['c'],
-            team_dict['s'],
-            team_dict['tz'],
-            team_dict['pc'],
-            team_dict['sc'],
-            team_dict['url']
-
-
-                    )"""
-"
+                    VALUES (
+                        '{team_dict['id']}',
+                        '{team_dict['a']}',
+                        '{team_dict['n']}',
+                        '{team_dict['c']}',
+                        '{team_dict['s']}',
+                        '{team_dict['tz']}',
+                        '{team_dict['pc']}',
+                        '{team_dict['sc']}',
+                        '{team_dict['url']}'
+                )"""
         execute_sql('wnba_data.db', sql)
 
     # Insert data into the Players data table
     for player in all_players['data']['players']:
-        sql = "'INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    (player[0], player[1], player[2], player[3], player[4], player[5], player[6])"
+        sql = f"""INSERT INTO players
+                    VALUES (
+                        '{player[0]}',
+                        '{player[1]}',
+                        '{player[2]}',
+                        '{player[3]}',
+                        '{player[4]}',
+                        '{player[5]}',
+                        '{player[6]}'
+                )"""
         execute_sql('wnba_data.db', sql)
 
     # TODO (2024-04-05): Create tables/columns for Teams, Games, etc.
