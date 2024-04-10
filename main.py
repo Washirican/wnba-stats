@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     # LEARN (2024-04-05): ==============================================
 
-    db = Database('data4.db')
+    db = Database('wnba_data.db')
     db.create_tables()
 
     # Insert data into the general data information table
@@ -129,6 +129,17 @@ if __name__ == "__main__":
 
     sql = 'SELECT * FROM players WHERE player_name = (?)'
     data = (player_name_input, )
+
+
+    connection = sqlite3.connect('wnba_data.db')
+    cursor = connection.cursor()
+    # FIXME (2024-04-09): Check if SQL executed successfully
+    cursor.execute(sql, data)
+
+    player_id, player_name, active_flag, rookie_year, last_year, uk, current_team = cursor.fetchone()
+    # Commit changes and close the connection
+    connection.commit()
+    connection.close()
 
     # FIXME (2024-04-09): Fix query return
     player = db.execute(sql, data)
