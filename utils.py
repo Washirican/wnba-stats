@@ -314,15 +314,31 @@ class Team:
                          params=parameters,
                          timeout=10)
         headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        data = json.loads(r.content.decode()) ['resultSets'][0]['rowSet']
 
-        # Define indices for data to print
-        data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
+        connection = sqlite3.connect('wnba_data.db')
+        cursor = connection.cursor()
 
-        select_data = [[each_list[i] for i in data_ids] for each_list in data]
-        select_headers = itemgetter(*data_ids)(headers)
+        # FIXME (2024-04-09): Check if SQL executed successfully
+        # FIXME (2024-04-10): Learn how to handle data requests from API, saving to DB and query DB
+        self.id, self.name, self.active, self.year_drafted, self.last_season, self.uk, self.current_team  = cursor.fetchone()
 
-        return select_headers, select_data
+
+        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        sql = 'INSERT INTO commonteamroster VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        # FIXME (2024-04-10): Figure out how to save roster data to DB
+        cursor.execute(sql, data)
+
+        connection.commit()
+        connection.close()
+
+        # # Define indices for data to print
+        # data_ids = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]
+
+        # select_data = [[each_list[i] for i in data_ids] for each_list in data]
+        # select_headers = itemgetter(*data_ids)(headers)
+
+        # return select_headers, select_data
 
 
 # LEARN (2024-02-28): How to fix issue with too many instance attributes
@@ -342,11 +358,11 @@ class Game:
 
         if season_year:
             self.season = season_year
-            logging.debug('Getting roster for current %s season', self.season)
+            logging.debug('Getting roster for %s season', self.season)
         else:
             # Set to current season played if no season given
             self.season = datetime.now().year
-            logging.debug('Getting roster for current %s season', self.season)
+            logging.debug('Getting roster for %s season', self.season)
 
         self.game_id = None
 
@@ -390,13 +406,32 @@ class Game:
                          params=parameters,
                          timeout=10)
 
-        all_shots = json.loads(r.content.decode())['resultSets'][0]
+        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        headers = all_shots['headers']
-        data = all_shots['rowSet']
+        # headers = all_shots['headers']
+        # data = all_shots['rowSet']
 
-        for shot in data:
-            self.all_shot_data_list.append(dict(zip(headers, shot)))
+        sql = 'INSERT INTO shotchartdetail VALUES ('
+
+        bindings  = 24
+        for i in range(bindings -1):
+            sql += '?, '
+
+        sql += '?)'
+
+        connection = sqlite3.connect('wnba_data.db')
+        cursor = connection.cursor()
+
+        # FIXME (2024-04-09): Check if SQL executed successfully
+
+        for i in range(len(data)):
+            cursor.execute(sql, data[i])
+            connection.commit()
+
+        connection.close()
+
+        # for shot in data:
+        #     self.all_shot_data_list.append(dict(zip(headers, shot)))
 
     def plot_short_chart(self):
         """Plot player shot chart data."""
@@ -468,39 +503,61 @@ class Game:
                          params=parameters,
                          timeout=10)
 
-        headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
         data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        gamelog = []
+        sql = 'INSERT INTO PlayerGameLogs VALUES ('
 
-        for game in data:
-            gamelog.append(dict(zip(headers, game)))
+        bindings  = 68
+        for i in range(bindings -1):
+            sql += '?, '
 
-        gamelog_dict = {}
+        sql += '?)'
 
-        for game in gamelog:
-            gamelog_dict[game['GAME_DATE'][:10]] = game
-            self.gamelog_list.append(game)
+        connection = sqlite3.connect('wnba_data.db')
+        cursor = connection.cursor()
 
-        self.gamelog_list.reverse()
+        # FIXME (2024-04-09): Check if SQL executed successfully
 
-        # Return game_list_headers (tuple) and game_list_data (list of lists)
-        game_list_headers = ('Game ID', 'Game Date',
-                             'Match', 'Player Headline')
-        game_list_data = []
+        for i in range(len(data)):
+            cursor.execute(sql, data[i])
+            connection.commit()
 
-        GAME_COUNT = 1
-        for game in self.gamelog_list:
-            scoring_headline = f"{game['PTS']} pts, on {
-                game['FGM']}/{game['FGA']} shooting"
-            game_list_data.append([GAME_COUNT,
-                                   game['GAME_DATE'][:10],
-                                   game['MATCHUP'][:11],
-                                   scoring_headline])
+        connection.close()
 
-            GAME_COUNT += 1
 
-        return game_list_headers, game_list_data
+
+
+        # gamelog = []
+
+        # for game in data:
+        #     gamelog.append(dict(zip(headers, game)))
+
+        # gamelog_dict = {}
+
+        # for game in gamelog:
+        #     gamelog_dict[game['GAME_DATE'][:10]] = game
+        #     self.gamelog_list.append(game)
+
+        # self.gamelog_list.reverse()
+
+        # # Return game_list_headers (tuple) and game_list_data (list of lists)
+        # game_list_headers = ('Game ID', 'Game Date',
+        #                      'Match', 'Player Headline')
+        # game_list_data = []
+
+        # GAME_COUNT = 1
+        # for game in self.gamelog_list:
+        #     scoring_headline = f"{game['PTS']} pts, on {
+        #         game['FGM']}/{game['FGA']} shooting"
+        #     game_list_data.append([GAME_COUNT,
+        #                            game['GAME_DATE'][:10],
+        #                            game['MATCHUP'][:11],
+        #                            scoring_headline])
+
+        #     GAME_COUNT += 1
+
+        # return game_list_headers, game_list_data
 
     def get_single_game_data(self, game_selection):
         """
