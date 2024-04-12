@@ -33,19 +33,19 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 def get_player_list():
-    """"""
+    """Get players list."""
     r = requests.get(PLAYER_INDEX_URL, timeout=10)
     return json.loads(r.content.decode()[17:-1])['data']['players']
 
 
 def get_teams_list():
-    """"""
+    """GEt teams list."""
     r = requests.get(TEAM_INDEX_URL, timeout=10)
     return json.loads(r.content.decode())
 
 
 def get_team_roster():
-    """"""
+    """Get team roster for a specific season or current roster (?)."""
     parameters = {
             'LeagueID': 10,
             'Season': self.season,
