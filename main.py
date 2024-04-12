@@ -93,15 +93,17 @@ if __name__ == "__main__":
     data = []
     for team_dict in all_teams.values():
         # FIXME (2024-04-09): Why is this giving an error?
-        data.append((team_dict['id'],
-                     team_dict['a'],
-                     team_dict['n'],
-                     team_dict['c'],
+        data += ((
+                    team_dict['id'],
+                    team_dict['a'],
+                    team_dict['n'],
+                    team_dict['c'],
                     team_dict['s'],
                     team_dict['tz'],
                     team_dict['pc'],
                     team_dict['sc'],
-                    team_dict['url']))
+                    team_dict['url']
+                ))
 
     db.execute_many(sql, data)
 
@@ -112,37 +114,40 @@ if __name__ == "__main__":
     data = []
     for player in all_players['data']['players']:
         # FIXME (2024-04-09): Why is this giving an error?
-        data.append(
-            (player[0],
-             player[1],
-             player[2],
-             player[3],
-             player[4],
-             player[5],
-             player[6])
-        )
+        data += ((
+                    player[0],
+                    player[1],
+                    player[2],
+                    player[3],
+                    player[4],
+                    player[5],
+                    player[6]
+                ))
     db.execute_many(sql, data)
 
     # execute_sql('wnba_data.db', sql, data)
 
     # TODO (2024-04-05): Create tables/columns for Teams, Games, etc.
 
-    sql = 'SELECT * FROM players WHERE player_name = (?)'
-    data = (player_name_input, )
+    # sql = 'SELECT * FROM players WHERE player_name = (?)'
+    # data = (player_name_input, )
 
 
-    connection = sqlite3.connect('wnba_data.db')
-    cursor = connection.cursor()
-    # FIXME (2024-04-09): Check if SQL executed successfully
-    cursor.execute(sql, data)
+    # connection = sqlite3.connect('wnba_data.db')
+    # cursor = connection.cursor()
+    # # FIXME (2024-04-09): Check if SQL executed successfully
+    # cursor.execute(sql, data)
 
-    player_id, player_name, active_flag, rookie_year, last_year, uk, current_team = cursor.fetchone()
-    # Commit changes and close the connection
-    connection.commit()
-    connection.close()
+    # player_id, player_name, active_flag, rookie_year, last_year, uk, current_team = cursor.fetchone()
+    # # Commit changes and close the connection
+    # connection.commit()
+    # connection.close()
 
     # FIXME (2024-04-09): Fix query return
-    player = db.execute(sql, data)
+    player = Player(player_name_input)
+
+    sql = 'SELECT * FROM SeasonTotalsRegularSeason WHERE player_id=(?)'
+    data = (player.id, )
 
 
     # INCOMPLETE (2024-04-09): Need to revise code below to use Database
