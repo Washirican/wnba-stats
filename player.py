@@ -1,6 +1,7 @@
 # !/usr/bin/env python3
 import sqlite3
 import logging
+import json
 from datetime import datetime
 import requests
 
@@ -65,53 +66,53 @@ class Player:
 
     def get_season_totals(self):
         """Get regular seasons Per Game totals."""
-        parameters = {
-            'LeagueID': self.league_id,
-            'PerMode': 'PerGame',
-            'PlayerID': self.id,
-        }
+        # parameters = {
+        #     'LeagueID': self.league_id,
+        #     'PerMode': 'PerGame',
+        #     'PlayerID': self.id,
+        # }
 
-        endpoint = 'playerprofilev2'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+        # endpoint = 'playerprofilev2'
+        # request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
+        # r = requests.get(request_url,
+        #                  headers=HEADERS,
+        #                  params=parameters,
+        #                  timeout=10)
 
-        connection = sqlite3.connect('wnba_data.db')
-        cursor = connection.cursor()
+        # connection = sqlite3.connect('wnba_data.db')
+        # cursor = connection.cursor()
 
-        # FIXME (2024-04-09): Check if SQL executed successfully
-        # FIXME (2024-04-10): Learn how to handle data requests from API, saving to DB and query DB
-        self.id, self.name, self.active, self.year_drafted, self.last_season, self.uk, self.current_team  = cursor.fetchone()
+        # # FIXME (2024-04-09): Check if SQL executed successfully
+        # # FIXME (2024-04-10): Learn how to handle data requests from API, saving to DB and query DB
+        # self.id, self.name, self.active, self.year_drafted, self.last_season, self.uk, self.current_team  = cursor.fetchone()
 
 
-        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
-        # sql = 'INSERT INTO SeasonTotalsRegularSeason VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        # # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        # # data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        # # sql = 'INSERT INTO SeasonTotalsRegularSeason VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
-        sql = 'INSERT INTO SeasonTotalsRegularSeason VALUES ('
+        # sql = 'INSERT INTO SeasonTotalsRegularSeason VALUES ('
 
-        bindings  = 27
+        # bindings  = 27
 
-        # RECHECK (2024-04-12): Use this in other methods.
-        sql += ', '.join(['?'] * bindings)
+        # # RECHECK (2024-04-12): Use this in other methods.
+        # sql += ', '.join(['?'] * bindings)
 
-        sql += ')'
+        # sql += ')'
 
-        cursor.execute(sql, data)
-
-        connection.commit()
-
-        # FIXME (2024-04-10): Learn how to get data from DB into variables
         # cursor.execute(sql, data)
 
-        # season_data  = cursor.fetchall()
         # connection.commit()
 
+        # # FIXME (2024-04-10): Learn how to get data from DB into variables
+        # # cursor.execute(sql, data)
 
-        connection.close()
+        # # season_data  = cursor.fetchall()
+        # # connection.commit()
+
+
+        # connection.close()
         # # Define indices for season data to print
         # data_ids = [1, 4, 6, 26, 20, 21]
 

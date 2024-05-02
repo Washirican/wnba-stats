@@ -3,6 +3,9 @@ import sqlite3
 import logging
 from datetime import datetime
 import requests
+import json
+import matplotlib.pyplot as plt
+
 
 # INCOMPLETE (2024-04-12): This module should interact with local DB
 
@@ -48,58 +51,58 @@ class Game:
 
     def get_shot_chart_data(self):
         """Gets player shot chart data for a single game."""
-        parameters = {
-            'ContextMeasure': 'FGA',
-            'EndPeriod': '1',
-            'EndRange': '0',
-            'GameID': self.game_id,
-            'GroupQuantity': '0',
-            'LastNGames': '0',
-            'LeagueID': '10',
-            'Month': '0',
-            'OpponentTeamID': '0',
-            'PORound': '0',
-            'Period': '0',
-            'PlayerID': self.player.id,
-            'RangeType': '0',
-            'Season': self.season,
-            'SeasonType': 'Regular Season',
-            'StartPeriod': '1',
-            'StartRange': '0',
-            'TeamID': '0',
-        }
+        # parameters = {
+        #     'ContextMeasure': 'FGA',
+        #     'EndPeriod': '1',
+        #     'EndRange': '0',
+        #     'GameID': self.game_id,
+        #     'GroupQuantity': '0',
+        #     'LastNGames': '0',
+        #     'LeagueID': '10',
+        #     'Month': '0',
+        #     'OpponentTeamID': '0',
+        #     'PORound': '0',
+        #     'Period': '0',
+        #     'PlayerID': self.player.id,
+        #     'RangeType': '0',
+        #     'Season': self.season,
+        #     'SeasonType': 'Regular Season',
+        #     'StartPeriod': '1',
+        #     'StartRange': '0',
+        #     'TeamID': '0',
+        # }
 
-        endpoint = 'shotchartdetail'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+        # endpoint = 'shotchartdetail'
+        # request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
+        # r = requests.get(request_url,
+        #                  headers=HEADERS,
+        #                  params=parameters,
+        #                  timeout=10)
 
-        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        # data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        # headers = all_shots['headers']
-        # data = all_shots['rowSet']
+        # # headers = all_shots['headers']
+        # # data = all_shots['rowSet']
 
-        sql = 'INSERT INTO shotchartdetail VALUES ('
+        # sql = 'INSERT INTO shotchartdetail VALUES ('
 
-        bindings  = 24
-        for i in range(bindings -1):
-            sql += '?, '
+        # bindings  = 24
+        # for i in range(bindings -1):
+        #     sql += '?, '
 
-        sql += '?)'
+        # sql += '?)'
 
-        connection = sqlite3.connect('wnba_data.db')
-        cursor = connection.cursor()
+        # connection = sqlite3.connect('wnba_data.db')
+        # cursor = connection.cursor()
 
-        # FIXME (2024-04-09): Check if SQL executed successfully
+        # # FIXME (2024-04-09): Check if SQL executed successfully
 
-        for i in range(len(data)):
-            cursor.execute(sql, data[i])
-            connection.commit()
+        # for i in range(len(data)):
+        #     cursor.execute(sql, data[i])
+        #     connection.commit()
 
-        connection.close()
+        # connection.close()
 
         # for shot in data:
         #     self.all_shot_data_list.append(dict(zip(headers, shot)))
@@ -148,53 +151,53 @@ class Game:
 
     def get_game_list(self):
         """Get player season gamelog."""
-        parameters = {
-            'LastNGames': '0',
-            'LeagueID': self.player.league_id,
-            'MeasureType': 'Base',
-            'Month': '0',
-            'OpponentTeamID': '0',
-            'PORound': '0',
-            'PaceAdjust': 'N',
-            'PerMode': 'Totals',
-            'Period': '0',
-            'PlayerID': self.player.id,
-            'PlusMinus': 'N',
-            'Rank': 'N',
-            'Season': self.season,
-            'SeasonSegment': '',
-            'SeasonType': 'Regular Season'
-        }
+        # parameters = {
+        #     'LastNGames': '0',
+        #     'LeagueID': self.player.league_id,
+        #     'MeasureType': 'Base',
+        #     'Month': '0',
+        #     'OpponentTeamID': '0',
+        #     'PORound': '0',
+        #     'PaceAdjust': 'N',
+        #     'PerMode': 'Totals',
+        #     'Period': '0',
+        #     'PlayerID': self.player.id,
+        #     'PlusMinus': 'N',
+        #     'Rank': 'N',
+        #     'Season': self.season,
+        #     'SeasonSegment': '',
+        #     'SeasonType': 'Regular Season'
+        # }
 
-        endpoint = 'playergamelogs'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+        # endpoint = 'playergamelogs'
+        # request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
+        # r = requests.get(request_url,
+        #                  headers=HEADERS,
+        #                  params=parameters,
+        #                  timeout=10)
 
-        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-        data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        # # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+        # data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-        sql = 'INSERT INTO PlayerGameLogs VALUES ('
+        # sql = 'INSERT INTO PlayerGameLogs VALUES ('
 
-        bindings  = 68
-        for i in range(bindings -1):
-            sql += '?, '
+        # bindings  = 68
+        # for i in range(bindings -1):
+        #     sql += '?, '
 
-        sql += '?)'
+        # sql += '?)'
 
-        connection = sqlite3.connect('wnba_data.db')
-        cursor = connection.cursor()
+        # connection = sqlite3.connect('wnba_data.db')
+        # cursor = connection.cursor()
 
-        # FIXME (2024-04-09): Check if SQL executed successfully
+        # # FIXME (2024-04-09): Check if SQL executed successfully
 
-        for i in range(len(data)):
-            cursor.execute(sql, data[i])
-            connection.commit()
+        # for i in range(len(data)):
+        #     cursor.execute(sql, data[i])
+        #     connection.commit()
 
-        connection.close()
+        # connection.close()
 
 
 

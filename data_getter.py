@@ -44,12 +44,12 @@ def get_teams_list():
     return json.loads(r.content.decode())
 
 
-def get_team_roster():
+def get_team_roster(team_id, season):
     """Get team roster for a specific season or current roster (?)."""
     parameters = {
             'LeagueID': 10,
-            'Season': self.season,
-            'TeamID': self.id
+            'Season': season,
+            'TeamID': team_id
         }
 
     endpoint = 'commonteamroster'
@@ -61,15 +61,15 @@ def get_team_roster():
                         timeout=10)
 
     # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-    return json.loads(r.content.decode()) ['resultSets'][0]['rowSet']
+    return json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-def get_shot_chart_data():
+def get_shot_chart_data(season, game_id, player_id):
         """Gets player shot chart data for a single game."""
         parameters = {
             'ContextMeasure': 'FGA',
             'EndPeriod': '1',
             'EndRange': '0',
-            'GameID': self.game_id,
+            'GameID': game_id,
             'GroupQuantity': '0',
             'LastNGames': '0',
             'LeagueID': '10',
@@ -77,9 +77,9 @@ def get_shot_chart_data():
             'OpponentTeamID': '0',
             'PORound': '0',
             'Period': '0',
-            'PlayerID': self.player.id,
+            'PlayerID': player_id,
             'RangeType': '0',
-            'Season': self.season,
+            'Season': season,
             'SeasonType': 'Regular Season',
             'StartPeriod': '1',
             'StartRange': '0',
@@ -96,11 +96,11 @@ def get_shot_chart_data():
 
         return json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-def get_game_list():
+def get_game_list(season, league_id, player_id):
         """Get player season gamelog."""
         parameters = {
             'LastNGames': '0',
-            'LeagueID': self.player.league_id,
+            'LeagueID': league_id,
             'MeasureType': 'Base',
             'Month': '0',
             'OpponentTeamID': '0',
@@ -108,10 +108,10 @@ def get_game_list():
             'PaceAdjust': 'N',
             'PerMode': 'Totals',
             'Period': '0',
-            'PlayerID': self.player.id,
+            'PlayerID': player_id,
             'PlusMinus': 'N',
             'Rank': 'N',
-            'Season': self.season,
+            'Season': season,
             'SeasonSegment': '',
             'SeasonType': 'Regular Season'
         }
