@@ -3,6 +3,7 @@ import requests
 import json
 import sqlite3
 import logging
+import psycopg2
 
 # NOTE (2024-04-12): This module gets data from API and saves to local DB
 
