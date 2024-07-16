@@ -3,53 +3,31 @@
 WNBA Data
 This code connects to a PostgreSQL database.
 """
+from database import Database
+from data_getter import get_player_list
 import psycopg2
 from configparser import ConfigParser
 
-def config(filename='database.ini', section='postgresql'):
-    # create a parser
-    parser = ConfigParser()
-    # read config file
-    parser.read(filename)
+if __name__ == '__main__':
+    # Get player list
+    all_players = get_player_list()
 
-    # get section, default to postgresql
-    db = {}
-    if parser.has_section(section):
-        params = parser.items(section)
-        for param in params:
-            db[param[0]] = param[1]
-    else:
-        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
+    # Example usage:
+    db = Database(user="wnba_data_user", password="password", host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
 
-    return db
+    # db.execute_query("SELECT * FROM your_table")
 
-def connect():
-    """ Connect to the PostgreSQL database server """
-    conn = None
-    try:
-        # read connection parameters
-        params = config()
+    sql = 'INSERT INTO dataset_info VALUES (?, ?, ?, ?)'
+    data = [(all_players['generated'], all_players['seasons_count'],
+             all_players['teams_count'], all_players['players_count'])]
 
-        # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(**params)
+    db.execute_many(sql, data)
 
-        # create a cursor
-        cur = conn.cursor()
+    results = db.fetch_all("SELECT * FROM players")
 
-        # execute a statement
-        print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
+    db.close_connection()
 
-        # display the PostgreSQL database server version
-        db_version = cur.fetchone()
-        print(db_version)
-
-        # close the communication with the PostgreSQL
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not closed:
-            conn.close()
-            print('Database connection closed.')
+    for row in results:
+        print(row)

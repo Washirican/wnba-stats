@@ -36,7 +36,7 @@ logging.basicConfig(level=logging.DEBUG,
 def get_player_list():
     """Get players list."""
     r = requests.get(PLAYER_INDEX_URL, timeout=10)
-    return json.loads(r.content.decode()[17:-1])['data']['players']
+    return json.loads(r.content.decode()[17:-1])  # ['data']['players']
 
 
 def get_teams_list():

@@ -1,127 +1,72 @@
 
 # !/usr/bin/env python3
-import sqlite3
 
+import psycopg2
 
 class Database:
-    """Database class."""
-    def __init__(self, database):
-        """
-        Initialize the Database class with a database location.
-        :param db_location: Path to the SQLite database file
-        """
+    def __init__(self, user, password, host, port, database):
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
         self.database = database
-        self.connection = sqlite3.connect(self.database)
-        self.connection.close()
+        self.connection = None
+        self.cursor = None
 
-    def execute_many(self, sql, data):
-        """
-        Execute a single SQL query.
-        """
-        self.connection = sqlite3.connect(self.database)
-        self.cursor = self.connection.cursor()
-         # FIXME (2024-04-09): Check if SQL executed successfully
+    def connect(self):
         try:
-            self.cursor.executemany(sql, data)
-            # Commit changes and close the connection
-            self.connection.commit()
-            self.connection.close()
-        except Exception as e:
-            print(f"ERROR: Could not complete transaction: {e}")
-            self.connection.close()
-        else:
-            self.connection.close()
+            self.connection = psycopg2.connect(
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port,
+                database=self.database
+            )
+            self.cursor = self.connection.cursor()
+            print("Connected to PostgreSQL database!")
 
-    def execute(self, sql, data):
-        """
-        Execute a single SQL query.
-        """
-        self.connection = sqlite3.connect(self.database)
-        self.cursor = self.connection.cursor()
-         # FIXME (2024-04-09): Check if SQL executed successfully
+        except (Exception, psycopg2.Error) as error:
+            print("Error while connecting to PostgreSQL:", error)
+
+    def close_connection(self):
+        if self.cursor:
+            self.cursor.close()
+        if self.connection:
+            self.connection.close()
+        print("Connection closed.")
+
+    def execute_query(self, query):
         try:
-            self.cursor.execute(sql, data)
-            # Commit changes and close the connection
+            self.cursor.execute(query)
             self.connection.commit()
-            self.connection.close()
-        except Exception as e:
-            print(f"ERROR: Could not complete transaction: {e}")
-            self.connection.close()
-        else:
-            self.connection.close()
+            print("Query executed successfully!")
 
-    def create_table(self, sql):
-        """
-        Create a database tables.
-        """
-        self.connection = sqlite3.connect(self.database)
-        self.cursor = self.connection.cursor()
-        self.cursor.execute(sql)
+        except (Exception, psycopg2.Error) as error:
+            print("Error executing query:", error)
 
-        # # FIXME (2024-04-09): Only create tables if they do not exist
-        # self.cursor.execute("""
-        #         CREATE TABLE dataset_info
-        #         (
-        #         date_generated DATETIME PRIMARY KEY,
-        #         seasons_count INTEGER,
-        #         teams_count INTEGER,
-        #         players_count INTEGER
-        #         )
-        #         """)
+    def fetch_one(self, query):
+        try:
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            return result
 
-        # self.cursor.execute("""
-        #         CREATE TABLE players
-        #         (
-        #         player_id INTEGER PRIMARY KEY,
-        #         player_name STRING,
-        #         active_flag INTEGER,
-        #         rookie_season INTEGER,
-        #         last_season INTEGER,
-        #         unknown INTEGER,
-        #         current_team STRING
-        #         )
-        #         """)
-        # self.cursor.execute("""
-        #         CREATE TABLE teams
-        #         (
-        #         team_id INTEGER PRIMARY KEY,
-        #         team_abbreviation STRING,
-        #         team_name STRING,
-        #         team_city STRING,
-        #         team_state STRING,
-        #         time_zone STRING,
-        #         primary_color STRING,
-        #         secondary_color STRING,
-        #         url STRING
-        #         )
-        #         """)
+        except (Exception, psycopg2.Error) as error:
+            print("Error executing query:", error)
 
-        self.connection.close()
+    def fetch_all(self, query):
+        try:
+            self.cursor.execute(query)
+            result = self.cursor.fetchall()
+            return result
 
-    def commit(self):
-        """
-        Commit changes to the database.
-        """
-        self.connection = sqlite3.connect(self.database)
-        self.cursor = self.connection.cursor()
+        except (Exception, psycopg2.Error) as error:
+            print("Error executing query:", error)
 
-        self.connection.commit()
+    def fetch_many(self, query, size):
+        try:
+            self.cursor.execute(query)
+            result = self.cursor.fetchmany(size)
+            return result
 
-        self.connection.close()
-
-    def close(self):
-        """
-        Close the SQLite connection.
-        """
-        self.connection.close()
-
-    def reset(self):
-        """Delete all data from database tables."""
-        self.connection = sqlite3.connect(self.database)
-        self.cursor = self.connection.cursor()
-
-        self.cursor.execute("""DROP TABLE IF EXISTS dataset_info""")
-        self.cursor.execute("""DROP TABLE IF EXISTS teams""")
-        self.cursor.execute("""DROP TABLE IF EXISTS players""")
-
-        self.connection.close()
+        except (Exception, psycopg2.Error) as error:
+            print("Error executing query:", error)
