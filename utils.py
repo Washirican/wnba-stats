@@ -33,7 +33,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 
 class Player:
