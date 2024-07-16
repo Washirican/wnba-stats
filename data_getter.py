@@ -60,9 +60,9 @@ def get_team_roster(team_id, season):
                         headers=HEADERS,
                         params=parameters,
                         timeout=10)
-
+    result = json.loads(r.content.decode())['resultSets'][0]['rowSet']
     # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-    return json.loads(r.content.decode())['resultSets'][0]['rowSet']
+    return result
 
 def get_shot_chart_data(season, game_id, player_id):
         """Gets player shot chart data for a single game."""

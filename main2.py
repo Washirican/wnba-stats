@@ -4,36 +4,37 @@ WNBA Data
 This code connects to a PostgreSQL database.
 """
 from database import Database
-from data_getter import get_player_list, get_teams_list
+from data_getter import get_player_list, get_teams_list, get_team_roster
 import psycopg2
 from configparser import ConfigParser
 
 if __name__ == '__main__':
-    # Get player list
-    player_data = get_player_list()
-    team_data = get_teams_list()
-
     # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
                   port="5432", database="wnba_data")
     db.connect()
 
-    # Insert Dataset Info into dataset_info database table
+    # Insert player Dataset Info into dataset_info database table
+    # Get player list
+    player_data = get_player_list()
+
     db.execute_query("DELETE FROM dataset_info")
 
-    query = 'INSERT INTO dataset_info VALUES (%s, %s, %s, %s)'
+    placeholders = '%s,' * 4
+    query = f'INSERT INTO dataset_info VALUES ({placeholders[:-1]})'
     data = (player_data['generated'], player_data['seasons_count'],
             player_data['teams_count'], player_data['players_count'])
 
     db.insert_data(query, data)
 
-    dataset_info = db.fetch_all("SELECT * FROM dataset_info")
+    # dataset_info = db.fetch_all("SELECT * FROM dataset_info")
 
     # Insert player data into players database table
     players = player_data['data']['players']
 
+    placeholders = '%s,' * 7
     for player in players:
-        query = 'INSERT INTO players VALUES (%s, %s, %s, %s, %s, %s, %s)'
+        query = f'INSERT INTO players VALUES ({placeholders[:-1]})'
         data = (player[0],
                 player[1],
                 player[2],
@@ -44,11 +45,15 @@ if __name__ == '__main__':
 
         db.insert_data(query, data)
 
-    results = db.fetch_all("SELECT * FROM players")
+    # results = db.fetch_all("SELECT * FROM players")
 
     # Insert team data into players database table
+    # Get Team data
+    team_data = get_teams_list()
+
+    placeholders = '%s,' * 9
     for team in team_data.values():
-        query = 'INSERT INTO teams VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        query = f'INSERT INTO teams VALUES ({placeholders[:-1]})'
         data = (team['id'],
                 team['a'],
                 team['n'],
@@ -61,8 +66,47 @@ if __name__ == '__main__':
                 )
         db.insert_data(query, data)
 
-    db.close_connection()
+    # Get current season team rosters
+    # Get Team Roster for each team
+    for team in team_data.values():
+        print(f"Getting roster for {team['n']}...")
+        team_roster = get_team_roster(team['id'], 2024)
 
-    for row in results:
-        print(row)
+        for player in team_roster:
+            print(tuple(player))
+
+        # # Connect to database:
+        # db = Database(user="wnba_data_user", password="password",
+        #               host="localhost",
+        #               port="5432", database="wnba_data")
+        # db.connect()
+
+        placeholders = '%s,' * 16
+        for player in team_roster:
+            query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]})'
+            data = (player[0],
+                    player[1],
+                    player[2],
+                    player[3],
+                    player[4],
+                    player[5],
+                    player[6],
+                    player[7],
+                    player[8],
+                    player[9],
+                    player[10],
+                    player[11],
+                    player[12],
+                    player[13],
+                    player[14],
+                    str(player[15]),
+                    )
+            print()
+            print(f"Saving player {player[3]} to database...")
+            print(data)
+
+            db.insert_data(query, data)
+
+    # Close database connection
+    db.close_connection()
 
