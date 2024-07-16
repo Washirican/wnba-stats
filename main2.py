@@ -23,7 +23,7 @@ if __name__ == '__main__':
     data = [(all_players['generated'], all_players['seasons_count'],
              all_players['teams_count'], all_players['players_count'])]
 
-    db.execute_many(sql, data)
+    db.insert_data(sql, data)
 
     results = db.fetch_all("SELECT * FROM players")
 
