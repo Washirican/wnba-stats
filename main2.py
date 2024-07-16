@@ -69,17 +69,7 @@ if __name__ == '__main__':
     # Get current season team rosters
     # Get Team Roster for each team
     for team in team_data.values():
-        print(f"Getting roster for {team['n']}...")
         team_roster = get_team_roster(team['id'], 2024)
-
-        for player in team_roster:
-            print(tuple(player))
-
-        # # Connect to database:
-        # db = Database(user="wnba_data_user", password="password",
-        #               host="localhost",
-        #               port="5432", database="wnba_data")
-        # db.connect()
 
         placeholders = '%s,' * 16
         for player in team_roster:
