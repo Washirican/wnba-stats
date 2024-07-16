@@ -4,32 +4,33 @@ WNBA Data
 This code connects to a PostgreSQL database.
 """
 from database import Database
-from data_getter import get_player_list
+from data_getter import get_player_list, get_teams_list
 import psycopg2
 from configparser import ConfigParser
 
 if __name__ == '__main__':
     # Get player list
-    all_players = get_player_list()
+    player_data = get_player_list()
+    team_data = get_teams_list()
 
-    # Example usage:
+    # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
                   port="5432", database="wnba_data")
     db.connect()
 
-    # db.execute_query("SELECT * FROM your_table")
-
     # Insert Dataset Info into dataset_info database table
+    db.execute_query("DELETE FROM dataset_info")
+
     query = 'INSERT INTO dataset_info VALUES (%s, %s, %s, %s)'
-    data = (all_players['generated'], all_players['seasons_count'],
-             all_players['teams_count'], all_players['players_count'])
+    data = (player_data['generated'], player_data['seasons_count'],
+            player_data['teams_count'], player_data['players_count'])
 
     db.insert_data(query, data)
 
     dataset_info = db.fetch_all("SELECT * FROM dataset_info")
 
     # Insert player data into players database table
-    players = all_players['data']['players']
+    players = player_data['data']['players']
 
     for player in players:
         query = 'INSERT INTO players VALUES (%s, %s, %s, %s, %s, %s, %s)'
@@ -44,6 +45,21 @@ if __name__ == '__main__':
         db.insert_data(query, data)
 
     results = db.fetch_all("SELECT * FROM players")
+
+    # Insert team data into players database table
+    for team in team_data.values():
+        query = 'INSERT INTO teams VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        data = (team['id'],
+                team['a'],
+                team['n'],
+                team['c'],
+                team['s'],
+                team['tz'],
+                team['pc'],
+                team['sc'],
+                team['url'],
+                )
+        db.insert_data(query, data)
 
     db.close_connection()
 
