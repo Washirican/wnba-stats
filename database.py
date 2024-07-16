@@ -44,10 +44,10 @@ class Database:
         except (Exception, psycopg2.Error) as error:
             print("Error executing query:", error)
 
-    def insert_data(self, query, values):
+    def insert_data(self, query, data):
         try:
             # query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(values))})"
-            self.cursor.execute(query, values)
+            self.cursor.execute(query, data)
             self.connection.commit()
             print("Data inserted successfully!")
 
