@@ -1,6 +1,7 @@
 # !/usr/bin/env python3
 """
 Plot WNBA Shot Charts.
+This code connects to an SQLite Database
 """
 
 import json

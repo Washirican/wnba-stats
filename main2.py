@@ -1,5 +1,8 @@
 # !/usr/bin/env python3
-
+"""
+WNBA Data
+This code connects to a PostgreSQL database.
+"""
 import psycopg2
 from configparser import ConfigParser
 
