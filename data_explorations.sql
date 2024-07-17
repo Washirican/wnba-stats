@@ -1,11 +1,15 @@
 TABLE common_team_roster;
 
-SELECT * FROM common_team_roster;
+TABLE teams;
 
-DELETE FROM common_team_roster;
+TABLE player_game_logs;
 
-INSERT INTO common_team_roster VALUES
-(1611661322, '2024', '10', 'Shakira Austin', 'Shakira', 'shakira-austin', '0', 'C-F', '6-5', '190', 'JUL 25, 2000', 23.0, '2', 'Mississippi', 1631022, None);
+table shot_chart_detail;
+
+DELETE FROM player_game_logs;
+
+-- INSERT INTO common_team_roster VALUES
+-- (1611661322, '2024', '10', 'Shakira Austin', 'Shakira', 'shakira-austin', '0', 'C-F', '6-5', '190', 'JUL 25, 2000', 23.0, '2', 'Mississippi', 1631022, None);
 
 SELECT * FROM common_team_roster WHERE school = 'Connecticut';
 
@@ -22,3 +26,9 @@ select distinct exp, count(*) over (partition by exp) as count from common_team_
 select player, exp from common_team_roster where exp = 'R' order by player;
 
 select distinct age, count(*) over (partition by age) as count from common_team_roster order by age DESC;
+
+SELECT t.team_city, t.team_name, ctr.* from common_team_roster ctr join teams t on ctr.teamid = t.team_id;
+
+SELECT t.team_city, t.team_name, ctr.player, ctr.player_id from common_team_roster ctr join teams t on ctr.teamid = t.team_id WHERE t.team_name='Sky';
+
+SELECT game_id, player_name, matchup, pts, reb, ast FROM player_game_logs order by game_date;

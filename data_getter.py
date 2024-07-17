@@ -32,7 +32,6 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%d-%b-%y %H:%M:%S')
 
 
-
 def get_player_list():
     """Get players list."""
     r = requests.get(PLAYER_INDEX_URL, timeout=10)
@@ -50,82 +49,84 @@ def get_teams_list():
 def get_team_roster(team_id, season):
     """Get team roster for a specific season or current roster (?)."""
     parameters = {
-            'LeagueID': 10,
-            'Season': season,
-            'TeamID': team_id
-        }
+        'LeagueID': 10,
+        'Season': season,
+        'TeamID': team_id
+    }
 
     endpoint = 'commonteamroster'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     r = requests.get(request_url,
-                        headers=HEADERS,
-                        params=parameters,
-                        timeout=10)
+                     headers=HEADERS,
+                     params=parameters,
+                     timeout=10)
     result = json.loads(r.content.decode())['resultSets'][0]['rowSet']
     # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
     return result
 
+
 def get_shot_chart_data(season, game_id, player_id):
-        """Gets player shot chart data for a single game."""
-        parameters = {
-            'ContextMeasure': 'FGA',
-            'EndPeriod': '1',
-            'EndRange': '0',
-            'GameID': game_id,
-            'GroupQuantity': '0',
-            'LastNGames': '0',
-            'LeagueID': '10',
-            'Month': '0',
-            'OpponentTeamID': '0',
-            'PORound': '0',
-            'Period': '0',
-            'PlayerID': player_id,
-            'RangeType': '0',
-            'Season': season,
-            'SeasonType': 'Regular Season',
-            'StartPeriod': '1',
-            'StartRange': '0',
-            'TeamID': '0',
-        }
+    """Gets player shot chart data for a single game."""
+    parameters = {
+        'ContextMeasure': 'FGA',
+        'EndPeriod': '1',
+        'EndRange': '0',
+        'GameID': game_id,
+        'GroupQuantity': '0',
+        'LastNGames': '0',
+        'LeagueID': '10',
+        'Month': '0',
+        'OpponentTeamID': '0',
+        'PORound': '0',
+        'Period': '0',
+        'PlayerID': player_id,
+        'RangeType': '0',
+        'Season': season,
+        'SeasonType': 'Regular Season',
+        'StartPeriod': '1',
+        'StartRange': '0',
+        'TeamID': '0',
+    }
 
-        endpoint = 'shotchartdetail'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+    endpoint = 'shotchartdetail'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
+    r = requests.get(request_url,
+                     headers=HEADERS,
+                     params=parameters,
+                     timeout=10)
+    result = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+    return result
 
-        return json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
-def get_game_list(season, league_id, player_id):
-        """Get player season gamelog."""
-        parameters = {
-            'LastNGames': '0',
-            'LeagueID': league_id,
-            'MeasureType': 'Base',
-            'Month': '0',
-            'OpponentTeamID': '0',
-            'PORound': '0',
-            'PaceAdjust': 'N',
-            'PerMode': 'Totals',
-            'Period': '0',
-            'PlayerID': player_id,
-            'PlusMinus': 'N',
-            'Rank': 'N',
-            'Season': season,
-            'SeasonSegment': '',
-            'SeasonType': 'Regular Season'
-        }
+def get_game_logs(season, league_id, player_id):
+    """Get player season gamelog."""
+    parameters = {
+        'LastNGames': '0',
+        'LeagueID': league_id,
+        'MeasureType': 'Base',
+        'Month': '0',
+        'OpponentTeamID': '0',
+        'PORound': '0',
+        'PaceAdjust': 'N',
+        'PerMode': 'Totals',
+        'Period': '0',
+        'PlayerID': player_id,
+        'PlusMinus': 'N',
+        'Rank': 'N',
+        'Season': season,
+        'SeasonSegment': '',
+        'SeasonType': 'Regular Season'
+    }
 
-        endpoint = 'playergamelogs'
-        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+    endpoint = 'playergamelogs'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
-        r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
-
-        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
-        return json.loads(r.content.decode())['resultSets'][0]['rowSet']
+    r = requests.get(request_url,
+                     headers=HEADERS,
+                     params=parameters,
+                     timeout=10)
+    result = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+    # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+    return result

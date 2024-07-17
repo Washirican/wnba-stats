@@ -4,7 +4,7 @@ WNBA Data
 This code connects to a PostgreSQL database.
 """
 from database import Database
-from data_getter import get_player_list, get_teams_list, get_team_roster
+from data_getter import get_player_list, get_teams_list, get_team_roster, get_game_logs, get_shot_chart_data
 import psycopg2
 from configparser import ConfigParser
 
@@ -35,13 +35,15 @@ if __name__ == '__main__':
     placeholders = '%s,' * 7
     for player in players:
         query = f'INSERT INTO players VALUES ({placeholders[:-1]})'
-        data = (player[0],
-                player[1],
-                player[2],
-                player[3],
-                player[4],
-                player[5],
-                player[6])
+        data = tuple(player)
+
+        # data = (player[0],
+        #         player[1],
+        #         player[2],
+        #         player[3],
+        #         player[4],
+        #         player[5],
+        #         player[6])
 
         db.insert_data(query, data)
 
@@ -74,28 +76,47 @@ if __name__ == '__main__':
         placeholders = '%s,' * 16
         for player in team_roster:
             query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]})'
-            data = (player[0],
-                    player[1],
-                    player[2],
-                    player[3],
-                    player[4],
-                    player[5],
-                    player[6],
-                    player[7],
-                    player[8],
-                    player[9],
-                    player[10],
-                    player[11],
-                    player[12],
-                    player[13],
-                    player[14],
-                    str(player[15]),
-                    )
-            print()
-            print(f"Saving player {player[3]} to database...")
-            print(data)
+            data = tuple(player)
+
+            # data = (player[0],
+            #         player[1],
+            #         player[2],
+            #         player[3],
+            #         player[4],
+            #         player[5],
+            #         player[6],
+            #         player[7],
+            #         player[8],
+            #         player[9],
+            #         player[10],
+            #         player[11],
+            #         player[12],
+            #         player[13],
+            #         player[14],
+            #         str(player[15]),
+            #         )
 
             db.insert_data(query, data)
+
+    # Insert player game log data into database table
+    # Get Player Game Log data
+    game_list = get_game_logs(2024, 10, 1630150)
+
+    placeholders = '%s,' * len(game_list[0])
+    for game in game_list:
+        query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
+        data = tuple(game)
+        db.insert_data(query, data)
+
+    # Insert player game log data into database table
+    # Get Player Game Log data
+    shot_chart_data = get_shot_chart_data(2024, 1022400146, 1630150)
+
+    placeholders = '%s,' * len(shot_chart_data[0])
+    for shot in shot_chart_data:
+        query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]})'
+        data = tuple(shot)
+        db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()
