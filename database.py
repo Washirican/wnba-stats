@@ -1,7 +1,7 @@
-
 # !/usr/bin/env python3
 
 import psycopg2
+
 
 class Database:
     def __init__(self, user, password, host, port, database):
@@ -46,7 +46,6 @@ class Database:
 
     def insert_data(self, query, data):
         try:
-            # query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(values))})"
             self.cursor.execute(query, data)
             self.connection.commit()
             print("Data inserted successfully!")

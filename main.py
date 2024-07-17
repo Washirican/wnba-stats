@@ -5,8 +5,6 @@ This code connects to a PostgreSQL database.
 """
 from database import Database
 from data_getter import get_player_list, get_teams_list, get_team_roster, get_game_logs, get_shot_chart_data
-import psycopg2
-from configparser import ConfigParser
 
 if __name__ == '__main__':
     # Connect to database:
