@@ -43,7 +43,8 @@ def get_player_list():
 def get_teams_list():
     """GEt teams list."""
     r = requests.get(TEAM_INDEX_URL, timeout=10)
-    return json.loads(r.content.decode())
+    result = json.loads(r.content.decode())
+    return result
 
 
 def get_team_roster(team_id, season):
