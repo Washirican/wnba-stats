@@ -5,6 +5,7 @@ This code connects to a PostgreSQL database.
 """
 from database import Database
 from data_getter import get_player_list, get_teams_list, get_team_roster, get_game_logs, get_shot_chart_data
+from utils import plot_short_chart
 
 if __name__ == '__main__':
     # Connect to database:
@@ -44,8 +45,6 @@ if __name__ == '__main__':
         #         player[6])
 
         db.insert_data(query, data)
-
-    # results = db.fetch_all("SELECT * FROM players")
 
     # Insert team data into players database table
     # Get Team data
@@ -116,6 +115,19 @@ if __name__ == '__main__':
         data = tuple(shot)
         db.insert_data(query, data)
 
+
+    # Query shot chart details data
+    # Connect to database:
+    db = Database(user="wnba_data_user", password="password",
+                  host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
+
+    results = db.fetch_all("SELECT * FROM shot_chart_detail")
+
     # Close database connection
     db.close_connection()
+
+    # Plot shot chart detail data
+    plot_short_chart(results)
 
