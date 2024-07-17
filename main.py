@@ -1,183 +1,102 @@
 # !/usr/bin/env python3
 """
-Plot WNBA Shot Charts.
-This code connects to an SQLite Database
+WNBA Data
+This code connects to a PostgreSQL database.
 """
+from database import Database
+from data_getter import get_player_list, get_teams_list, get_team_roster
+import psycopg2
+from configparser import ConfigParser
 
-import json
-import logging
-import sqlite3
-from datetime import datetime
-from operator import itemgetter
+if __name__ == '__main__':
+    # Connect to database:
+    db = Database(user="wnba_data_user", password="password", host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
 
-import matplotlib.pyplot as plt
-import requests
-from matplotlib.backend_tools import ToolSetCursor
-from tabulate import tabulate
+    # Insert player Dataset Info into dataset_info database table
+    # Get player list
+    player_data = get_player_list()
 
-from utils import Game, Player, Team, Database
+    db.execute_query("DELETE FROM dataset_info")
 
-HEADERS = {
-    'Host': 'stats.wnba.com',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) '
-                  'Gecko/20100101 Firefox/72.0',
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'en-US,en;q=0.5',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'x-nba-stats-origin': 'stats',
-    'x-nba-stats-token': 'true',
-    'Connection': 'keep-alive',
-    'Referer': 'https://stats.wnba.com/',
-    'Pragma': 'no-cache',
-    'Cache-Control': 'no-cache',
-}
+    placeholders = '%s,' * 4
+    query = f'INSERT INTO dataset_info VALUES ({placeholders[:-1]})'
+    data = (player_data['generated'], player_data['seasons_count'],
+            player_data['teams_count'], player_data['players_count'])
 
-TEAM_INDEX_URL = 'https://www.wnba.com/wp-json/api/v1/teams.json'
-PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
+    db.insert_data(query, data)
 
-# Create a custom logger
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s: %(asctime)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
+    # dataset_info = db.fetch_all("SELECT * FROM dataset_info")
 
+    # Insert player data into players database table
+    players = player_data['data']['players']
 
-if __name__ == "__main__":
+    placeholders = '%s,' * 7
+    for player in players:
+        query = f'INSERT INTO players VALUES ({placeholders[:-1]})'
+        data = (player[0],
+                player[1],
+                player[2],
+                player[3],
+                player[4],
+                player[5],
+                player[6])
 
-    # Create database and tables. Only need to run it once.
-    # initial_db_setup('wnba_data.db')
+        db.insert_data(query, data)
 
-    # input('Enter player name (Last, First): ')
-    player_name_input = 'Loyd, Jewell'
+    # results = db.fetch_all("SELECT * FROM players")
 
-    # Request Players data
-    r = requests.get(PLAYER_INDEX_URL, timeout=10)
-    all_players = json.loads(r.content.decode()[17:-1])
+    # Insert team data into players database table
+    # Get Team data
+    team_data = get_teams_list()
 
-    # Request Team data
-    r = requests.get(TEAM_INDEX_URL, timeout=10)
-    all_teams = json.loads(r.content.decode())
+    placeholders = '%s,' * 9
+    for team in team_data.values():
+        query = f'INSERT INTO teams VALUES ({placeholders[:-1]})'
+        data = (team['id'],
+                team['a'],
+                team['n'],
+                team['c'],
+                team['s'],
+                team['tz'],
+                team['pc'],
+                team['sc'],
+                team['url'],
+                )
+        db.insert_data(query, data)
 
-    # LEARN (2024-04-09):  Exploring API data formats
-    # for k, v in all_players['data'].items():
-    #     print(f'Key: {k}\nValue:{v}\n')
+    # Get current season team rosters
+    # Get Team Roster for each team
+    for team in team_data.values():
+        team_roster = get_team_roster(team['id'], 2024)
 
-    # for item in all_players['data']['seasons']:
-    #     print(item)
-
-    # for k, v in all_teams.items():
-    #     print(f'Key: {k}\nValue:{v}\n')
-
-    # for team_dict in all_teams.values():
-    #     for k, v in team_dict.items():
-    #         print(f'Key:{k}\nValue:{v}\n')
-
-    # LEARN (2024-04-05): ==============================================
-
-    db = Database('wnba_data.db')
-    db.create_tables()
-
-    # Insert data into the general data information table
-    sql = 'INSERT INTO dataset_info VALUES (?, ?, ?, ?)'
-    data = [(all_players['generated'], all_players['seasons_count'],
-             all_players['teams_count'], all_players['players_count'])]
-
-    db.execute_many(sql, data)
-
-    # execute_sql('wnba_data.db', sql, data)
-   # TODO (2024-04-05): Create table for Season data
-   # TODO (2024-04-05): Check if table exist before creating it
-
-   # TODO (2024-04-05): Insert data into the Seasons data table
-
-   # TODO (2024-04-05): Insert data into the Teams data table
-    sql = 'INSERT INTO teams VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    data = []
-    for team_dict in all_teams.values():
-        # FIXME (2024-04-09): Why is this giving an error?
-        data += ((
-                    team_dict['id'],
-                    team_dict['a'],
-                    team_dict['n'],
-                    team_dict['c'],
-                    team_dict['s'],
-                    team_dict['tz'],
-                    team_dict['pc'],
-                    team_dict['sc'],
-                    team_dict['url']
-                ))
-
-    db.execute_many(sql, data)
-
-    # execute_sql('wnba_data.db', sql, data)
-
-    # Insert data into the Players data table
-    sql = 'INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?)'
-    data = []
-    for player in all_players['data']['players']:
-        # FIXME (2024-04-09): Why is this giving an error?
-        data += ((
-                    player[0],
+        placeholders = '%s,' * 16
+        for player in team_roster:
+            query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]})'
+            data = (player[0],
                     player[1],
                     player[2],
                     player[3],
                     player[4],
                     player[5],
-                    player[6]
-                ))
-    db.execute_many(sql, data)
+                    player[6],
+                    player[7],
+                    player[8],
+                    player[9],
+                    player[10],
+                    player[11],
+                    player[12],
+                    player[13],
+                    player[14],
+                    str(player[15]),
+                    )
+            print()
+            print(f"Saving player {player[3]} to database...")
+            print(data)
 
-    # execute_sql('wnba_data.db', sql, data)
+            db.insert_data(query, data)
 
-    # TODO (2024-04-05): Create tables/columns for Teams, Games, etc.
+    # Close database connection
+    db.close_connection()
 
-    # sql = 'SELECT * FROM players WHERE player_name = (?)'
-    # data = (player_name_input, )
-
-
-    # connection = sqlite3.connect('wnba_data.db')
-    # cursor = connection.cursor()
-    # # FIXME (2024-04-09): Check if SQL executed successfully
-    # cursor.execute(sql, data)
-
-    # player_id, player_name, active_flag, rookie_year, last_year, uk, current_team = cursor.fetchone()
-    # # Commit changes and close the connection
-    # connection.commit()
-    # connection.close()
-
-    # FIXME (2024-04-09): Fix query return
-    player = Player(player_name_input)
-
-    sql = 'SELECT * FROM SeasonTotalsRegularSeason WHERE player_id=(?)'
-    data = (player.id, )
-
-
-    # INCOMPLETE (2024-04-09): Need to revise code below to use Database
-
-    # player = Player(player_name_input)
-
-    # season_headers, season_data = player.get_season_totals()
-
-    # # Print tabulated career totals per season
-    # print(tabulate(season_data, headers=season_headers, tablefmt="pretty"))
-
-    # season_selection = input('Enter season: ')
-
-    # # TODO (2024-03-08): Get team player was on in selected season
-    # team = Team(season_data,  season_selection)
-
-    # roster_headers, roster_data = team.get_roster()
-    # # Print tabulated team roster for selected season
-    # print(tabulate(roster_data, headers=roster_headers, tablefmt="pretty"))
-
-    # game = Game(player, team, season_selection)
-
-    # game_list_headers, game_list_data = game.get_game_list()
-
-    # # Print tabulated season game list for selected player and season
-    # print(tabulate(game_list_data, headers=game_list_headers, tablefmt="pretty"))
-
-    # game_selection = int(input('Game ID: ')) - 1
-
-    # game.get_single_game_data(game_selection)
-    # game.get_shot_chart_data()
-    # game.plot_short_chart()
