@@ -26,11 +26,6 @@ HEADERS = {
 TEAM_INDEX_URL = 'https://www.wnba.com/wp-json/api/v1/teams.json'
 PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
 
-# Create a custom logger
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s: %(asctime)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
-
 
 def get_player_list():
     """Get players list."""

@@ -9,12 +9,6 @@ import matplotlib.pyplot as plt
 
 # INCOMPLETE (2024-04-12): This module should interact with local DB
 
-# Create a custom logger
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s: %(asctime)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
-
-
 # LEARN (2024-02-28): How to fix issue with too many instance attributes
 class Game:
     """"Game class"""

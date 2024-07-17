@@ -8,11 +8,6 @@ import data_getter as dg
 
 # INCOMPLETE (2024-04-12): This module should interact with local DB
 
-# Create a custom logger
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s: %(asctime)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
-
 
 class Team:
     """Team class"""
