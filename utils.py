@@ -2,15 +2,9 @@
 """
 WNBA Shot Charts
 """
-import json
-from lib2to3.fixes.fix_metaclass import FixMetaclass
-import sqlite3
-import logging
-from datetime import datetime
-from operator import itemgetter
-
 import matplotlib.pyplot as plt
-import requests
+from database import Database
+
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -30,18 +24,30 @@ HEADERS = {
 TEAM_INDEX_URL = 'https://www.wnba.com/wp-json/api/v1/teams.json'
 PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
 
-# Create a custom logger
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s: %(asctime)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
-
-
-# logging.disable(logging.CRITICAL)
 
 def plot_short_chart(all_shot_data_list):
     """Plot player shot chart data."""
     # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
     # data directly from all_shots?
+
+    # Query shot chart details data
+    # Connect to database:
+    db = Database(user="wnba_data_user", password="password",
+                  host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
+
+    game_headline = db.fetch_one("SELECT game_id, player_name, team_name, matchup, game_date, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct FROM player_game_logs where game_id = 1022400146 order by game_date")
+
+    # Close database connection
+    db.close_connection()
+
+    # Build chart title
+    player_name = game_headline[1]
+    team_name = game_headline[2]
+    matchup = game_headline[3]
+    game_date = game_headline[4].date()
+    scoring_headline = f"{game_headline[8]}/{game_headline[9]} ({float(game_headline[10])*100}% Shooting)"
 
     x_all = []
     y_all = []
@@ -52,12 +58,6 @@ def plot_short_chart(all_shot_data_list):
     x_miss = []
     y_miss = []
 
-    # Build chart title
-    player_name = all_shot_data_list[0][4]
-    team_name = all_shot_data_list[0][6]
-    scoring_headline = 'TBD'
-    matchup = all_shot_data_list[0][22]
-    game_date = all_shot_data_list[0][21]
 
     for shot in all_shot_data_list:
         x_all.append(int(shot[17]))

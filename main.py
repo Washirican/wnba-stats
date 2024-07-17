@@ -6,6 +6,15 @@ This code connects to a PostgreSQL database.
 from database import Database
 from data_getter import get_player_list, get_teams_list, get_team_roster, get_game_logs, get_shot_chart_data
 from utils import plot_short_chart
+import logging
+
+# Create a custom logger
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(levelname)s: %(asctime)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+
+logging.disable(logging.CRITICAL)
 
 if __name__ == '__main__':
     # Connect to database:
