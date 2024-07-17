@@ -52,16 +52,23 @@ def plot_short_chart(all_shot_data_list):
     x_miss = []
     y_miss = []
 
-    for shot in all_shot_data_list:
-        x_all.append(shot['LOC_X'])
-        y_all.append(shot['LOC_Y'])
+    # Build chart title
+    player_name = all_shot_data_list[0][4]
+    team_name = all_shot_data_list[0][6]
+    scoring_headline = 'TBD'
+    matchup = all_shot_data_list[0][22]
+    game_date = all_shot_data_list[0][21]
 
-        if shot['SHOT_MADE_FLAG']:
-            x_made.append(shot['LOC_X'])
-            y_made.append(shot['LOC_Y'])
+    for shot in all_shot_data_list:
+        x_all.append(int(shot[17]))
+        y_all.append(int(shot[18]))
+
+        if int(shot[20]):
+            x_made.append(int(shot[17]))
+            y_made.append(int(shot[18]))
         else:
-            x_miss.append(shot['LOC_X'])
-            y_miss.append(shot['LOC_Y'])
+            x_miss.append(int(shot[17]))
+            y_miss.append(int(shot[18]))
 
     # TODO D. Rodriguez 2020-04-22: Add shot info to each shot marker
     # while hovering
@@ -73,9 +80,9 @@ def plot_short_chart(all_shot_data_list):
     ax.scatter(x_miss, y_miss, marker='x', c='red')
     ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
 
-    plt.title('Shot Chart')
-        # f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} '
-        # f'{game_date}')
+    plt.title(
+        f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} '
+        f'{game_date}')
     ax.axes.xaxis.set_visible(False)
     ax.axes.yaxis.set_visible(False)
 

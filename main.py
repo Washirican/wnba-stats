@@ -105,8 +105,8 @@ if __name__ == '__main__':
         data = tuple(game)
         db.insert_data(query, data)
 
-    # Insert player game log data into database table
-    # Get Player Game Log data
+    # Insert player shot chart data into database table
+    # Get Player shot chart detail data
     shot_chart_data = get_shot_chart_data(2024, 1022400146, 1630150)
 
     placeholders = '%s,' * len(shot_chart_data[0])
@@ -114,7 +114,6 @@ if __name__ == '__main__':
         query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]})'
         data = tuple(shot)
         db.insert_data(query, data)
-
 
     # Query shot chart details data
     # Connect to database:
