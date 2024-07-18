@@ -22,10 +22,10 @@ if __name__ == '__main__':
     get_team_rosters(2024)
 
     # Get Player Game Log data
-    get_game_logs(2024, 10, 1630150)
+    get_game_logs(2024, 10, 1631086)
 
     # Get Player shot chart detail data
-    get_shot_chart_data(2024, 1022400146, 1630150)
+    get_shot_chart_data(2024, 1022400007, 1631086)
 
     # Plot shot chart detail data
-    plot_short_chart(1022400146)
+    plot_short_chart(1022400007)

@@ -59,4 +59,4 @@ SELECT game_id, player_name, matchup, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3
 
 SELECT * FROM shot_chart_detail;
 
-SELECT * FROM players WHERE player_name like '%Jewell%';
+SELECT * FROM players WHERE player_name like '%Hull%';

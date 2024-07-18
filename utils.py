@@ -2,11 +2,13 @@
 """
 WNBA Shot Charts
 """
-import matplotlib.pyplot as plt
-from database import Database
-import requests
 import json
 import logging
+
+import matplotlib.pyplot as plt
+import requests
+
+from database import Database
 
 # Create a custom logger
 logging.basicConfig(level=logging.DEBUG,
