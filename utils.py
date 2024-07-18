@@ -6,7 +6,15 @@ import matplotlib.pyplot as plt
 from database import Database
 import requests
 import json
+import logging
 
+# Create a custom logger
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(levelname)s: %(asctime)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+
+# logging.disable(logging.CRITICAL)
 
 HEADERS = {
     'Host': 'stats.wnba.com',
@@ -116,7 +124,7 @@ def get_team_rosters(season):
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     for team_id in team_ids:
-        print(f'\nGetting ddata for team id {team_id}')
+        logging.debug(f'\nGetting ddata for team id {team_id}')
         parameters = {
             'LeagueID': 10,
             'Season': season,
