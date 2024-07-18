@@ -4,8 +4,6 @@ TABLE teams;
 
 TABLE common_team_roster;
 
-TABLE teams;
-
 TABLE player_game_logs;
 
 table shot_chart_detail;
@@ -29,6 +27,8 @@ SELECT * FROM teams WHERE team_id::integer = 1611661323;
 SELECT * FROM teams WHERE team_id::integer = 1611661330;
 
 select * FROM players where player_id::integer = 1629497;
+
+select * FROM players where player_id::integer = 1630150;
 
 select * FROM common_team_roster where player_id::integer = 1629497;
 

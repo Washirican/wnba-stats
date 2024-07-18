@@ -4,6 +4,13 @@
 import logging
 import psycopg2
 
+# Create a custom logger
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(levelname)s: %(asctime)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+
+# logging.disable(logging.CRITICAL)
 
 class Database:
     def __init__(self, user, password, host, port, database):
