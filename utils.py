@@ -124,7 +124,7 @@ def get_team_rosters(season):
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     for team_id in team_ids:
-        logging.debug(f'\nGetting ddata for team id {team_id}')
+        logging.debug(f'\nGetting data for team id {team_id}')
         parameters = {
             'LeagueID': 10,
             'Season': season,
