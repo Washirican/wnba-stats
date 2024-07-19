@@ -100,7 +100,7 @@ def get_teams_list():
     return 0
 
 
-def get_team_rosters(season):
+def get_team_rosters(season, league_id):
     """Get team roster for a specific season or current roster (?)."""
     # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
@@ -119,7 +119,7 @@ def get_team_rosters(season):
     for team_id in team_ids:
         logging.debug(f'\nGetting data for team id {team_id}')
         parameters = {
-            'LeagueID': 10,
+            'LeagueID': league_id,
             'Season': season,
             'TeamID': team_id
         }
@@ -181,7 +181,7 @@ def get_season_totals(league_id, player_id):
     return 0
 
 
-def get_game_logs(season, league_id, player_id):
+def get_player_game_logs(season, league_id, player_id):
     """Get player season game log."""
     parameters = {
         'LastNGames': '0',
@@ -222,6 +222,54 @@ def get_game_logs(season, league_id, player_id):
     placeholders = '%s,' * len(game_list[0])
     for game in game_list:
         query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
+        data = tuple(game)
+        db.insert_data(query, data)
+
+    # Close database connection
+    db.close_connection()
+
+    return 0
+
+
+def get_team_game_logs(season, league_id):
+    """Get player season game log."""
+    parameters = {
+                'LastNGames': '0',
+                'LeagueID': league_id,
+                'MeasureType': 'Base',
+                'Month': '0',
+                'OpponentTeamID': '0',
+                'PORound': '0',
+                'PaceAdjust': 'N',
+                'PerMode': 'Totals',
+                'Period': '0',
+                'PlusMinus': 'N',
+                'Rank': 'N',
+                'Season': season,
+                'SeasonType': 'Regular Season',
+                }
+
+    endpoint = 'teamgamelogs'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+    r = requests.get(request_url,
+                     headers=HEADERS,
+                     params=parameters,
+                     timeout=10)
+    team_game_logs = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+    # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+
+    # Connect to database:
+    db = Database(user="wnba_data_user", password="password", host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
+
+    # Delete table data
+    db.execute_query("DELETE FROM team_game_logs")
+
+    placeholders = '%s,' * len(team_game_logs[0])
+    for game in team_game_logs:
+        query = f'INSERT INTO team_game_logs VALUES ({placeholders[:-1]})'
         data = tuple(game)
         db.insert_data(query, data)
 
@@ -335,12 +383,8 @@ def plot_short_chart(game_id):
     # while hovering
 
     im = plt.imread('shotchart-blue.png')
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 6))
 
-    # plt.subplots_adjust(bottom=1.0, right=0.8, top=1.9)
-
-    # (left, right, bottom, top)
-    # ax.imshow(im, extent=[-260, 260, -65, 424])
     ax.imshow(im, extent=[-260, 260, -65, 424])
 
     ax.scatter(x_miss, y_miss, marker='x', c='red')

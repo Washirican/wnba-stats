@@ -5,6 +5,7 @@ TABLE player_game_logs;
 TABLE players;
 TABLE season_totals_regular_season;
 TABLE shot_chart_detail;
+TABLE team_game_logs;
 TABLE teams;
 
 -- Delete table data
