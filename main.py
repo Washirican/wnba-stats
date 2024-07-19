@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     season = 2024
     league_id = 10
-    player_id = 1642286
+    player_id = 1641648
     game_id = 1022400148
 
     # This updates database tables with player list, team list, and team roster

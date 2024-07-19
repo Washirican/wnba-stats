@@ -1,3 +1,6 @@
+TABLE boxscore_player_stats;
+TABLE boxscore_team_start_bench_stats;
+TABLE boxscore_team_stats;
 TABLE common_team_roster;
 TABLE dataset_info;
 TABLE player_career_stats;
@@ -17,6 +20,9 @@ TABLE teams;
 -- DELETE FROM wnba_data_user.season_totals_regular_season;
 -- DELETE FROM wnba_data_user.shot_chart_detail;
 -- DELETE FROM wnba_data_user.teams;
+DELETE FROM boxscore_player_stats;
+DELETE FROM boxscore_team_start_bench_stats;
+DELETE FROM boxscore_team_stats;
 
 INSERT INTO player_career_stats VALUES
 (1631086, '2024-25', '10', 1611661325, 'IND', 24.0, 20, 1, 13.3, 1.2, 3.4, 0.338, 0.5, 1.6, 0.281, 0.8, 1.0, 0.8, 0.5, 1.0, 1.5, 0.7, 0.5, 0.2, 0.8, 2.0, 3.6)
@@ -62,3 +68,9 @@ SELECT game_id, player_name, matchup, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3
 SELECT * FROM shot_chart_detail;
 
 SELECT * FROM players WHERE player_name like '%Hull%';
+
+SELECT * FROM team_game_logs WHERE team_abbreviation = 'SEA';
+
+SELECT * FROM team_game_logs WHERE game_id = '1022400147';
+
+SELECT DISTINCT game_id FROM team_game_logs;

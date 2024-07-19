@@ -232,7 +232,7 @@ def get_player_game_logs(season, league_id, player_id):
 
 
 def get_team_game_logs(season, league_id):
-    """Get player season game log."""
+    """Get team season game log."""
     parameters = {
                 'LastNGames': '0',
                 'LeagueID': league_id,
@@ -272,6 +272,82 @@ def get_team_game_logs(season, league_id):
         query = f'INSERT INTO team_game_logs VALUES ({placeholders[:-1]})'
         data = tuple(game)
         db.insert_data(query, data)
+
+    # Close database connection
+    db.close_connection()
+
+    return 0
+
+
+def get_game_box_score(season):
+    """Get game box score for all games in season."""
+    # Connect to database:
+    db = Database(user="wnba_data_user", password="password", host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
+
+    # Get Team IDs from teams table
+    game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs")
+
+    # # Close database connection
+    # db.close_connection()
+    #
+    # # Connect to database:
+    # db = Database(user="wnba_data_user", password="password", host="localhost",
+    #               port="5432", database="wnba_data")
+    # db.connect()
+
+    for game_id in game_ids:
+        parameters = {
+                    'EndPeriod': 10,
+                    'EndRange': 24000,
+                    'GameID': game_id,
+                    'RangeType': 0,
+                    'Season': season,
+                    'SeasonType': 'Regular Season',
+                    'StartPeriod': 1,
+                    'StartRange': 1200
+                    }
+
+        endpoint = 'boxscoretraditionalv2'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+        player_stats = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        start_bench_stats = json.loads(r.content.decode())['resultSets'][2]['rowSet']
+        team_stats = json.loads(r.content.decode())['resultSets'][1]['rowSet']
+
+        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+
+        # Delete table data
+        # db.execute_query("DELETE FROM boxscore_player_stats")
+
+        placeholders = '%s,' * len(player_stats[0])
+        for game in player_stats:
+            query = f'INSERT INTO boxscore_player_stats VALUES ({placeholders[:-1]})'
+            data = tuple(game)
+            db.insert_data(query, data)
+
+        # Delete table data
+        # db.execute_query("DELETE FROM boxscore_team_start_bench_stats")
+
+        placeholders = '%s,' * len(start_bench_stats[0])
+        for game in start_bench_stats:
+            query = f'INSERT INTO boxscore_team_start_bench_stats VALUES ({placeholders[:-1]})'
+            data = tuple(game)
+            db.insert_data(query, data)
+
+        # Delete table data
+        # db.execute_query("DELETE FROM boxscore_team_stats")
+
+        placeholders = '%s,' * len(team_stats[0])
+        for game in team_stats:
+            query = f'INSERT INTO boxscore_team_stats VALUES ({placeholders[:-1]})'
+            data = tuple(game)
+            db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()
