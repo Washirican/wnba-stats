@@ -1,12 +1,11 @@
-table dataset_info;
-TABLE players;
-TABLE teams;
-
 TABLE common_team_roster;
-
+TABLE dataset_info;
+TABLE player_career_stats;
 TABLE player_game_logs;
-
-table shot_chart_detail;
+TABLE players;
+TABLE season_totals_regular_season;
+TABLE shot_chart_detail;
+TABLE teams;
 
 -- Delete table data
 -- DELETE FROM wnba_data_user.common_team_roster;

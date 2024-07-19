@@ -28,4 +28,4 @@ if __name__ == '__main__':
     get_shot_chart_data(2024, 1022400007, 1631086)
 
     # Plot shot chart detail data
-    plot_short_chart(1022400007)
+    # plot_short_chart(1022400007)
