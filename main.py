@@ -5,8 +5,7 @@ This code connects to a PostgreSQL database.
 """
 import logging
 
-from utils import (get_game_logs, get_player_list, get_shot_chart_data,
-                   get_team_rosters, get_teams_list, plot_short_chart)
+import utils as u
 
 # Create a custom logger
 logging.basicConfig(level=logging.DEBUG,
@@ -17,15 +16,27 @@ logging.basicConfig(level=logging.DEBUG,
 # logging.disable(logging.CRITICAL)
 
 if __name__ == '__main__':
-    get_player_list()
-    get_teams_list()
-    get_team_rosters(2024)
+
+    season = 2024
+    league_id = 10
+    player_id = 1629497
+    game_id = 1022400005
+
+    # This updates database tables with player list, team list, and team roster
+    # Only needs to be updated occasionally.
+    # Move to another module?
+    # u.get_player_list()
+    # u.get_teams_list()
+    # u.get_team_rosters(season)
+
+    # Get player regular season totals
+    u.get_season_totals(league_id, player_id)
 
     # Get Player Game Log data
-    get_game_logs(2024, 10, 1631086)
+    u.get_game_logs(season, league_id, player_id)
 
     # Get Player shot chart detail data
-    get_shot_chart_data(2024, 1022400007, 1631086)
+    u.get_shot_chart_data(season, game_id, player_id)
 
     # Plot shot chart detail data
-    # plot_short_chart(1022400007)
+    u.plot_short_chart(game_id)

@@ -15,7 +15,6 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-
 # logging.disable(logging.CRITICAL)
 
 HEADERS = {
@@ -144,6 +143,44 @@ def get_team_rosters(season):
     return 0
 
 
+def get_season_totals(league_id, player_id):
+    """Get regular seasons Per Game totals."""
+    parameters = {
+        'LeagueID': league_id,
+        'PerMode': 'PerGame',
+        'PlayerID': player_id,
+    }
+
+    endpoint = 'playerprofilev2'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+    r = requests.get(request_url,
+                     headers=HEADERS,
+                     params=parameters,
+                     timeout=10)
+
+    regular_season_totals = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+
+    # Connect to database:
+    db = Database(user="wnba_data_user", password="password", host="localhost",
+                  port="5432", database="wnba_data")
+    db.connect()
+
+    # Delete table data
+    db.execute_query("DELETE FROM player_career_stats")
+
+    placeholders = '%s,' * len(regular_season_totals[0])
+    for season in regular_season_totals:
+        query = f'INSERT INTO player_career_stats VALUES ({placeholders[:-1]})'
+        data = tuple(season)
+        db.insert_data(query, data)
+
+    # Close database connection
+    db.close_connection()
+
+    return 0
+
+
 def get_game_logs(season, league_id, player_id):
     """Get player season game log."""
     parameters = {
@@ -190,6 +227,7 @@ def get_game_logs(season, league_id, player_id):
 
     # Close database connection
     db.close_connection()
+
     return 0
 
 
@@ -256,7 +294,8 @@ def plot_short_chart(game_id):
                   port="5432", database="wnba_data")
     db.connect()
 
-    game_headline = db.fetch_one(f"SELECT game_id, player_name, team_name, matchup, game_date, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct FROM player_game_logs where game_id = {game_id} order by game_date")
+    game_headline = db.fetch_one(
+        f"SELECT game_id, player_name, team_name, matchup, game_date, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct FROM player_game_logs where game_id = {game_id} order by game_date")
 
     all_shot_data_list = db.fetch_all("SELECT * FROM shot_chart_detail")
 
@@ -268,7 +307,9 @@ def plot_short_chart(game_id):
     team_name = game_headline[2]
     matchup = game_headline[3]
     game_date = game_headline[4].date()
-    scoring_headline = f"{game_headline[8]}/{game_headline[9]} ({float(game_headline[10])*100}% Shooting)"
+    points = game_headline[5]
+
+    scoring_headline = f"{points} pts on {game_headline[8]}/{game_headline[9]} ({float(game_headline[10]) * 100}% Shooting)"
 
     x_all = []
     y_all = []
@@ -295,6 +336,11 @@ def plot_short_chart(game_id):
 
     im = plt.imread('shotchart-blue.png')
     fig, ax = plt.subplots()
+
+    # plt.subplots_adjust(bottom=1.0, right=0.8, top=1.9)
+
+    # (left, right, bottom, top)
+    # ax.imshow(im, extent=[-260, 260, -65, 424])
     ax.imshow(im, extent=[-260, 260, -65, 424])
 
     ax.scatter(x_miss, y_miss, marker='x', c='red')

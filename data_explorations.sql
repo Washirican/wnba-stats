@@ -17,8 +17,10 @@ TABLE teams;
 -- DELETE FROM wnba_data_user.shot_chart_detail;
 -- DELETE FROM wnba_data_user.teams;
 
--- INSERT INTO common_team_roster VALUES
--- (1611661322, '2024', '10', 'Shakira Austin', 'Shakira', 'shakira-austin', '0', 'C-F', '6-5', '190', 'JUL 25, 2000', 23.0, '2', 'Mississippi', 1631022, None);
+INSERT INTO player_career_stats VALUES
+(1631086, '2024-25', '10', 1611661325, 'IND', 24.0, 20, 1, 13.3, 1.2, 3.4, 0.338, 0.5, 1.6, 0.281, 0.8, 1.0, 0.8, 0.5, 1.0, 1.5, 0.7, 0.5, 0.2, 0.8, 2.0, 3.6)
+;
+
 SELECT * FROM teams WHERE team_id::integer = 1611661329;
 
 SELECT * FROM teams WHERE team_id::integer = 1611661323;

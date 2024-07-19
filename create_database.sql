@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS  player_career_stats (
     PF VARCHAR(45) NOT NULL,
     PTS VARCHAR(45) NOT NULL,
 
-    PRIMARY KEY (PLAYER_ID)
+    PRIMARY KEY (PLAYER_ID, season_id)
 );
 
 ALTER TABLE wnba_data_user.player_career_stats OWNER TO wnba_data_user;
