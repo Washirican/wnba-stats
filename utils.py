@@ -91,16 +91,8 @@ def get_teams_list():
     placeholders = '%s,' * 9
     for team in team_data.values():
         query = f'INSERT INTO teams VALUES ({placeholders[:-1]})'
-        data = (team['id'],
-                team['a'],
-                team['n'],
-                team['c'],
-                team['s'],
-                team['tz'],
-                team['pc'],
-                team['sc'],
-                team['url'],
-                )
+        data = tuple(team.values())
+
         db.insert_data(query, data)
 
     # Close database connection

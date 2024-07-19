@@ -9,14 +9,14 @@ TABLE player_game_logs;
 table shot_chart_detail;
 
 -- Delete table data
-DELETE FROM wnba_data_user.common_team_roster;
-DELETE FROM wnba_data_user.dataset_info;
-DELETE FROM wnba_data_user.player_career_stats;
-DELETE FROM wnba_data_user.player_game_logs;
-DELETE FROM wnba_data_user.players;
-DELETE FROM wnba_data_user.season_totals_regular_season;
-DELETE FROM wnba_data_user.shot_chart_detail;
-DELETE FROM wnba_data_user.teams;
+-- DELETE FROM wnba_data_user.common_team_roster;
+-- DELETE FROM wnba_data_user.dataset_info;
+-- DELETE FROM wnba_data_user.player_career_stats;
+-- DELETE FROM wnba_data_user.player_game_logs;
+-- DELETE FROM wnba_data_user.players;
+-- DELETE FROM wnba_data_user.season_totals_regular_season;
+-- DELETE FROM wnba_data_user.shot_chart_detail;
+-- DELETE FROM wnba_data_user.teams;
 
 -- INSERT INTO common_team_roster VALUES
 -- (1611661322, '2024', '10', 'Shakira Austin', 'Shakira', 'shakira-austin', '0', 'C-F', '6-5', '190', 'JUL 25, 2000', 23.0, '2', 'Mississippi', 1631022, None);
