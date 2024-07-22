@@ -143,37 +143,54 @@ def get_team_rosters(season, league_id):
     return 0
 
 
-def get_season_totals(league_id, player_id):
+def get_player_career_stats(league_id):
     """Get regular seasons Per Game totals."""
-    parameters = {
-        'LeagueID': league_id,
-        'PerMode': 'PerGame',
-        'PlayerID': player_id,
-    }
-
-    endpoint = 'playerprofilev2'
-    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
-    r = requests.get(request_url,
-                     headers=HEADERS,
-                     params=parameters,
-                     timeout=10)
-
-    regular_season_totals = json.loads(r.content.decode())['resultSets'][0]['rowSet']
-
     # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
                   port="5432", database="wnba_data")
     db.connect()
 
     # Delete table data
-    # db.execute_query("DELETE FROM player_career_stats")
+    # db.execute_query("DELETE FROM common_team_roster")
 
-    placeholders = '%s,' * len(regular_season_totals[0])
-    for season in regular_season_totals:
-        query = f'INSERT INTO player_career_stats VALUES ({placeholders[:-1]})'
-        data = tuple(season)
-        db.insert_data(query, data)
+    # Get Team IDs from teams table
+    player_ids = db.fetch_all(
+        "SELECT player_id FROM common_team_roster ORDER BY player_id")
+
+    # Close database connection
+    # db.close_connection()
+
+    for player_id in player_ids:
+        logging.debug(f'Getting data for player: {player_id}')
+        parameters = {
+            'LeagueID': league_id,
+            'PerMode': 'PerGame',
+            'PlayerID': player_id,
+        }
+
+        endpoint = 'playerprofilev2'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+
+        regular_season_totals = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+
+        # Connect to database:
+        # db = Database(user="wnba_data_user", password="password", host="localhost",
+        #               port="5432", database="wnba_data")
+        # db.connect()
+
+        # Delete table data
+        # db.execute_query("DELETE FROM player_career_stats")
+        if regular_season_totals:
+            placeholders = '%s,' * len(regular_season_totals[0])
+            for season in regular_season_totals:
+                query = f'INSERT INTO player_career_stats VALUES ({placeholders[:-1]})'
+                data = tuple(season)
+                db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()

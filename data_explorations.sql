@@ -4,9 +4,7 @@ TABLE boxscore_team_stats;
 TABLE common_team_roster;
 TABLE dataset_info;
 TABLE player_career_stats;
-
 TABLE player_game_logs;
-
 TABLE players;
 TABLE season_totals_regular_season;
 TABLE shot_chart_detail;
@@ -16,8 +14,8 @@ TABLE teams;
 -- Delete table data
 -- DELETE FROM common_team_roster;
 -- DELETE FROM dataset_info;
--- DELETE FROM player_career_stats;
-DELETE FROM player_game_logs;
+DELETE FROM player_career_stats;
+-- DELETE FROM player_game_logs;
 -- DELETE FROM players;
 -- DELETE FROM season_totals_regular_season;
 -- DELETE FROM shot_chart_detail;
@@ -36,7 +34,7 @@ SELECT * FROM teams WHERE team_id::integer = 1611661323;
 
 SELECT * FROM teams WHERE team_id::integer = 1611661330;
 
-select * FROM players where player_id::integer = 1641648;
+select * FROM players where player_id::integer = 100940;
 
 select * FROM players where player_id::integer = 1630149;
 
@@ -91,3 +89,5 @@ select player_id from common_team_roster;
 SELECT DISTINCT game_id FROM team_game_logs;
 
 SELECT * FROM player_game_logs where player_id = 1630149;
+
+select * from player_career_stats WHERE player_id::integer = 1630149;

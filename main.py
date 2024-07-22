@@ -36,7 +36,7 @@ if __name__ == '__main__':
     u.get_team_rosters(season, league_id)
 
     # Get player regular season totals
-    u.get_season_totals(league_id, player_id)
+    u.get_player_career_stats(league_id)
 
     # Get team game logs
     u.get_team_game_logs(season, league_id)
