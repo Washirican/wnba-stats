@@ -199,6 +199,7 @@ def get_player_game_logs(season, league_id):
     # db.close_connection()
 
     for player_id in player_ids:
+        logging.debug(f'Getting game log for: {player_id}')
         parameters = {
             'LastNGames': '0',
             'LeagueID': league_id,
@@ -235,11 +236,12 @@ def get_player_game_logs(season, league_id):
         # Delete table data
         # db.execute_query("DELETE FROM player_game_logs")
 
-        placeholders = '%s,' * len(game_list[0])
-        for game in game_list:
-            query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
-            data = tuple(game)
-            db.insert_data(query, data)
+        if game_list:
+            placeholders = '%s,' * len(game_list[0])
+            for game in game_list:
+                query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
+                data = tuple(game)
+                db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()

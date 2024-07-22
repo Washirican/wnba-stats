@@ -38,9 +38,9 @@ SELECT * FROM teams WHERE team_id::integer = 1611661330;
 
 select * FROM players where player_id::integer = 1641648;
 
-select * FROM players where player_id::integer = 1630150;
+select * FROM players where player_id::integer = 1630149;
 
-select * FROM common_team_roster where player_id::integer = 1629497;
+select * FROM common_team_roster where player_id::integer = 1630149;
 
 SELECT team_id FROM teams ORDER BY team_id;
 
@@ -82,7 +82,7 @@ SELECT count(*) FROM players WHERE active_flag::integer = 1;
 
 select ctr.player_id, p.player_id from common_team_roster ctr LEFT JOIN players p USING (player_id);
 
-SELECT * FROM common_team_roster where player_id::integer = 1641698;
+SELECT * FROM common_team_roster where player_id::integer = 1630149;
 
 select team_id, matchup, game_id, game_date from team_game_logs order by game_id desc, game_date desc;
 
@@ -90,4 +90,4 @@ select player_id from common_team_roster;
 
 SELECT DISTINCT game_id FROM team_game_logs;
 
-SELECT * FROM player_game_logs where player_id = 1641648;
+SELECT * FROM player_game_logs where player_id = 1630149;

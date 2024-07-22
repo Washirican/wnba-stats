@@ -25,9 +25,15 @@ if __name__ == '__main__':
     # This updates database tables with player list, team list, and team roster
     # Only needs to be updated occasionally.
     # Move to another module?
-    # u.get_player_list()
-    # u.get_teams_list()
-    # u.get_team_rosters(season, league_id)
+
+    # Get all players list
+    u.get_player_list()
+
+    # Get all teams list
+    u.get_teams_list()
+
+    # Get all team rosters
+    u.get_team_rosters(season, league_id)
 
     # Get player regular season totals
     u.get_season_totals(league_id, player_id)
