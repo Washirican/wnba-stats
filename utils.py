@@ -47,8 +47,8 @@ def get_player_list():
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM dataset_info")
-    db.execute_query("DELETE FROM players")
+    # db.execute_query("DELETE FROM dataset_info")
+    # db.execute_query("DELETE FROM players")
 
     # Save data to database tables
     placeholders = '%s,' * 4
@@ -85,7 +85,7 @@ def get_teams_list():
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM teams")
+    # db.execute_query("DELETE FROM teams")
 
     placeholders = '%s,' * 9
     for team in team_data.values():
@@ -108,7 +108,7 @@ def get_team_rosters(season, league_id):
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM common_team_roster")
+    # db.execute_query("DELETE FROM common_team_roster")
 
     # Get Team IDs from teams table
     team_ids = db.fetch_all("SELECT team_id FROM teams ORDER BY team_id")
@@ -167,7 +167,7 @@ def get_season_totals(league_id, player_id):
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM player_career_stats")
+    # db.execute_query("DELETE FROM player_career_stats")
 
     placeholders = '%s,' * len(regular_season_totals[0])
     for season in regular_season_totals:
@@ -181,35 +181,8 @@ def get_season_totals(league_id, player_id):
     return 0
 
 
-def get_player_game_logs(season, league_id, player_id):
+def get_player_game_logs(season, league_id):
     """Get player season game log."""
-    parameters = {
-        'LastNGames': '0',
-        'LeagueID': league_id,
-        'MeasureType': 'Base',
-        'Month': '0',
-        'OpponentTeamID': '0',
-        'PORound': '0',
-        'PaceAdjust': 'N',
-        'PerMode': 'Totals',
-        'Period': '0',
-        'PlayerID': player_id,
-        'PlusMinus': 'N',
-        'Rank': 'N',
-        'Season': season,
-        'SeasonSegment': '',
-        'SeasonType': 'Regular Season'
-    }
-
-    endpoint = 'playergamelogs'
-    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
-    r = requests.get(request_url,
-                     headers=HEADERS,
-                     params=parameters,
-                     timeout=10)
-    game_list = json.loads(r.content.decode())['resultSets'][0]['rowSet']
-    # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
 
     # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
@@ -217,13 +190,56 @@ def get_player_game_logs(season, league_id, player_id):
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM player_game_logs")
+    # db.execute_query("DELETE FROM common_team_roster")
 
-    placeholders = '%s,' * len(game_list[0])
-    for game in game_list:
-        query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
-        data = tuple(game)
-        db.insert_data(query, data)
+    # Get Team IDs from teams table
+    player_ids = db.fetch_all("SELECT player_id FROM common_team_roster ORDER BY player_id")
+
+    # Close database connection
+    # db.close_connection()
+
+    for player_id in player_ids:
+        parameters = {
+            'LastNGames': '0',
+            'LeagueID': league_id,
+            'MeasureType': 'Base',
+            'Month': '0',
+            'OpponentTeamID': '0',
+            'PORound': '0',
+            'PaceAdjust': 'N',
+            'PerMode': 'Totals',
+            'Period': '0',
+            'PlayerID': player_id,
+            'PlusMinus': 'N',
+            'Rank': 'N',
+            'Season': season,
+            'SeasonSegment': '',
+            'SeasonType': 'Regular Season'
+        }
+
+        endpoint = 'playergamelogs'
+        request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+        r = requests.get(request_url,
+                         headers=HEADERS,
+                         params=parameters,
+                         timeout=10)
+        game_list = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+
+        # Connect to database:
+        # db = Database(user="wnba_data_user", password="password", host="localhost",
+        #               port="5432", database="wnba_data")
+        # db.connect()
+
+        # Delete table data
+        # db.execute_query("DELETE FROM player_game_logs")
+
+        placeholders = '%s,' * len(game_list[0])
+        for game in game_list:
+            query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
+            data = tuple(game)
+            db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()
@@ -265,7 +281,7 @@ def get_team_game_logs(season, league_id):
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM team_game_logs")
+    # db.execute_query("DELETE FROM team_game_logs")
 
     placeholders = '%s,' * len(team_game_logs[0])
     for game in team_game_logs:
@@ -281,6 +297,7 @@ def get_team_game_logs(season, league_id):
 
 def get_game_box_score(season):
     """Get game box score for all games in season."""
+
     # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
                   port="5432", database="wnba_data")
@@ -289,9 +306,9 @@ def get_game_box_score(season):
     # Get Team IDs from teams table
     game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs")
 
-    # # Close database connection
+    # Close database connection
     # db.close_connection()
-    #
+
     # # Connect to database:
     # db = Database(user="wnba_data_user", password="password", host="localhost",
     #               port="5432", database="wnba_data")
@@ -393,7 +410,7 @@ def get_shot_chart_data(season, game_id, player_id):
     db.connect()
 
     # Delete table data
-    db.execute_query("DELETE FROM shot_chart_detail")
+    # db.execute_query("DELETE FROM shot_chart_detail")
 
     placeholders = '%s,' * len(shot_chart_data[0])
     for shot in shot_chart_data:
@@ -432,8 +449,9 @@ def plot_short_chart(game_id):
     matchup = game_headline[3]
     game_date = game_headline[4].date()
     points = game_headline[5]
+    shooting_percentage = float(game_headline[10]) * 100
 
-    scoring_headline = f"{points} pts on {game_headline[8]}/{game_headline[9]} ({float(game_headline[10]) * 100}% Shooting)"
+    scoring_headline = f"{points} pts on {game_headline[8]}/{game_headline[9]} ({shooting_percentage:.2f}% Shooting)"
 
     x_all = []
     y_all = []

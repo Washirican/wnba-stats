@@ -4,7 +4,9 @@ TABLE boxscore_team_stats;
 TABLE common_team_roster;
 TABLE dataset_info;
 TABLE player_career_stats;
+
 TABLE player_game_logs;
+
 TABLE players;
 TABLE season_totals_regular_season;
 TABLE shot_chart_detail;
@@ -12,17 +14,17 @@ TABLE team_game_logs;
 TABLE teams;
 
 -- Delete table data
--- DELETE FROM wnba_data_user.common_team_roster;
--- DELETE FROM wnba_data_user.dataset_info;
--- DELETE FROM wnba_data_user.player_career_stats;
--- DELETE FROM wnba_data_user.player_game_logs;
--- DELETE FROM wnba_data_user.players;
--- DELETE FROM wnba_data_user.season_totals_regular_season;
--- DELETE FROM wnba_data_user.shot_chart_detail;
--- DELETE FROM wnba_data_user.teams;
-DELETE FROM boxscore_player_stats;
-DELETE FROM boxscore_team_start_bench_stats;
-DELETE FROM boxscore_team_stats;
+-- DELETE FROM common_team_roster;
+-- DELETE FROM dataset_info;
+-- DELETE FROM player_career_stats;
+DELETE FROM player_game_logs;
+-- DELETE FROM players;
+-- DELETE FROM season_totals_regular_season;
+-- DELETE FROM shot_chart_detail;
+-- DELETE FROM teams;
+-- DELETE FROM boxscore_player_stats;
+-- DELETE FROM boxscore_team_start_bench_stats;
+-- DELETE FROM boxscore_team_stats;
 
 INSERT INTO player_career_stats VALUES
 (1631086, '2024-25', '10', 1611661325, 'IND', 24.0, 20, 1, 13.3, 1.2, 3.4, 0.338, 0.5, 1.6, 0.281, 0.8, 1.0, 0.8, 0.5, 1.0, 1.5, 0.7, 0.5, 0.2, 0.8, 2.0, 3.6)
@@ -34,12 +36,11 @@ SELECT * FROM teams WHERE team_id::integer = 1611661323;
 
 SELECT * FROM teams WHERE team_id::integer = 1611661330;
 
-select * FROM players where player_id::integer = 1629497;
+select * FROM players where player_id::integer = 1641648;
 
 select * FROM players where player_id::integer = 1630150;
 
 select * FROM common_team_roster where player_id::integer = 1629497;
-
 
 SELECT team_id FROM teams ORDER BY team_id;
 
@@ -74,3 +75,19 @@ SELECT * FROM team_game_logs WHERE team_abbreviation = 'SEA';
 SELECT * FROM team_game_logs WHERE game_id = '1022400147';
 
 SELECT DISTINCT game_id FROM team_game_logs;
+
+SELECT count(*) FROM common_team_roster;
+
+SELECT count(*) FROM players WHERE active_flag::integer = 1;
+
+select ctr.player_id, p.player_id from common_team_roster ctr LEFT JOIN players p USING (player_id);
+
+SELECT * FROM common_team_roster where player_id::integer = 1641698;
+
+select team_id, matchup, game_id, game_date from team_game_logs order by game_id desc, game_date desc;
+
+select player_id from common_team_roster;
+
+SELECT DISTINCT game_id FROM team_game_logs;
+
+SELECT * FROM player_game_logs where player_id = 1641648;

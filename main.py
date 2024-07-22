@@ -36,7 +36,10 @@ if __name__ == '__main__':
     u.get_team_game_logs(season, league_id)
 
     # Get Player Game Log data
-    u.get_player_game_logs(season, league_id, player_id)
+    u.get_player_game_logs(season, league_id)
+
+    # Get box scores
+    u.get_game_box_score(season)
 
     # Get Player shot chart detail data
     u.get_shot_chart_data(season, game_id, player_id)
