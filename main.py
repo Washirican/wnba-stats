@@ -48,7 +48,7 @@ if __name__ == '__main__':
     u.get_game_box_score(season)
 
     # Get Player shot chart detail data
-    u.get_shot_chart_data(season, game_id, player_id)
+    u.get_shot_chart_data(season)
 
     # Plot shot chart detail data
     u.plot_short_chart(game_id)

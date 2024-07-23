@@ -14,11 +14,11 @@ TABLE teams;
 -- Delete table data
 -- DELETE FROM common_team_roster;
 -- DELETE FROM dataset_info;
-DELETE FROM player_career_stats;
+-- DELETE FROM player_career_stats;
 -- DELETE FROM player_game_logs;
 -- DELETE FROM players;
 -- DELETE FROM season_totals_regular_season;
--- DELETE FROM shot_chart_detail;
+DELETE FROM shot_chart_detail;
 -- DELETE FROM teams;
 -- DELETE FROM boxscore_player_stats;
 -- DELETE FROM boxscore_team_start_bench_stats;
@@ -38,7 +38,7 @@ select * FROM players where player_id::integer = 100940;
 
 select * FROM players where player_id::integer = 1630149;
 
-select * FROM common_team_roster where player_id::integer = 1630149;
+select * FROM common_team_roster where player_id::integer = 100940;
 
 SELECT team_id FROM teams ORDER BY team_id;
 

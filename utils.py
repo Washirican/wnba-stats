@@ -209,7 +209,7 @@ def get_player_game_logs(season, league_id):
     # Delete table data
     # db.execute_query("DELETE FROM common_team_roster")
 
-    # Get Team IDs from teams table
+    # Get Player IDs from teams table
     player_ids = db.fetch_all("SELECT player_id FROM common_team_roster ORDER BY player_id")
 
     # Close database connection
@@ -391,51 +391,68 @@ def get_game_box_score(season):
     return 0
 
 
-def get_shot_chart_data(season, game_id, player_id):
+def get_shot_chart_data(season):
     """Gets player shot chart data for a single game."""
-    parameters = {
-        'ContextMeasure': 'FGA',
-        'EndPeriod': '1',
-        'EndRange': '0',
-        'GameID': game_id,
-        'GroupQuantity': '0',
-        'LastNGames': '0',
-        'LeagueID': '10',
-        'Month': '0',
-        'OpponentTeamID': '0',
-        'PORound': '0',
-        'Period': '0',
-        'PlayerID': player_id,
-        'RangeType': '0',
-        'Season': season,
-        'SeasonType': 'Regular Season',
-        'StartPeriod': '1',
-        'StartRange': '0',
-        'TeamID': '0',
-    }
-
-    endpoint = 'shotchartdetail'
-    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
-    r = requests.get(request_url,
-                     headers=HEADERS,
-                     params=parameters,
-                     timeout=10)
-    shot_chart_data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
-
     # Connect to database:
     db = Database(user="wnba_data_user", password="password", host="localhost",
                   port="5432", database="wnba_data")
     db.connect()
 
-    # Delete table data
-    # db.execute_query("DELETE FROM shot_chart_detail")
+    # Get Player IDs from teams table
+    player_ids = db.fetch_all(
+        "SELECT player_id FROM common_team_roster ORDER BY player_id")
 
-    placeholders = '%s,' * len(shot_chart_data[0])
-    for shot in shot_chart_data:
-        query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]})'
-        data = tuple(shot)
-        db.insert_data(query, data)
+    # Get Game IDs from teams table
+    game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs")
+
+    for player_id in player_ids:
+        logging.debug(f'Getting data for player: {player_id}')
+        for game_id in game_ids:
+            logging.debug(f'Getting data for game: {game_id}')
+            parameters = {
+                'ContextMeasure': 'FGA',
+                'EndPeriod': '1',
+                'EndRange': '0',
+                'GameID': game_id,
+                'GroupQuantity': '0',
+                'LastNGames': '0',
+                'LeagueID': '10',
+                'Month': '0',
+                'OpponentTeamID': '0',
+                'PORound': '0',
+                'Period': '0',
+                'PlayerID': player_id,
+                'RangeType': '0',
+                'Season': season,
+                'SeasonType': 'Regular Season',
+                'StartPeriod': '1',
+                'StartRange': '0',
+                'TeamID': '0',
+            }
+
+            endpoint = 'shotchartdetail'
+            request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+            r = requests.get(request_url,
+                             headers=HEADERS,
+                             params=parameters,
+                             timeout=10)
+            shot_chart_data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+
+            # Connect to database:
+            # db = Database(user="wnba_data_user", password="password", host="localhost",
+            #               port="5432", database="wnba_data")
+            # db.connect()
+
+            # Delete table data
+            # db.execute_query("DELETE FROM shot_chart_detail")
+
+            if shot_chart_data:
+                placeholders = '%s,' * len(shot_chart_data[0])
+                for shot in shot_chart_data:
+                    query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]})'
+                    data = tuple(shot)
+                    db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()
