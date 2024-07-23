@@ -119,3 +119,12 @@ SELECT player_id FROM common_team_roster ORDER BY player_id;
 SELECT distinct player_id FROM wnba_data_user.player_game_logs ORDER BY player_id;
 
 SELECT DISTINCT player_name FROM wnba_data_user.shot_chart_detail ORDER by player_name;
+
+SELECT team_id, team_name, game_id FROM team_game_logs WHERE game_id::INTEGER = 1022400148;
+
+SELECT player_id, player_name, team_id, team_name, game_id FROM player_game_logs WHERE game_id::INTEGER = 1022400148;
+
+SELECT DISTINCT game_id FROM team_game_logs;
+
+SELECT player_id FROM player_game_logs WHERE game_id::INTEGER = 1022400102;
+

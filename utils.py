@@ -399,10 +399,6 @@ def get_shot_chart_data(season):
     # Connect to database:
     db.connect()
 
-    # Get Player IDs from teams table
-    player_ids = db.fetch_all(
-        "SELECT player_id FROM common_team_roster ORDER BY player_id")
-
     # Get Game IDs from teams table
     # TODO: Get from player_game_logs to only search for games where
     #  player participated
@@ -411,10 +407,15 @@ def get_shot_chart_data(season):
     # Close database connection
     db.close_connection()
 
-    for player_id in player_ids:
-        logging.debug(f'Getting data for player: {player_id}')
-        for game_id in game_ids:
-            logging.debug(f'Getting data for game: {game_id}')
+    for game_id in game_ids:
+        logging.debug(f'Getting data for game: {game_id[0]}')
+        # Get Player IDs from teams table
+        player_ids = db.fetch_all(
+            f"SELECT player_id FROM player_game_logs WHERE game_id::integer = {game_id[0]}")
+
+        for player_id in player_ids:
+            logging.debug(f'Getting data for player: {player_id}')
+
             parameters = {
                 'ContextMeasure': 'FGA',
                 'EndPeriod': '1',
@@ -455,7 +456,7 @@ def get_shot_chart_data(season):
 
             if shot_chart_data:
                 # Connect to database:
-                db.connect()
+                # db.connect()
 
                 placeholders = '%s,' * len(shot_chart_data[0])
                 for shot in shot_chart_data:
@@ -464,10 +465,11 @@ def get_shot_chart_data(season):
                     db.insert_data(query, data)
 
                 # Close database connection
-                db.close_connection()
+                # db.close_connection()
 
     # Close database connection
-    # db.close_connection()
+    db.close_connection()
+
     return 0
 
 
