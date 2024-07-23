@@ -466,11 +466,11 @@ CREATE TABLE IF NOT EXISTS  boxscore_team_start_bench_stats(
 
 ALTER TABLE wnba_data_user.boxscore_team_start_bench_stats OWNER TO wnba_data_user;
 
-
+-- ==================================================================================================
 -- From PGAdmin4
 -- Table: wnba_data_user.boxscore_player_stats
 
--- DROP TABLE IF EXISTS wnba_data_user.boxscore_player_stats;
+DROP TABLE IF EXISTS wnba_data_user.boxscore_player_stats;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.boxscore_player_stats
 (
@@ -512,7 +512,7 @@ ALTER TABLE IF EXISTS wnba_data_user.boxscore_player_stats
 
 -- Table: wnba_data_user.boxscore_team_start_bench_stats
 
--- DROP TABLE IF EXISTS wnba_data_user.boxscore_team_start_bench_stats;
+DROP TABLE IF EXISTS wnba_data_user.boxscore_team_start_bench_stats;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.boxscore_team_start_bench_stats
 (
@@ -551,7 +551,7 @@ ALTER TABLE IF EXISTS wnba_data_user.boxscore_team_start_bench_stats
 
 -- Table: wnba_data_user.boxscore_team_stats
 
--- DROP TABLE IF EXISTS wnba_data_user.boxscore_team_stats;
+DROP TABLE IF EXISTS wnba_data_user.boxscore_team_stats;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.boxscore_team_stats
 (
@@ -589,7 +589,7 @@ ALTER TABLE IF EXISTS wnba_data_user.boxscore_team_stats
 
 -- Table: wnba_data_user.common_team_roster
 
--- DROP TABLE IF EXISTS wnba_data_user.common_team_roster;
+DROP TABLE IF EXISTS wnba_data_user.common_team_roster;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.common_team_roster
 (
@@ -619,7 +619,7 @@ ALTER TABLE IF EXISTS wnba_data_user.common_team_roster
 
 -- Table: wnba_data_user.player_career_stats
 
--- DROP TABLE IF EXISTS wnba_data_user.player_career_stats;
+DROP TABLE IF EXISTS wnba_data_user.player_career_stats;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.player_career_stats
 (
@@ -659,7 +659,7 @@ ALTER TABLE IF EXISTS wnba_data_user.player_career_stats
 
 -- Table: wnba_data_user.player_game_logs
 
--- DROP TABLE IF EXISTS wnba_data_user.player_game_logs;
+DROP TABLE IF EXISTS wnba_data_user.player_game_logs;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.player_game_logs
 (
@@ -762,7 +762,7 @@ ALTER TABLE IF EXISTS wnba_data_user.players
 
 -- Table: wnba_data_user.season_totals_regular_season
 
--- DROP TABLE IF EXISTS wnba_data_user.season_totals_regular_season;
+DROP TABLE IF EXISTS wnba_data_user.season_totals_regular_season;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.season_totals_regular_season
 (
@@ -803,7 +803,7 @@ ALTER TABLE IF EXISTS wnba_data_user.season_totals_regular_season
 
 -- Table: wnba_data_user.shot_chart_detail
 
--- DROP TABLE IF EXISTS wnba_data_user.shot_chart_detail;
+DROP TABLE IF EXISTS wnba_data_user.shot_chart_detail;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.shot_chart_detail
 (
@@ -840,7 +840,7 @@ ALTER TABLE IF EXISTS wnba_data_user.shot_chart_detail
 
 -- Table: wnba_data_user.team_game_logs
 
--- DROP TABLE IF EXISTS wnba_data_user.team_game_logs;
+DROP TABLE IF EXISTS wnba_data_user.team_game_logs;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.team_game_logs
 (

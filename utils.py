@@ -393,9 +393,10 @@ def get_game_box_score(season):
 
 def get_shot_chart_data(season):
     """Gets player shot chart data for a single game."""
-    # Connect to database:
+    # Define database connection parameters:
     db = Database(user="wnba_data_user", password="password", host="localhost",
                   port="5432", database="wnba_data")
+    # Connect to database:
     db.connect()
 
     # Get Player IDs from teams table
@@ -403,7 +404,12 @@ def get_shot_chart_data(season):
         "SELECT player_id FROM common_team_roster ORDER BY player_id")
 
     # Get Game IDs from teams table
+    # TODO: Get from player_game_logs to only search for games where
+    #  player participated
     game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs")
+
+    # Close database connection
+    db.close_connection()
 
     for player_id in player_ids:
         logging.debug(f'Getting data for player: {player_id}')
@@ -448,14 +454,20 @@ def get_shot_chart_data(season):
             # db.execute_query("DELETE FROM shot_chart_detail")
 
             if shot_chart_data:
+                # Connect to database:
+                db.connect()
+
                 placeholders = '%s,' * len(shot_chart_data[0])
                 for shot in shot_chart_data:
                     query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]})'
                     data = tuple(shot)
                     db.insert_data(query, data)
 
+                # Close database connection
+                db.close_connection()
+
     # Close database connection
-    db.close_connection()
+    # db.close_connection()
     return 0
 
 

@@ -7,7 +7,9 @@ TABLE player_career_stats;
 TABLE player_game_logs;
 TABLE players;
 TABLE season_totals_regular_season;
+
 TABLE shot_chart_detail;
+
 TABLE team_game_logs;
 TABLE teams;
 
@@ -78,9 +80,9 @@ SELECT count(*) FROM common_team_roster;
 
 SELECT count(*) FROM players WHERE active_flag::integer = 1;
 
-select ctr.player_id, p.player_id from common_team_roster ctr LEFT JOIN players p USING (player_id);
+select ctr.player_id, ctr.player, p.player_id, p.player_name from common_team_roster ctr LEFT JOIN players p USING (player_id) WHERE p.player_id is NULL;
 
-SELECT * FROM common_team_roster where player_id::integer = 1630149;
+SELECT * FROM common_team_roster where player_id::integer = 1641698;
 
 select team_id, matchup, game_id, game_date from team_game_logs order by game_id desc, game_date desc;
 
@@ -90,4 +92,30 @@ SELECT DISTINCT game_id FROM team_game_logs;
 
 SELECT * FROM player_game_logs where player_id = 1630149;
 
-select * from player_career_stats WHERE player_id::integer = 1630149;
+select * from player_career_stats WHERE player_id::integer = 1642288;
+
+select p.player_name, pcs.* from player_career_stats pcs join players p using (player_id) WHERE player_id::integer = 204365;
+
+select count(distinct game_id) from wnba_data_user.boxscore_player_stats;
+
+select count(distinct player_id) from wnba_data_user.boxscore_player_stats;
+
+select count(distinct game_id) from wnba_data_user.shot_chart_detail;
+
+select count(distinct player_id) from wnba_data_user.shot_chart_detail;
+
+select count(distinct game_id) from wnba_data_user.player_game_logs;
+
+select count(distinct player_id) from wnba_data_user.player_game_logs;
+
+select * from wnba_data_user.player_game_logs where min::float < 5 order by min asc;
+
+select * from shot_chart_detail where game_id::integer = 1022400135;
+
+select game_id, count(game_event_id) as game_events from shot_chart_detail group by game_id order by game_events desc;
+
+SELECT player_id FROM common_team_roster ORDER BY player_id;
+
+SELECT distinct player_id FROM wnba_data_user.player_game_logs ORDER BY player_id;
+
+SELECT DISTINCT player_name FROM wnba_data_user.shot_chart_detail ORDER by player_name;
