@@ -82,7 +82,7 @@ SELECT count(*) FROM players WHERE active_flag::integer = 1;
 
 select ctr.player_id, ctr.player, p.player_id, p.player_name from common_team_roster ctr LEFT JOIN players p USING (player_id) WHERE p.player_id is NULL;
 
-SELECT * FROM common_team_roster where player_id::integer = 1641698;
+SELECT * FROM common_team_roster where player_id::integer = 1631007;
 
 select team_id, matchup, game_id, game_date from team_game_logs order by game_id desc, game_date desc;
 
@@ -90,7 +90,7 @@ select player_id from common_team_roster;
 
 SELECT DISTINCT game_id FROM team_game_logs;
 
-SELECT * FROM player_game_logs where player_id = 1630149;
+SELECT * FROM player_game_logs where player_id = 1631007;
 
 select * from player_career_stats WHERE player_id::integer = 1642288;
 
@@ -110,7 +110,7 @@ select count(distinct player_id) from wnba_data_user.player_game_logs;
 
 select * from wnba_data_user.player_game_logs where min::float < 5 order by min asc;
 
-select * from shot_chart_detail where game_id::integer = 1022400135;
+select * from shot_chart_detail where game_id::integer = 1022400048;
 
 select game_id, count(game_event_id) as game_events from shot_chart_detail group by game_id order by game_events desc;
 
