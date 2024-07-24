@@ -7,9 +7,7 @@ TABLE player_career_stats;
 TABLE player_game_logs;
 TABLE players;
 TABLE season_totals_regular_season;
-
 TABLE shot_chart_detail;
-
 TABLE team_game_logs;
 TABLE teams;
 
@@ -90,7 +88,7 @@ select player_id from common_team_roster;
 
 SELECT DISTINCT game_id FROM team_game_logs;
 
-SELECT * FROM player_game_logs where player_id = 1631007;
+SELECT * FROM player_game_logs where season_year = '2024' and player_id = 204319;
 
 select * from player_career_stats WHERE player_id::integer = 1641648;
 
@@ -128,11 +126,16 @@ SELECT DISTINCT game_id FROM team_game_logs ORDER BY game_id;
 
 SELECT player_id, player_name, team_name FROM player_game_logs WHERE game_id = '1022400148' order by player_id;
 
-SELECT * FROM shot_chart_detail WHERE game_id = '1022400148' AND player_id = '1642292';
+SELECT * FROM shot_chart_detail WHERE game_id = '1022400004' AND player_id = '204319';
 
 select * from shot_chart_detail where player_id = '1642286' and shot_zone_range like '%24+%' order by shot_distance;
 
-select * from player_career_stats where player_id = '1642286';
+select * from player_career_stats where player_id = '204319';
 
-select * from shot_chart_detail where player_id = '1642286';
+select * from shot_chart_detail where player_id = '204319';
 
+select * from players where player_name = 'Loyd, Jewell';
+
+SELECT * FROM player_game_logs where season_year = '2024' and player_id = 204319 and game_id = '1022400004';
+
+SELECT column_name FROM information_schema.columns WHERE table_name = 'player_game_logs';
