@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WNBA Shot Charts
+WNBA Data Charts
 """
 import json
 import logging

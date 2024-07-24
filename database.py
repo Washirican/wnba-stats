@@ -32,11 +32,9 @@ class Database:
                 database=self.database
             )
             self.cursor = self.connection.cursor()
-            # print("Connected to PostgreSQL database!")
             logging.info('Connected to PostgreSQL database!')
 
         except (Exception, psycopg2.Error) as error:
-            # print("Error while connecting to PostgreSQL:", error)
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
     def close_connection(self):
