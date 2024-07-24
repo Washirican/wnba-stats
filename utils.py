@@ -111,7 +111,7 @@ def get_team_rosters(season, league_id):
     # db.execute_query("DELETE FROM common_team_roster")
 
     # Get Team IDs from teams table
-    team_ids = db.fetch_all("SELECT team_id FROM teams ORDER BY team_id")
+    team_ids = db.fetch_all("select distinct team_id from team_game_logs")
 
     endpoint = 'commonteamroster'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -131,12 +131,13 @@ def get_team_rosters(season, league_id):
         team_roster = json.loads(r.content.decode())['resultSets'][0]['rowSet']
         # headers = json.loads(r.content.decode())['resultSets'][0]['headers']
 
-        placeholders = '%s,' * len(team_roster[0])
-        for player in team_roster:
-            query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]})'
-            data = tuple(player)
+        if team_roster:
+            placeholders = '%s,' * len(team_roster[0])
+            for player in team_roster:
+                query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]})'
+                data = tuple(player)
 
-            db.insert_data(query, data)
+                db.insert_data(query, data)
 
     # Close database connection
     db.close_connection()
