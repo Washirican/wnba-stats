@@ -14,17 +14,17 @@ TABLE team_game_logs;
 TABLE teams;
 
 -- Delete table data
--- DELETE FROM common_team_roster;
--- DELETE FROM dataset_info;
--- DELETE FROM player_career_stats;
--- DELETE FROM player_game_logs;
--- DELETE FROM players;
--- DELETE FROM season_totals_regular_season;
--- DELETE FROM shot_chart_detail;
--- DELETE FROM teams;
--- DELETE FROM boxscore_player_stats;
--- DELETE FROM boxscore_team_start_bench_stats;
--- DELETE FROM boxscore_team_stats;
+DELETE FROM common_team_roster;
+DELETE FROM dataset_info;
+DELETE FROM player_career_stats;
+DELETE FROM player_game_logs;
+DELETE FROM players;
+DELETE FROM season_totals_regular_season;
+DELETE FROM shot_chart_detail;
+DELETE FROM teams;
+DELETE FROM boxscore_player_stats;
+DELETE FROM boxscore_team_start_bench_stats;
+DELETE FROM boxscore_team_stats;
 
 INSERT INTO player_career_stats VALUES
 (1631086, '2024-25', '10', 1611661325, 'IND', 24.0, 20, 1, 13.3, 1.2, 3.4, 0.338, 0.5, 1.6, 0.281, 0.8, 1.0, 0.8, 0.5, 1.0, 1.5, 0.7, 0.5, 0.2, 0.8, 2.0, 3.6)

@@ -466,6 +466,12 @@ CREATE TABLE IF NOT EXISTS  boxscore_team_start_bench_stats(
 
 ALTER TABLE wnba_data_user.boxscore_team_start_bench_stats OWNER TO wnba_data_user;
 
+
+
+
+
+-- ==================================================================================================
+-- ==================================================================================================
 -- ==================================================================================================
 -- From PGAdmin4
 -- Table: wnba_data_user.boxscore_player_stats
@@ -741,7 +747,7 @@ ALTER TABLE IF EXISTS wnba_data_user.player_game_logs
 
 -- Table: wnba_data_user.players
 
--- DROP TABLE IF EXISTS wnba_data_user.players;
+DROP TABLE IF EXISTS wnba_data_user.players;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.players
 (
@@ -910,7 +916,7 @@ ALTER TABLE IF EXISTS wnba_data_user.team_game_logs
 
 -- Table: wnba_data_user.teams
 
--- DROP TABLE IF EXISTS wnba_data_user.teams;
+DROP TABLE IF EXISTS wnba_data_user.teams;
 
 CREATE TABLE IF NOT EXISTS wnba_data_user.teams
 (
