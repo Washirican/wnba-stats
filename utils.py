@@ -480,35 +480,35 @@ def get_shot_chart_data(season):
     return 0
 
 
-def plot_short_chart(game_id):
+def plot_short_chart(all_shot_data_list, title):
     """Plot player shot chart data."""
     # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
     # data directly from all_shots?
 
     # Query shot chart details data
     # Connect to database:
-    db = Database(user="wnba_data_user", password="password",
-                  host="localhost",
-                  port="5432", database="wnba_data")
-    db.connect()
+    # db = Database(user="wnba_data_user", password="password",
+    #               host="localhost",
+    #               port="5432", database="wnba_data")
+    # db.connect()
 
-    game_headline = db.fetch_one(
-        f"SELECT game_id, player_name, team_name, matchup, game_date, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct FROM player_game_logs where game_id = {game_id} order by game_date")
-
-    all_shot_data_list = db.fetch_all("SELECT * FROM shot_chart_detail")
+    # game_headline = db.fetch_one(
+    #     f"SELECT game_id, player_name, team_name, matchup, game_date, pts, reb, ast, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct FROM player_game_logs where game_id = {game_id} order by game_date")
+    #
+    # all_shot_data_list = db.fetch_all("SELECT * FROM shot_chart_detail")
 
     # Close database connection
-    db.close_connection()
+    # db.close_connection()
 
     # Build chart title
-    player_name = game_headline[1]
-    team_name = game_headline[2]
-    matchup = game_headline[3]
-    game_date = game_headline[4].date()
-    points = game_headline[5]
-    shooting_percentage = float(game_headline[10]) * 100
-
-    scoring_headline = f"{points} pts on {game_headline[8]}/{game_headline[9]} ({shooting_percentage:.2f}% Shooting)"
+    # player_name = game_headline[1]
+    # team_name = game_headline[2]
+    # matchup = game_headline[3]
+    # game_date = game_headline[4].date()
+    # points = game_headline[5]
+    # shooting_percentage = float(game_headline[10]) * 100
+    #
+    # scoring_headline = f"{points} pts on {game_headline[8]}/{game_headline[9]} ({shooting_percentage:.2f}% Shooting)"
 
     x_all = []
     y_all = []
@@ -541,9 +541,9 @@ def plot_short_chart(game_id):
     ax.scatter(x_miss, y_miss, marker='x', c='red')
     ax.scatter(x_made, y_made, facecolors='none', edgecolors='green')
 
-    plt.title(
-        f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} '
-        f'{game_date}')
+    plt.title(title)
+        # f'{player_name} ({team_name})\n{scoring_headline}\n{matchup} '
+        # f'{game_date}')
     ax.axes.xaxis.set_visible(False)
     ax.axes.yaxis.set_visible(False)
 

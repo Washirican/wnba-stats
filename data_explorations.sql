@@ -20,7 +20,7 @@ TABLE teams;
 -- DELETE FROM player_game_logs;
 -- DELETE FROM players;
 -- DELETE FROM season_totals_regular_season;
-DELETE FROM shot_chart_detail;
+-- DELETE FROM shot_chart_detail;
 -- DELETE FROM teams;
 -- DELETE FROM boxscore_player_stats;
 -- DELETE FROM boxscore_team_start_bench_stats;
@@ -92,9 +92,9 @@ SELECT DISTINCT game_id FROM team_game_logs;
 
 SELECT * FROM player_game_logs where player_id = 1631007;
 
-select * from player_career_stats WHERE player_id::integer = 1642288;
+select * from player_career_stats WHERE player_id::integer = 1641648;
 
-select p.player_name, pcs.* from player_career_stats pcs join players p using (player_id) WHERE player_id::integer = 204365;
+select p.player_name, pcs.* from player_career_stats pcs join players p using (player_id) WHERE player_id::integer = 1641648;
 
 select count(distinct game_id) from wnba_data_user.boxscore_player_stats;
 
@@ -124,7 +124,15 @@ SELECT team_id, team_name, game_id FROM team_game_logs WHERE game_id::INTEGER = 
 
 SELECT player_id, player_name, team_id, team_name, game_id FROM player_game_logs WHERE game_id::INTEGER = 1022400148;
 
-SELECT DISTINCT game_id FROM team_game_logs;
+SELECT DISTINCT game_id FROM team_game_logs ORDER BY game_id;
 
-SELECT player_id FROM player_game_logs WHERE game_id::INTEGER = 1022400102;
+SELECT player_id, player_name, team_name FROM player_game_logs WHERE game_id = '1022400148' order by player_id;
+
+SELECT * FROM shot_chart_detail WHERE game_id = '1022400148' AND player_id = '1642292';
+
+select * from shot_chart_detail where player_id = '1642286' and shot_zone_range like '%24+%' order by shot_distance;
+
+select * from player_career_stats where player_id = '1642286';
+
+select * from shot_chart_detail where player_id = '1642286';
 
