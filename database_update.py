@@ -26,15 +26,16 @@ if __name__ == '__main__':
     # SEASON = 2000
     LEAGUE_ID = 10
 
-    for season in range(2020, 2024):
+    for season in range(2020, 2025):
+        season = 2024
         # Get team game logs
-        # u.get_team_game_logs(season, LEAGUE_ID)
+        u.get_team_game_logs(season, LEAGUE_ID)
 
         # Get all team rosters
-        # u.get_team_rosters(season, LEAGUE_ID)
+        u.get_team_rosters(season, LEAGUE_ID)
 
         # Get player regular season totals
-        # u.get_player_career_stats(LEAGUE_ID)
+        u.get_player_career_stats(LEAGUE_ID)
 
         # Get Player Game Log data
         u.get_player_game_logs(season, LEAGUE_ID)

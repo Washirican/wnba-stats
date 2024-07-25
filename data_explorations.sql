@@ -80,7 +80,7 @@ SELECT count(*) FROM players WHERE active_flag::integer = 1;
 
 select ctr.player_id, ctr.player, p.player_id, p.player_name from common_team_roster ctr LEFT JOIN players p USING (player_id) WHERE p.player_id is NULL;
 
-SELECT * FROM common_team_roster where player_id::integer = 1631007;
+SELECT * FROM common_team_roster where player_id::integer = 1630101;
 
 select team_id, matchup, game_id, game_date from team_game_logs order by game_id desc, game_date desc;
 
@@ -130,7 +130,7 @@ SELECT * FROM shot_chart_detail WHERE game_id = '1022400004' AND player_id = '20
 
 select * from shot_chart_detail where player_id = '1642286' and shot_zone_range like '%24+%' order by shot_distance;
 
-select * from player_career_stats where player_id = '204319';
+select * from player_career_stats where player_id = '100052';
 
 select * from shot_chart_detail where player_id = '204319';
 
@@ -139,3 +139,15 @@ select * from players where player_name = 'Loyd, Jewell';
 SELECT * FROM player_game_logs where season_year = '2024' and player_id = 204319 and game_id = '1022400004';
 
 SELECT column_name FROM information_schema.columns WHERE table_name = 'player_game_logs';
+
+select season_year, team_name, team_id from team_game_logs where team_id = '1611661327' order by season_year;
+
+select team_name from team_game_logs where team_id = '1611661327'; 
+
+select * from common_team_roster where teamid = '1611661313' order by season; 
+
+select * from player_career_stats order by season_id;
+
+select distinct season_year from player_game_logs order by season_year asc;
+
+select * from common_team_roster where season = '2024';

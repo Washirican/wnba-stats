@@ -61,6 +61,8 @@ def get_player_list():
     # Insert player data into players database table
     players = player_data['data']['players']
 
+    # teams = player_data['data']['teams']
+
     placeholders = '%s,' * 7
     for player in players:
         query = f'INSERT INTO players VALUES ({placeholders[:-1]})'
