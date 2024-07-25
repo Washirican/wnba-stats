@@ -26,7 +26,8 @@ if __name__ == '__main__':
     # SEASON = 2000
     LEAGUE_ID = 10
 
-    for season in range(2023, 2025):
+    for season in range(2024, 2025):
+        logging.debug(f'Getting data for season {season}...')
         # Get team game logs
         u.get_team_game_logs(season, LEAGUE_ID)
 
