@@ -119,7 +119,7 @@ def get_team_rosters(season, league_id):
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     for team_id in team_ids:
-        logging.debug(f'\nGetting data for team id {team_id}')
+        logging.debug('Getting data for team id %s', team_id)
         parameters = {
             'LeagueID': league_id,
             'Season': season,
@@ -164,7 +164,7 @@ def get_player_career_stats(league_id):
     # db.close_connection()
 
     for player_id in player_ids:
-        logging.debug(f'Getting data for player: {player_id}')
+        logging.debug('Getting data for player: %s', player_id)
         parameters = {
             'LeagueID': league_id,
             'PerMode': 'PerGame',
@@ -219,7 +219,7 @@ def get_player_game_logs(season, league_id):
     # db.close_connection()
 
     for player_id in player_ids:
-        logging.debug(f'Getting game log for: {player_id}')
+        logging.debug('Getting game log for: %s', player_id)
         parameters = {
             'LastNGames': '0',
             'LeagueID': league_id,
@@ -407,13 +407,13 @@ def get_shot_chart_data(season):
 
     # Get Player IDs from teams database table
     player_ids = db.fetch_all(
-        f"SELECT distinct player_id FROM player_game_logs ORDER BY player_id")
+        "SELECT distinct player_id FROM player_game_logs ORDER BY player_id")
 
     # Close database connection
     db.close_connection()
 
     for player_id in player_ids[:]:
-        logging.debug(f'Getting data for player id: {player_id}')
+        logging.debug('Getting data for player id: %s', player_id)
 
         # Connect to database:
         db.connect()
@@ -429,7 +429,7 @@ def get_shot_chart_data(season):
         db.close_connection()
 
         for game_id in game_ids[:]:
-            logging.debug(f'Getting data for game id: {game_id}')
+            logging.debug('Getting data for game id: %s', game_id)
 
             parameters = {
                 'ContextMeasure': 'FGA',
@@ -496,9 +496,6 @@ def get_shot_chart_data(season):
 
 def plot_short_chart(all_shot_data_list, title):
     """Plot player shot chart data."""
-    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
-    # data directly from all_shots?
-
     # Query shot chart details data
     # Connect to database:
     # db = Database(user="wnba_data_user", password="password",
