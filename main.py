@@ -33,7 +33,6 @@ if __name__ == '__main__':
     player = db.fetch_one(f"SELECT * FROM players WHERE player_name = '{player_name_input}'")
     career_stats = db.fetch_all(f"select * from player_career_stats where player_id = '{player[0]}'")
     
-    # FIXME (2024-07-25): Column headers are fetched in different order than data.
     headers_tuple = db.fetch_all("SELECT column_name FROM information_schema.columns WHERE table_name = 'player_career_stats' ORDER BY ordinal_position")
     headers_list = [i[0] for i in headers_tuple]
 
