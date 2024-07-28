@@ -23,6 +23,7 @@ DELETE FROM teams;
 DELETE FROM boxscore_player_stats;
 DELETE FROM boxscore_team_start_bench_stats;
 DELETE FROM boxscore_team_stats;
+DELETE FROM team_game_logs;
 
 INSERT INTO player_career_stats VALUES
 (1631086, '2024-25', '10', 1611661325, 'IND', 24.0, 20, 1, 13.3, 1.2, 3.4, 0.338, 0.5, 1.6, 0.281, 0.8, 1.0, 0.8, 0.5, 1.0, 1.5, 0.7, 0.5, 0.2, 0.8, 2.0, 3.6)

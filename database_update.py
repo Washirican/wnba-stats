@@ -29,19 +29,19 @@ if __name__ == '__main__':
     for season in range(2024, 2025):
         logging.debug(f'Getting data for season {season}...')
         # Get team game logs
-        u.get_team_game_logs(season, LEAGUE_ID)
+        # u.get_team_game_logs(season, LEAGUE_ID)
 
         # Get all team rosters
-        u.get_team_rosters(season, LEAGUE_ID)
+        # u.get_team_rosters(season, LEAGUE_ID)
 
         # Get player regular season totals
-        u.get_player_career_stats(LEAGUE_ID)
+        # u.get_player_career_stats(LEAGUE_ID)
 
         # Get Player Game Log data
-        u.get_player_game_logs(season, LEAGUE_ID)
+        # u.get_player_game_logs(season, LEAGUE_ID)
 
         # Get box scores
-        u.get_game_box_score(season)
+        # u.get_game_box_score(season)
 
         # Get Player shot chart detail data
         u.get_shot_chart_data(season)
