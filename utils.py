@@ -113,13 +113,13 @@ def get_team_rosters(season, league_id):
     # db.execute_query("DELETE FROM common_team_roster")
 
     # Get Team IDs from teams table
-    team_ids = db.fetch_all("select distinct team_id from team_game_logs")
+    team_ids = db.fetch_all("select distinct team_id from teams order by team_id")
 
     endpoint = 'commonteamroster'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     for team_id in team_ids:
-        logging.debug(f'\nGetting data for team id {team_id}')
+        logging.debug('Getting data for team id %s', team_id)
         parameters = {
             'LeagueID': league_id,
             'Season': season,
@@ -164,7 +164,7 @@ def get_player_career_stats(league_id):
     # db.close_connection()
 
     for player_id in player_ids:
-        logging.debug(f'Getting data for player: {player_id}')
+        logging.debug('Getting data for player: %s', player_id)
         parameters = {
             'LeagueID': league_id,
             'PerMode': 'PerGame',
@@ -219,7 +219,7 @@ def get_player_game_logs(season, league_id):
     # db.close_connection()
 
     for player_id in player_ids:
-        logging.debug(f'Getting game log for: {player_id}')
+        logging.debug('Getting game log for: %s', player_id)
         parameters = {
             'LastNGames': '0',
             'LeagueID': league_id,
@@ -402,29 +402,34 @@ def get_shot_chart_data(season):
     # Connect to database:
     db.connect()
 
-    # Get Game IDs from teams table
-    # TODO: Get from player_game_logs to only search for games where
-    #  player participated
-    game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs ORDER BY game_id")
+    # Get Game IDs from teams database table
+    # game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs ORDER BY game_id")
+
+    # Get Player IDs from teams database table
+    player_ids = db.fetch_all(
+        "SELECT distinct player_id FROM player_game_logs ORDER BY player_id")
 
     # Close database connection
     db.close_connection()
 
-    for game_id in game_ids:
-        logging.debug(f'Getting data for game: {game_id}')
+    for player_id in player_ids[:]:
+        logging.debug('Getting data for player id: %s', player_id)
 
         # Connect to database:
         db.connect()
 
+        # Get Game IDs from teams table
+        game_ids = db.fetch_all(f"select game_id from player_game_logs where player_id = {player_id[0]} order by game_id")
+
         # Get Player IDs from teams table
-        player_ids = db.fetch_all(
-            f"SELECT player_id FROM player_game_logs WHERE game_id = {game_id[0]} ORDER BY player_id")
+        # player_ids = db.fetch_all(
+        #     f"SELECT player_id FROM player_game_logs WHERE game_id = {game_id[0]} ORDER BY player_id")
 
         # Close database connection
         db.close_connection()
 
-        for player_id in player_ids:
-            logging.debug(f'Getting data for player: {player_id}')
+        for game_id in game_ids[:]:
+            logging.debug('Getting data for game id: %s', game_id)
 
             parameters = {
                 'ContextMeasure': 'FGA',
@@ -477,6 +482,12 @@ def get_shot_chart_data(season):
                 # Close database connection
                 db.close_connection()
 
+                # Remove game id from list after game id is added to list
+                game_ids.remove(game_id)
+
+        # Remove player id after all game id for player are added to database
+        player_ids.remove(player_id)
+
     # Close database connection
     # db.close_connection()
 
@@ -485,9 +496,6 @@ def get_shot_chart_data(season):
 
 def plot_short_chart(all_shot_data_list, title):
     """Plot player shot chart data."""
-    # TODO D. Rodriguez 2020-04-22: Cleanup variable quantity, maybe read
-    # data directly from all_shots?
-
     # Query shot chart details data
     # Connect to database:
     # db = Database(user="wnba_data_user", password="password",
