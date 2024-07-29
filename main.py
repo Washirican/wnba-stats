@@ -16,10 +16,9 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%d-%b-%y %H:%M:%S')
 
 
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 if __name__ == '__main__':
-
     player_name_input = input('Enter player name (Last, First): ')
 
     # Query shot chart details data
@@ -30,39 +29,42 @@ if __name__ == '__main__':
     # Connect to database:
     db.connect()
 
-    player = db.fetch_one(
-        f"SELECT * "
-        f"FROM players "
-        f"WHERE player_name = '{player_name_input}'")
-    career_stats = db.fetch_all(
-        f"SELECT * "
-        f"FROM player_career_stats "
-        f"WHERE player_id = '{player[0]}'")
+    SQL = """SELECT *
+            FROM players
+            WHERE player_name = %s """
+    params = (player_name_input, )
 
-    headers_tuple = db.fetch_all(
-        """SELECT column_name
-        FROM information_schema.columns
-        WHERE table_name = 'player_career_stats'
-        ORDER BY ordinal_position""")
-    headers_list = [i[0] for i in headers_tuple]
+    player = db.fetch_one(SQL, params)
+
+    SQL = """SELECT pcs.season_id, p.player_name, t.team_name, pcs.pts, pcs.reb, pcs.ast
+            FROM player_career_stats pcs
+            LEFT JOIN players p ON pcs.player_id = p.player_id
+            LEFT JOIN teams t ON pcs.team_id = t.team_id
+            WHERE pcs.player_id = %s
+            ORDER BY pcs.season_id;"""
+    params = (player[0], )
+
+    career_stats = db.fetch_all(SQL, params)
+
+    headers_list = ['Season', 'Player Name', 'Team Name', 'Points', 'Rebounds', 'Assists']
 
     # Print tabulated career totals per season
     print(tabulate(career_stats, headers=headers_list, tablefmt="pretty"))
 
     season = input('Enter season: ')
 
-    player_game_log = db.fetch_all(
-        f"SELECT * "
-        f"FROM player_game_logs "
-        f"WHERE season_year = '{season}' "
-            f"AND player_id = '{player[0]}'")
+    SQL = """
+            SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.game_id, pgl.pts, pgl.reb, pgl.ast
+            FROM player_game_logs pgl
+            WHERE pgl.season_year = %s
+            AND pgl.player_id = %s
+            ORDER BY pgl.game_date;
+        """
+    params = (season, player[0])
 
-    headers_tuple = db.fetch_all(
-        """SELECT column_name
-        FROM information_schema.columns
-        WHERE table_name = 'player_game_logs'
-        ORDER BY ordinal_position""")
-    headers_list = [i[0] for i in headers_tuple]
+    player_game_log = db.fetch_all(SQL, params)
+
+    headers_list = ['Season', 'Player Name', 'Team Name', 'Matchup', 'Game ID', 'Points', 'Rebounds', 'Assists']
 
     # Print tabulated player game log for season
     print(tabulate(player_game_log, headers=headers_list, tablefmt="pretty"))
@@ -70,54 +72,22 @@ if __name__ == '__main__':
     # Get shot chart detail for game id
     game_id = input('Enter game id: ')
 
-    all_shot_data_list = db.fetch_all(
-        f"SELECT * "
-        f"FROM shot_chart_detail "
-        f"WHERE game_id = '{game_id}' "
-            f"AND player_id = '{player[0]}'")
-    made_shots = db.fetch_all(
-        f"SELECT * "
-        f"FROM shot_chart_detail "
-        f"WHERE game_id = '{game_id}' "
-            f"AND player_id = '{player[0]}' "
-            f"AND shot_made_flag = '1'")
+    SQL = """SELECT *
+            FROM shot_chart_detail
+            WHERE game_id = %s
+            AND player_id = %s """
+    params = (game_id, player[0])
 
-    # 2s
-    # all_shot_data_list = db.fetch_all(
-    # "select *
-    # from shot_chart_detail
-    # where player_id = '1642286'
-    #   and shot_type = '2PT Field Goal'")
-    # made_shots = db.fetch_all(
-    # "select *
-    # from shot_chart_detail
-    # where player_id = '1642286'
-    #   and shot_type = '2PT Field Goal'
-    #   and shot_made_flag = '1'")
+    all_shot_data_list = db.fetch_all(SQL, params)
 
-    # 3s
-    # all_shot_data_list = db.fetch_all(
-    # "select *
-    # from shot_chart_detail
-    # where player_id = '1642286'
-    #   and shot_type = '3PT Field Goal'")
-    # made_shots = db.fetch_all(
-    # "select *
-    # from shot_chart_detail
-    # where player_id = '1642286'
-    #   and shot_type = '3PT Field Goal'
-    #   and shot_made_flag = '1'")
+    SQL = """SELECT *
+            FROM shot_chart_detail
+            WHERE game_id = %s
+            AND player_id = %s
+            AND shot_made_flag = '1'"""
+    params = (game_id, player[0])
 
-    # All shots
-    # all_shot_data_list = db.fetch_all(
-    # f"select *
-    # from shot_chart_detail
-    # where player_id = '{player[0]}'")
-    # made_shots = db.fetch_all(
-    # f"select *
-    # from shot_chart_detail
-    # where player_id = '{player[0]}'
-    #   and shot_made_flag = '1'")
+    made_shots = db.fetch_all(SQL, params)
 
     # Close database connection
     db.close_connection()

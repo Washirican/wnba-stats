@@ -1,7 +1,9 @@
 # !/usr/bin/env python3
 """PostgreSQL database connection and transactions"""
 
+from ast import List
 import logging
+from h11 import Connection
 import psycopg2
 
 # Create a custom logger
@@ -67,32 +69,35 @@ class Database:
         except (Exception, psycopg2.Error) as error:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
-    def fetch_one(self, query):
+    def fetch_one(self, query: str, params: tuple) -> List:
         """Execute SQL database query."""
         try:
-            self.cursor.execute(query)
+            self.cursor.execute(query, params)
             result = self.cursor.fetchone()
-            return result
 
         except (Exception, psycopg2.Error) as error:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
+            result = []
+        return result
 
-    def fetch_all(self, query):
+    def fetch_all(self, query: str, params: tuple) -> List:
         """Execute SQL database query."""
         try:
-            self.cursor.execute(query)
+            self.cursor.execute(query, params)
             result = self.cursor.fetchall()
-            return result
 
         except (Exception, psycopg2.Error) as error:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
+            result = []
+        return result
 
-    def fetch_many(self, query, size):
+    def fetch_many(self, size: int, query: str, params: tuple) -> List:
         """Execute SQL database query."""
         try:
-            self.cursor.execute(query)
+            self.cursor.execute(query, params)
             result = self.cursor.fetchmany(size)
-            return result
 
         except (Exception, psycopg2.Error) as error:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
+            result = []
+        return result

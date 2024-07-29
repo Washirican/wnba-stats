@@ -5,8 +5,6 @@ This code connects to a PostgreSQL database.
 """
 import logging
 
-from tabulate import tabulate
-
 import utils as u
 from database import Database
 
@@ -27,17 +25,24 @@ if __name__ == '__main__':
     # Connect to database:
     db.connect()
 
-    SHOT_TYPE = 'Step Back Jump shot'
-    all_shot_data_list = db.fetch_all(
-        f"SELECT * "
-        f"FROM shot_chart_detail "
-        f"WHERE action_type = '{SHOT_TYPE}'")
+    SHOT_TYPE = 'Pullup Jump shot'
 
-    made_shots = db.fetch_all(
-        f"SELECT *"
-        f"FROM shot_chart_detail "
-        f"WHERE action_type = '{SHOT_TYPE}'"
-        f"AND shot_made_flag = '1' ")
+    SQL = """SELECT *
+            FROM shot_chart_detail
+            WHERE action_type = %s """
+
+    params = (SHOT_TYPE,)
+
+    all_shot_data_list = db.fetch_all(SQL, params)
+
+    SQL =  """SELECT *
+            FROM shot_chart_detail
+            WHERE action_type = %s
+            AND shot_made_flag = '1'"""
+
+    params = (SHOT_TYPE,)
+
+    made_shots = db.fetch_all(SQL, params)
 
      # Close database connection
     db.close_connection()
