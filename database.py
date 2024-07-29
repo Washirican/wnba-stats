@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.DEBUG,
 # logging.disable(logging.CRITICAL)
 
 class Database:
+    """Database class initialization."""
     def __init__(self, user, password, host, port, database):
         self.user = user
         self.password = password
@@ -23,6 +24,7 @@ class Database:
         self.cursor = None
 
     def connect(self):
+        """Connect to database."""
         try:
             self.connection = psycopg2.connect(
                 user=self.user,
@@ -38,6 +40,7 @@ class Database:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
     def close_connection(self):
+        """Close database connection."""
         if self.cursor:
             self.cursor.close()
         if self.connection:
@@ -45,6 +48,7 @@ class Database:
         logging.info("Connection closed.")
 
     def execute_query(self, query):
+        """Execute SQL query."""
         try:
             self.cursor.execute(query)
             self.connection.commit()
@@ -54,6 +58,7 @@ class Database:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
     def insert_data(self, query, data):
+        """Execute insert SQL code."""
         try:
             self.cursor.execute(query, data)
             self.connection.commit()
@@ -63,6 +68,7 @@ class Database:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
     def fetch_one(self, query):
+        """Execute SQL database query."""
         try:
             self.cursor.execute(query)
             result = self.cursor.fetchone()
@@ -72,6 +78,7 @@ class Database:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
     def fetch_all(self, query):
+        """Execute SQL database query."""
         try:
             self.cursor.execute(query)
             result = self.cursor.fetchall()
@@ -81,6 +88,7 @@ class Database:
             logging.debug('Error while connecting to PostgreSQL: %s', error)
 
     def fetch_many(self, query, size):
+        """Execute SQL database query."""
         try:
             self.cursor.execute(query)
             result = self.cursor.fetchmany(size)
