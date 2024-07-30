@@ -161,7 +161,7 @@ SELECT * FROM shot_chart_detail;
 
 SELECT DISTINCT action_type FROM shot_chart_detail ORDER BY action_type;
 
-SELECT event_type, action_type, shot_type, shot_zone_basic, shot_zone_area, shot_zone_range FROM shot_chart_detail;
+SELECT shot_zone_basic, shot_zone_area FROM shot_chart_detail ORDER by shot_zone_basic;
 
 SELECT pcs.season_id, p.player_name, t.team_name, pcs.pts, pcs.reb, pcs.ast
 	FROM player_career_stats pcs 
@@ -184,3 +184,15 @@ SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.pts, pg
   ORDER BY pgl.game_date;
 
 SELECT DISTINCT season FROM common_team_roster;
+
+SELECT DISTINCT action_type FROM shot_chart_detail;
+
+SELECT DISTINCT shot_zone_basic FROM shot_chart_detail;
+
+SELECT DISTINCT shot_zone_area FROM shot_chart_detail;
+
+SELECT DISTINCT shot_zone_range FROM shot_chart_detail;
+
+SELECT * FROM boxscore_player_stats WHERE game_id = '1022400010' order by fga::integer;
+
+select * FROM player_game_logs WHERE game_id = '1022400010' AND player_id = '1642286';
