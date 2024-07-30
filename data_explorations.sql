@@ -161,7 +161,7 @@ SELECT * FROM shot_chart_detail;
 
 SELECT DISTINCT action_type FROM shot_chart_detail ORDER BY action_type;
 
-SELECT shot_zone_basic, shot_zone_area FROM shot_chart_detail ORDER by shot_zone_basic;
+SELECT action_type, shot_zone_basic, shot_zone_area,shot_zone_range FROM shot_chart_detail ORDER by action_type ;
 
 SELECT pcs.season_id, p.player_name, t.team_name, pcs.pts, pcs.reb, pcs.ast
 	FROM player_career_stats pcs 
@@ -185,7 +185,7 @@ SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.pts, pg
 
 SELECT DISTINCT season FROM common_team_roster;
 
-SELECT DISTINCT action_type FROM shot_chart_detail;
+SELECT DISTINCT action_type FROM shot_chart_detail ORDER by action_type;
 
 SELECT DISTINCT shot_zone_basic FROM shot_chart_detail;
 
