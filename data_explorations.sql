@@ -199,6 +199,6 @@ select * FROM player_game_logs WHERE game_id = '1022400010' AND player_id = '164
 
 SELECT *
   FROM shot_chart_detail
-  WHERE (shot_zone_basic != 'Backcourt'
+  WHERE (shot_zone_area != 'Back Court(BC)'
   AND shot_made_flag = '1')
   ORDER BY shot_distance::integer DESC;
