@@ -178,9 +178,9 @@ select * from players p WHERE player_id = '1627668';
 
 
 SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.pts, pgl.reb, pgl.ast
-FROM player_game_logs pgl
-WHERE pgl.player_id = 204319
-AND pgl.season_year = 2024
-ORDER BY pgl.game_date
-;
+  FROM player_game_logs pgl
+  WHERE pgl.player_id = 204319
+  AND pgl.season_year = 2024
+  ORDER BY pgl.game_date;
 
+SELECT DISTINCT season FROM common_team_roster;
