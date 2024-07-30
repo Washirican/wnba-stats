@@ -29,7 +29,8 @@ if __name__ == '__main__':
 
     SQL = """SELECT *
             FROM shot_chart_detail
-            WHERE action_type = %s """
+            WHERE (action_type = %s 
+            AND shot_zone_basic != 'Backcourt') """
 
     params = (SHOT_TYPE,)
 
@@ -37,8 +38,9 @@ if __name__ == '__main__':
 
     SQL =  """SELECT *
             FROM shot_chart_detail
-            WHERE action_type = %s
-            AND shot_made_flag = '1'"""
+            WHERE (action_type = %s
+            AND shot_zone_basic != 'Backcourt'
+            AND shot_made_flag = '1') """
 
     params = (SHOT_TYPE,)
 

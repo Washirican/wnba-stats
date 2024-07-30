@@ -196,3 +196,9 @@ SELECT DISTINCT shot_zone_range FROM shot_chart_detail;
 SELECT * FROM boxscore_player_stats WHERE game_id = '1022400010' order by fga::integer;
 
 select * FROM player_game_logs WHERE game_id = '1022400010' AND player_id = '1642286';
+
+SELECT *
+  FROM shot_chart_detail
+  WHERE (shot_zone_basic != 'Backcourt'
+  AND shot_made_flag = '1')
+  ORDER BY shot_distance::integer DESC;
