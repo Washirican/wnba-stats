@@ -35,9 +35,7 @@ SELECT * FROM teams WHERE team_id::integer = 1611661323;
 
 SELECT * FROM teams WHERE team_id::integer = 1611661330;
 
-select * FROM players where player_id::integer = 100940;
-
-select * FROM players where player_id::integer = 1630149;
+select * FROM players where player_id::integer = 203826;
 
 select * FROM common_team_roster where player_id::integer = 100940;
 
@@ -125,7 +123,7 @@ SELECT player_id, player_name, team_id, team_name, game_id FROM player_game_logs
 
 SELECT DISTINCT game_id FROM team_game_logs ORDER BY game_id;
 
-SELECT player_id, player_name, team_name FROM player_game_logs WHERE game_id = '1022400148' order by player_id;
+SELECT player_id, player_name, team_name FROM player_game_logs WHERE game_id = '1022400102' order by player_id;
 
 SELECT * FROM shot_chart_detail WHERE game_id = '1022400004' AND player_id = '204319';
 
@@ -152,3 +150,55 @@ select * from player_career_stats order by season_id;
 select distinct season_year from player_game_logs order by season_year asc;
 
 select * from common_team_roster where season = '2024';
+
+select distinct team_id from teams order by team_id;
+
+select game_id from player_game_logs where player_id = 1642290 order by game_id;
+
+SELECT distinct player_id FROM player_game_logs ORDER BY player_id;
+
+SELECT * FROM shot_chart_detail;
+
+SELECT DISTINCT action_type FROM shot_chart_detail ORDER BY action_type;
+
+SELECT action_type, shot_zone_basic, shot_zone_area,shot_zone_range FROM shot_chart_detail ORDER by action_type ;
+
+SELECT pcs.season_id, p.player_name, t.team_name, pcs.pts, pcs.reb, pcs.ast
+	FROM player_career_stats pcs 
+	LEFT JOIN players p ON pcs.player_id = p.player_id
+	LEFT JOIN teams t ON pcs.team_id = t.team_id
+	WHERE pcs.player_id = '1627668'
+	ORDER BY pcs.season_id;
+
+
+select * from player_game_logs pgl WHERE player_id = '1627668'; -- where player_name like '%Stewart%';
+select * from player_career_stats pcs WHERE player_id = '1627668'; -- where player_name like '%Stewart%';
+select * from teams t;
+select * from players p WHERE player_id = '1627668';
+
+
+SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.pts, pgl.reb, pgl.ast
+  FROM player_game_logs pgl
+  WHERE pgl.player_id = 204319
+  AND pgl.season_year = 2024
+  ORDER BY pgl.game_date;
+
+SELECT DISTINCT season FROM common_team_roster;
+
+SELECT DISTINCT action_type FROM shot_chart_detail ORDER by action_type;
+
+SELECT DISTINCT shot_zone_basic FROM shot_chart_detail;
+
+SELECT DISTINCT shot_zone_area FROM shot_chart_detail;
+
+SELECT DISTINCT shot_zone_range FROM shot_chart_detail;
+
+SELECT * FROM boxscore_player_stats WHERE game_id = '1022400010' order by fga::integer;
+
+select * FROM player_game_logs WHERE game_id = '1022400010' AND player_id = '1642286';
+
+SELECT *
+  FROM shot_chart_detail
+  WHERE (shot_zone_area != 'Back Court(BC)'
+  AND shot_made_flag = '1')
+  ORDER BY shot_distance::integer DESC;
