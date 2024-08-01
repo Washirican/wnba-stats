@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     SQL = """SELECT *
             FROM players
-            WHERE player_name = %s """
+            WHERE player_name ILIKE %s """
     params = (player_name_input, )
 
     player = db.fetch_one(SQL, params)
