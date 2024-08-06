@@ -3,7 +3,7 @@ TABLE boxscore_team_start_bench_stats;
 TABLE boxscore_team_stats;
 TABLE common_team_roster;
 TABLE dataset_info;
-TABLE player_career_stats;
+TABLE player_career_stats;asd
 TABLE player_game_logs;
 TABLE players;
 TABLE season_totals_regular_season;
@@ -202,3 +202,6 @@ SELECT *
   WHERE (shot_zone_area != 'Back Court(BC)'
   AND shot_made_flag = '1')
   ORDER BY shot_distance::integer DESC;
+
+select * from wnba_data_user.boxscore_team_start_bench_stats
+where team_name ilike 'storm' and game_id = '1022400072';
