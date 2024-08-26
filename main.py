@@ -54,7 +54,7 @@ if __name__ == '__main__':
     season = input('Enter season: ')
 
     SQL = """
-            SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.game_id, pgl.pts, pgl.reb, pgl.ast
+            SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.game_date::date, pgl.matchup, pgl.game_id, pgl.pts, pgl.reb, pgl.ast
             FROM player_game_logs pgl
             WHERE pgl.season_year = %s
             AND pgl.player_id = %s
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     player_game_log = db.fetch_all(SQL, params)
 
-    headers_list = ['Season', 'Player Name', 'Team Name', 'Matchup', 'Game ID', 'Points', 'Rebounds', 'Assists']
+    headers_list = ['Season', 'Player Name', 'Team Name', 'Game Date', 'Matchup', 'Game ID', 'Points', 'Rebounds', 'Assists']
 
     # Print tabulated player game log for season
     print(tabulate(player_game_log, headers=headers_list, tablefmt="pretty"))
