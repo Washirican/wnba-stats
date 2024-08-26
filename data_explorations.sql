@@ -205,3 +205,9 @@ SELECT *
 
 select * from wnba_data_user.boxscore_team_start_bench_stats
 where team_name ilike 'storm' and game_id = '1022400072';
+
+SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.game_id, pgl.pts, pgl.reb, pgl.ast
+        FROM player_game_logs pgl
+        WHERE pgl.season_year = %s
+        AND pgl.player_id = %s
+        ORDER BY pgl.game_date;
