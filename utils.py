@@ -52,7 +52,7 @@ def get_player_list():
 
     # Save data to database tables
     placeholders = '%s,' * 4
-    query = f'INSERT INTO dataset_info VALUES ({placeholders[:-1]})'
+    query = f'INSERT INTO dataset_info VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
     data = (player_data['generated'], player_data['seasons_count'],
             player_data['teams_count'], player_data['players_count'])
 
@@ -65,7 +65,7 @@ def get_player_list():
 
     placeholders = '%s,' * 7
     for player in players:
-        query = f'INSERT INTO players VALUES ({placeholders[:-1]})'
+        query = f'INSERT INTO players VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
         data = tuple(player)
 
         db.insert_data(query, data)
@@ -91,7 +91,8 @@ def get_teams_list():
 
     placeholders = '%s,' * 9
     for team in team_data.values():
-        query = f'INSERT INTO teams VALUES ({placeholders[:-1]})'
+        # db.connect()
+        query = f'INSERT INTO teams VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
         data = tuple(team.values())
 
         db.insert_data(query, data)
@@ -136,7 +137,7 @@ def get_team_rosters(season, league_id):
         if team_roster:
             placeholders = '%s,' * len(team_roster[0])
             for player in team_roster:
-                query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]})'
+                query = f'INSERT INTO common_team_roster VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
                 data = tuple(player)
 
                 db.insert_data(query, data)
@@ -191,7 +192,7 @@ def get_player_career_stats(league_id):
         if regular_season_totals:
             placeholders = '%s,' * len(regular_season_totals[0])
             for season in regular_season_totals:
-                query = f'INSERT INTO player_career_stats VALUES ({placeholders[:-1]})'
+                query = f'INSERT INTO player_career_stats VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
                 data = tuple(season)
                 db.insert_data(query, data)
 
@@ -259,7 +260,7 @@ def get_player_game_logs(season, league_id):
         if game_list:
             placeholders = '%s,' * len(game_list[0])
             for game in game_list:
-                query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]})'
+                query = f'INSERT INTO player_game_logs VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
                 data = tuple(game)
                 db.insert_data(query, data)
 
@@ -307,7 +308,7 @@ def get_team_game_logs(season, league_id):
 
     placeholders = '%s,' * len(team_game_logs[0])
     for game in team_game_logs:
-        query = f'INSERT INTO team_game_logs VALUES ({placeholders[:-1]})'
+        query = f'INSERT INTO team_game_logs VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
         data = tuple(game)
         db.insert_data(query, data)
 
@@ -366,7 +367,7 @@ def get_game_box_score(season):
 
         placeholders = '%s,' * len(player_stats[0])
         for game in player_stats:
-            query = f'INSERT INTO boxscore_player_stats VALUES ({placeholders[:-1]})'
+            query = f'INSERT INTO boxscore_player_stats VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
             data = tuple(game)
             db.insert_data(query, data)
 
@@ -375,7 +376,7 @@ def get_game_box_score(season):
 
         placeholders = '%s,' * len(start_bench_stats[0])
         for game in start_bench_stats:
-            query = f'INSERT INTO boxscore_team_start_bench_stats VALUES ({placeholders[:-1]})'
+            query = f'INSERT INTO boxscore_team_start_bench_stats VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
             data = tuple(game)
             db.insert_data(query, data)
 
@@ -384,7 +385,7 @@ def get_game_box_score(season):
 
         placeholders = '%s,' * len(team_stats[0])
         for game in team_stats:
-            query = f'INSERT INTO boxscore_team_stats VALUES ({placeholders[:-1]})'
+            query = f'INSERT INTO boxscore_team_stats VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
             data = tuple(game)
             db.insert_data(query, data)
 
@@ -475,7 +476,7 @@ def get_shot_chart_data(season):
 
                 placeholders = '%s,' * len(shot_chart_data[0])
                 for shot in shot_chart_data:
-                    query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]})'
+                    query = f'INSERT INTO shot_chart_detail VALUES ({placeholders[:-1]}) ON CONFLICT DO NOTHING'
                     data = tuple(shot)
                     db.insert_data(query, data)
 

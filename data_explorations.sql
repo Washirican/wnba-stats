@@ -11,6 +11,12 @@ TABLE shot_chart_detail;
 TABLE team_game_logs;
 TABLE teams;
 
+ALTER TABLE team_game_logs ALTER COLUMN gp_rank TYPE integer USING (gp_rank::integer);
+
+ALTER TABLE team_game_logs ALTER COLUMN plus_minus TYPE float(1) USING (plus_minus::float(1));
+
+
+
 -- Delete table data
 DELETE FROM common_team_roster;
 DELETE FROM dataset_info;

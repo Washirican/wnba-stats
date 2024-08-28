@@ -67,7 +67,7 @@ class Database:
             logging.info("Data inserted successfully!")
 
         except (Exception, psycopg2.Error) as error:
-            logging.debug('Error while connecting to PostgreSQL: %s', error)
+            logging.debug('Error while inserting data to PostgreSQL database: %s', error)
 
     def fetch_one(self, query: str, params: tuple) -> List:
         """Execute SQL database query."""
