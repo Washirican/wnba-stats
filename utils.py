@@ -114,7 +114,14 @@ def get_team_rosters(season, league_id):
     # db.execute_query("DELETE FROM common_team_roster")
 
     # Get Team IDs from teams table
-    team_ids = db.fetch_all("select distinct team_id from teams order by team_id")
+
+    SQL = """SELECT DISTINCT team_id
+                FROM teams
+                ORDER by team_id"""
+    params = ()
+
+    team_ids = db.fetch_all(SQL, params)
+    # team_ids = db.fetch_all("select distinct team_id from teams order by team_id")
 
     endpoint = 'commonteamroster'
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
@@ -158,8 +165,10 @@ def get_player_career_stats(league_id):
     # db.execute_query("DELETE FROM common_team_roster")
 
     # Get Team IDs from teams table
-    player_ids = db.fetch_all(
-        "SELECT player_id FROM common_team_roster ORDER BY player_id")
+    SQL = """SELECT player_id FROM common_team_roster ORDER BY player_id"""
+    params = ()
+    player_ids = db.fetch_all(SQL, params)
+    # player_ids = db.fetch_all("SELECT player_id FROM common_team_roster ORDER BY player_id")
 
     # Close database connection
     # db.close_connection()
@@ -214,7 +223,10 @@ def get_player_game_logs(season, league_id):
     # db.execute_query("DELETE FROM common_team_roster")
 
     # Get Player IDs from teams table
-    player_ids = db.fetch_all("SELECT player_id FROM common_team_roster ORDER BY player_id")
+    SQL = """SELECT player_id FROM common_team_roster ORDER BY player_id"""
+    params = ()
+    player_ids = db.fetch_all(SQL, params)
+    # player_ids = db.fetch_all("SELECT player_id FROM common_team_roster ORDER BY player_id")
 
     # Close database connection
     # db.close_connection()
@@ -327,7 +339,10 @@ def get_game_box_score(season):
     db.connect()
 
     # Get Team IDs from teams table
-    game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs")
+    SQL = """SELECT DISTINCT game_id FROM team_game_logs"""
+    params = ()
+    game_ids = db.fetch_all(SQL, params)
+    # game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs")
 
     # Close database connection
     # db.close_connection()
@@ -407,8 +422,10 @@ def get_shot_chart_data(season):
     # game_ids = db.fetch_all("SELECT DISTINCT game_id FROM team_game_logs ORDER BY game_id")
 
     # Get Player IDs from teams database table
-    player_ids = db.fetch_all(
-        "SELECT distinct player_id FROM player_game_logs ORDER BY player_id")
+    SQL = """SELECT distinct player_id FROM player_game_logs ORDER BY player_id"""
+    params = ()
+    player_ids = db.fetch_all(SQL, params)
+    # player_ids = db.fetch_all("SELECT distinct player_id FROM player_game_logs ORDER BY player_id")
 
     # Close database connection
     db.close_connection()
@@ -420,7 +437,10 @@ def get_shot_chart_data(season):
         db.connect()
 
         # Get Game IDs from teams table
-        game_ids = db.fetch_all(f"select game_id from player_game_logs where player_id = {player_id[0]} order by game_id")
+        SQL = f"select game_id from player_game_logs where player_id = {player_id[0]} order by game_id"
+        params = ()
+        game_ids = db.fetch_all(SQL, params)
+        # game_ids = db.fetch_all(f"select game_id from player_game_logs where player_id = {player_id[0]} order by game_id")
 
         # Get Player IDs from teams table
         # player_ids = db.fetch_all(

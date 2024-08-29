@@ -3,7 +3,7 @@ TABLE boxscore_team_start_bench_stats;
 TABLE boxscore_team_stats;
 TABLE common_team_roster;
 TABLE dataset_info;
-TABLE player_career_stats;asd
+TABLE player_career_stats;
 TABLE player_game_logs;
 TABLE players;
 TABLE season_totals_regular_season;
@@ -11,11 +11,11 @@ TABLE shot_chart_detail;
 TABLE team_game_logs;
 TABLE teams;
 
-ALTER TABLE team_game_logs ALTER COLUMN gp_rank TYPE integer USING (gp_rank::integer);
+ALTER TABLE boxscore_player_stats ALTER COLUMN min TYPE character varying(45) USING (min::character varying(45));
 
-ALTER TABLE team_game_logs ALTER COLUMN plus_minus TYPE float(1) USING (plus_minus::float(1));
+ALTER TABLE common_team_roster ADD PRIMARY KEY (season, teamid, player_id); 
 
-
+select * from common_team_roster where (season, teamid, player_id)=(2024, 1611661328, 1642299);
 
 -- Delete table data
 DELETE FROM common_team_roster;

@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 # logging.disable(logging.CRITICAL)
 
-season = 2024
+seasons = [2024]
 LEAGUE_ID = 10
 
 if __name__ == '__main__':
@@ -26,8 +26,8 @@ if __name__ == '__main__':
     # Get all teams list
     u.get_teams_list()
 
-    for season in range(2024, 2025):
-        logging.debug('Getting data for season %s...', season)
+    for season in seasons:
+        logging.debug('Getting data for %s season...', season)
         # Get team game logs
         u.get_team_game_logs(season, LEAGUE_ID)
 
