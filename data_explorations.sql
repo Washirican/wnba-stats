@@ -217,3 +217,5 @@ SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.game_id
         WHERE pgl.season_year = %s
         AND pgl.player_id = %s
         ORDER BY pgl.game_date;
+
+SELECT DISTINCT game_date FROM shot_chart_detail ORDER BY game_date DESC;
