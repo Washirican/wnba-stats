@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.DEBUG,
 seasons = [2024]
 LEAGUE_ID = 10
 
+season = 2024
 if __name__ == '__main__':
     # Get all players list
     u.get_player_list()
