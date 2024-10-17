@@ -219,3 +219,23 @@ SELECT pgl.season_year, pgl.player_name, pgl.team_name, pgl.matchup, pgl.game_id
         ORDER BY pgl.game_date;
 
 SELECT DISTINCT game_date FROM shot_chart_detail ORDER BY game_date DESC;
+
+select player_name, 
+        matchup, 
+        wl, 
+        pts::numeric, 
+        reb::numeric, 
+        ast::numeric --, fgm, fga, fg3m, fg3a, ftm, fta
+from player_game_logs
+where player_name = 'Breanna Stewart'
+
+union 
+
+select 'Breana Stewart'::varchar(45), 
+        'Totals'::varchar(45), 
+        count(wl)::varchar(45) as Games_played, 
+        avg(pts::numeric) as Points, 
+        avg(reb::numeric) as Rebounds, 
+        avg(ast::numeric) as Assists 
+from player_game_logs where player_name = 'Breanna Stewart'
+order by matchup;
