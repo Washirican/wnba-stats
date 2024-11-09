@@ -4,11 +4,8 @@ Scrip to request Shot Chart Detail data from WNBA API and save to csv file
 
 import json
 import logging
-
-import matplotlib.pyplot as plt
+import csv
 import requests
-
-from database import Database
 
 # Create a custom logger
 logging.basicConfig(level=logging.DEBUG,
@@ -40,7 +37,21 @@ PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
 def get_player_list():
     """Get players list."""
     r = requests.get(PLAYER_INDEX_URL, timeout=10)
-    player_data = json.loads(r.content.decode()[17:-1])  # ['data']['players']
+
+    player_data = json.loads(r.content.decode()[17:-1])
+    players = player_data['data']['players']
+    data_info = [player_data['generated'], player_data['seasons_count'],
+            player_data['teams_count'], player_data['players_count']]
+
+    # output_file = open('data_details.csv')
+
+    with open('data_details.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(data_info)
+
+    with open('player_data.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(players)
 
 
 def get_teams_list():
@@ -48,7 +59,16 @@ def get_teams_list():
     r = requests.get(TEAM_INDEX_URL, timeout=10)
     team_data = json.loads(r.content.decode())
 
+    teams = team_data.values()
 
+    # FIXME (2024-11-09): Fix saving data to csv file.
+    with open('teams_data.csv', 'w', newline='') as csvfile:
+        # fieldnames = ['name', 'branch', 'year', 'cgpa']
+        writer = csv.DictWriter(csvfile) #, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(team_data)
+
+# FIXME (2024-11-09): Fix this function
 for game_id in game_ids[:]:
     logging.debug('Getting data for game id: %s', game_id)
 
