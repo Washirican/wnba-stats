@@ -2,7 +2,6 @@
 """
 WNBA Data
 """
-import logging
 import save_shot_chart_detail_to_csv as u
 
 seasons = [2024]
@@ -16,7 +15,6 @@ if __name__ == '__main__':
     # u.get_teams_list()
 
     for season in seasons:
-        # logging.debug('Getting data for %s season...', season)
         # # Get team game logs
         # u.get_team_game_logs(season, LEAGUE_ID)
 
