@@ -6,6 +6,8 @@ import json
 import logging
 import csv
 import requests
+from collections import defaultdict
+
 
 # Create a custom logger
 logging.basicConfig(level=logging.DEBUG,
@@ -34,6 +36,24 @@ PLAYER_INDEX_URL = 'https://stats.wnba.com/js/data/ptsd/stats_ptsd.js'
 
 season = 2024
 league_id = 10
+
+
+def create_player_game_dict(filename):
+    # Use defaultdict to automatically initialize lists for new player IDs
+    player_game_dict = defaultdict(list)
+    
+    # Open the CSV file and read its contents
+    with open(filename, mode='r') as file:
+        reader = csv.DictReader(file)  # Use DictReader to access columns by name
+        
+        for row in reader:
+            player_id = row['PLAYER_ID']
+            game_id = row['GAME_ID']
+            
+            # Append game_id to the list for each unique player_id
+            player_game_dict[player_id].append(game_id)
+    
+    return dict(player_game_dict)  # Convert defaultdict to a regular dictionary
 
 
 def get_player_list():
@@ -120,7 +140,7 @@ def get_team_game_logs(season, league_id):
 
 def get_team_rosters(season, league_id):
     """Get team roster for a specific season or current roster (?)."""
-    
+    # TODO (2024-11-12): Use function to get this list from csv file
     team_ids = [1611661330,
                 1611661329,
                 1611661323,
@@ -135,9 +155,6 @@ def get_team_rosters(season, league_id):
                 1611661322
     ]
 
-    endpoint = 'commonteamroster'
-    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
     # Get headers
     team_id = team_ids[0]
     parameters = {
@@ -145,6 +162,10 @@ def get_team_rosters(season, league_id):
             'Season': season,
             'TeamID': team_id
         }
+    
+    endpoint = 'commonteamroster'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
     r = requests.get(request_url,
                          headers=HEADERS,
                          params=parameters,
@@ -155,19 +176,22 @@ def get_team_rosters(season, league_id):
         writer = csv.writer(csvfile)
         writer.writerow(headers)
 
-        for team_id in team_ids:
-            logging.debug('Getting data for team id %s', team_id)
-            parameters = {
-                'LeagueID': league_id,
-                'Season': season,
-                'TeamID': team_id
-            }
+    for team_id in team_ids:
+        logging.debug('Getting data for team id %s', team_id)
+        parameters = {
+            'LeagueID': league_id,
+            'Season': season,
+            'TeamID': team_id
+        }
 
-            r = requests.get(request_url,
-                            headers=HEADERS,
-                            params=parameters,
-                            timeout=10)
-            team_roster = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        r = requests.get(request_url,
+                        headers=HEADERS,
+                        params=parameters,
+                        timeout=10)
+        team_roster = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        
+        with open('./data/teams_roster.csv', 'a', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
 
             # Write each list as a row in the CSV file
             for line in team_roster:
@@ -177,7 +201,7 @@ def get_team_rosters(season, league_id):
 
 def get_player_game_logs(season, league_id):
     """Get player season game log."""
-
+    # TODO (2024-11-12): Use function to get this list from csv file
     player_ids = [
     1628263, 204296, 1641656, 1628878, 1631056, 1631022, 1627671, 1631006, 1641658, 1641698,
     1628881, 201886, 1641648, 1642287, 1642240, 1629480, 1628882, 1629568, 1630996, 1631007,
@@ -229,31 +253,34 @@ def get_player_game_logs(season, league_id):
         writer = csv.writer(csvfile)
         writer.writerow(headers)
 
-        for player_id in player_ids:
-            logging.debug('Getting game log for: %s', player_id)
-            parameters = {
-                'LastNGames': '0',
-                'LeagueID': league_id,
-                'MeasureType': 'Base',
-                'Month': '0',
-                'OpponentTeamID': '0',
-                'PORound': '0',
-                'PaceAdjust': 'N',
-                'PerMode': 'Totals',
-                'Period': '0',
-                'PlayerID': player_id,
-                'PlusMinus': 'N',
-                'Rank': 'N',
-                'Season': season,
-                'SeasonSegment': '',
-                'SeasonType': 'Regular Season'
-            }
+    for player_id in player_ids:
+        logging.debug('Getting game log for: %s', player_id)
+        parameters = {
+            'LastNGames': '0',
+            'LeagueID': league_id,
+            'MeasureType': 'Base',
+            'Month': '0',
+            'OpponentTeamID': '0',
+            'PORound': '0',
+            'PaceAdjust': 'N',
+            'PerMode': 'Totals',
+            'Period': '0',
+            'PlayerID': player_id,
+            'PlusMinus': 'N',
+            'Rank': 'N',
+            'Season': season,
+            'SeasonSegment': '',
+            'SeasonType': 'Regular Season'
+        }
 
-            r = requests.get(request_url,
-                            headers=HEADERS,
-                            params=parameters,
-                            timeout=10)
-            game_list = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        r = requests.get(request_url,
+                        headers=HEADERS,
+                        params=parameters,
+                        timeout=10)
+        game_list = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+        
+        with open('./data/player_game_logs.csv', 'a', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
             
             # Write each list as a row in the CSV file
             for line in game_list:
@@ -262,6 +289,7 @@ def get_player_game_logs(season, league_id):
 
 def get_game_box_score(season):
     """Get game box score for all games in season."""
+    # TODO (2024-11-12): Use function to get this list from csv file
     game_ids = [
     1022400235, 1022400232, 1022400227, 1022400222, 1022400216, 1022400210, 1022400205, 1022400197,
     1022400191, 1022400185, 1022400181, 1022400174, 1022400169, 1022400161, 1022400157, 1022400149,
@@ -295,9 +323,6 @@ def get_game_box_score(season):
     1022400040, 1022400234, 1022400131, 1022400086, 1022400057, 1022400051, 1022400035, 1022400188
     ]
 
-    endpoint = 'boxscoretraditionalv2'
-    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
-
     # Get headers
     game_id = game_ids[0]
     parameters = {
@@ -311,6 +336,9 @@ def get_game_box_score(season):
                     'StartRange': 1200
                     }
 
+    endpoint = 'boxscoretraditionalv2'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+    
     r = requests.get(request_url,
                          headers=HEADERS,
                          params=parameters,
@@ -375,4 +403,90 @@ def get_game_box_score(season):
             # Write each list as a row in the CSV file
             for line in team_stats:
                 writer.writerow(line)
+
+# TODO (2024-11-12): Pop values from lists so if the script crashes you know where to restart
+def get_shot_chart_data(season):
+    """Gets player shot chart data for a single game."""
+    
+    filename = "C:\\Users\\tg715c\\Documents\\Learning\\wnba-stats\\data\\player_game_logs.csv"
+    player_game_dict = create_player_game_dict(filename)
+    
+    player_id = list(player_game_dict.keys())[0]
+    game_id = list(player_game_dict[player_id])[0] 
+    
+    parameters = {
+                'ContextMeasure': 'FGA',
+                'EndPeriod': '1',
+                'EndRange': '0',
+                'GameID': game_id,
+                'GroupQuantity': '0',
+                'LastNGames': '0',
+                'LeagueID': '10',
+                'Month': '0',
+                'OpponentTeamID': '0',
+                'PORound': '0',
+                'Period': '0',
+                'PlayerID': player_id,
+                'RangeType': '0',
+                'Season': season,
+                'SeasonType': 'Regular Season',
+                'StartPeriod': '1',
+                'StartRange': '0',
+                'TeamID': '0',
+            }
+
+    endpoint = 'shotchartdetail'
+    request_url = f'https://stats.wnba.com/stats/{endpoint}?'
+
+    r = requests.get(request_url,
+                             headers=HEADERS,
+                             params=parameters,
+                             timeout=10)
+    headers = json.loads(r.content.decode())['resultSets'][0]['headers']
+
+    with open('./data/player_shot_chart_data_by_game.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(headers)
+
+    for player_id, game_ids in player_game_dict.items():
+        logging.debug('Getting data for player id: %s', player_id)
+       
+        for game_id in game_ids:
+            logging.debug('Getting data for game id: %s', game_id)
+
+            parameters = {
+                'ContextMeasure': 'FGA',
+                'EndPeriod': '1',
+                'EndRange': '0',
+                'GameID': game_id,
+                'GroupQuantity': '0',
+                'LastNGames': '0',
+                'LeagueID': '10',
+                'Month': '0',
+                'OpponentTeamID': '0',
+                'PORound': '0',
+                'Period': '0',
+                'PlayerID': player_id,
+                'RangeType': '0',
+                'Season': season,
+                'SeasonType': 'Regular Season',
+                'StartPeriod': '1',
+                'StartRange': '0',
+                'TeamID': '0',
+            }            
+
+            r = requests.get(request_url,
+                             headers=HEADERS,
+                             params=parameters,
+                             timeout=10)          
+            
+
+            shot_chart_data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
+
+            with open('./data/player_shot_chart_data_by_game.csv', 'a', newline='', encoding='utf-8') as csvfile:
+                writer = csv.writer(csvfile)
+
+                # Write each list as a row in the CSV file
+                for line in shot_chart_data:
+                    writer.writerow(line)
         
