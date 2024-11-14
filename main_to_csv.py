@@ -14,19 +14,22 @@ if __name__ == '__main__':
     # Get all teams list
     u.get_teams_list()
 
-    for season in seasons:  
-
+    for season in seasons:
         # Get all team rosters
         u.get_team_rosters(season, LEAGUE_ID)
 
+    for season in seasons:
         # Get team game logs
         u.get_team_game_logs(season, LEAGUE_ID)
 
+    for season in seasons:
         # Get Player Game Log data
         u.get_player_game_logs(season, LEAGUE_ID)
 
+    for season in seasons:
         # Get box scores
         u.get_game_box_score(season)
 
+    for season in seasons:
         # Get Player shot chart detail data
         u.get_shot_chart_data(season)
