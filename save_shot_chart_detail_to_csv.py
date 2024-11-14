@@ -43,7 +43,7 @@ def create_player_game_dict(filename):
     player_game_dict = defaultdict(list)
 
     # Open the CSV file and read its contents
-    with open(filename, mode='r') as file:
+    with open(filename, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)  # Use DictReader to access columns by name
 
         for row in reader:
@@ -60,15 +60,15 @@ def get_team_ids_from_csv(filename):
     # new player IDs
     team_ids = []
     # Open the CSV file and read its contents
-    with open(filename, mode='r') as file:
+    with open(filename, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)  # Use DictReader to access columns by name
-        
+
         for row in reader:
             team_id = row['id']
-            
+
             # Append game_id to the list for each unique team_id
             team_ids.append(team_id)
-    
+
     return team_ids
 
 
@@ -76,15 +76,15 @@ def get_player_ids_from_csv(filename):
     # Use defaultdict to automatically initialize lists for new player IDs
     player_ids = []
     # Open the CSV file and read its contents
-    with open(filename, mode='r') as file:
+    with open(filename, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)  # Use DictReader to access columns by name
-        
+
         for row in reader:
             player_id = row['PLAYER_ID']
-            
+
             # Append game_id to the list for each unique player_id
             player_ids.append(player_id)
-    
+
     return player_ids  # Convert defaultdict to a regular dictionary
 
 
@@ -93,15 +93,15 @@ def get_game_ids_from_csv(filename):
     # Use defaultdict to automatically initialize lists for new player IDs
     game_ids = []
     # Open the CSV file and read its contents
-    with open(filename, mode='r') as file:
+    with open(filename, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)  # Use DictReader to access columns by name
-        
+
         for row in reader:
             game_id = row['GAME_ID']
-            
+
             # Append game_id to the list for each unique player_id
             game_ids.append(game_id)
-    
+
     return list(set(game_ids))   # Convert defaultdict to a regular dictionary
 
 
@@ -176,6 +176,7 @@ def get_team_game_logs(season, league_id):
                      headers=HEADERS,
                      params=parameters,
                      timeout=10)
+
     team_game_logs = json.loads(r.content.decode())['resultSets'][0]['rowSet']
     headers = json.loads(r.content.decode())['resultSets'][0]['headers']
 
@@ -205,9 +206,9 @@ def get_team_rosters(season, league_id):
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
+                        headers=HEADERS,
+                        params=parameters,
+                        timeout=10)
     headers = json.loads(r.content.decode())['resultSets'][0]['headers']
 
     with open('./data/teams_roster.csv', 'w', newline='', encoding='utf-8') as csvfile:
@@ -331,9 +332,9 @@ def get_game_box_score(season):
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     r = requests.get(request_url,
-                         headers=HEADERS,
-                         params=parameters,
-                         timeout=10)
+                    headers=HEADERS,
+                    params=parameters,
+                    timeout=10)
 
     player_stats_headers = json.loads(r.content.decode())['resultSets'][0]['headers']
     start_bench_stats_headers = json.loads(r.content.decode())['resultSets'][1]['headers']
@@ -402,6 +403,7 @@ def get_shot_chart_data(season):
     filename = "./data/player_game_logs.csv"
     player_game_dict = create_player_game_dict(filename)
 
+    # NOTE (2024-11-14): Getting sample player and game is for header request
     player_id = list(player_game_dict.keys())[0]
     game_id = list(player_game_dict[player_id])[0]
 
@@ -430,15 +432,16 @@ def get_shot_chart_data(season):
     request_url = f'https://stats.wnba.com/stats/{endpoint}?'
 
     r = requests.get(request_url,
-                             headers=HEADERS,
-                             params=parameters,
-                             timeout=10)
+                    headers=HEADERS,
+                    params=parameters,
+                    timeout=10)
     headers = json.loads(r.content.decode())['resultSets'][0]['headers']
 
     with open('./data/player_shot_chart_data_by_game.csv', 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(headers)
 
+    # NOTE (2024-11-14): Iterate over game ids for each player id to get shot chart data.
     for player_id, game_ids in player_game_dict.items():
         logging.debug('Getting data for player id: %s', player_id)
 
@@ -467,10 +470,9 @@ def get_shot_chart_data(season):
             }
 
             r = requests.get(request_url,
-                             headers=HEADERS,
-                             params=parameters,
-                             timeout=10)
-
+                            headers=HEADERS,
+                            params=parameters,
+                            timeout=10)
 
             shot_chart_data = json.loads(r.content.decode())['resultSets'][0]['rowSet']
 
