@@ -397,6 +397,7 @@ def get_game_box_score(season):
                 writer.writerow(line)
 
 # TODO (2024-11-12): Pop values from lists so if the script crashes you know where to restart
+# FIXME (2024-11-14): This is timing out.
 def get_shot_chart_data(season):
     """Gets player shot chart data for a single game."""
 
