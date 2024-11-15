@@ -441,11 +441,12 @@ def get_shot_chart_data(season):
         writer = csv.writer(csvfile)
         writer.writerow(headers)
 
-    # NOTE (2024-11-14): Iterate over game ids for each player id to get shot chart data.
-    for player_id, game_ids in player_game_dict.items():
-        logging.debug('Getting data for player id: %s', player_id)
+    player_ids = player_game_dict.keys()
 
-        for game_id in game_ids:
+    for player_id in player_ids:
+        logging.debug('\n\n')
+        logging.debug('**** Getting data for player id: %s', player_id)
+        for game_id in player_game_dict[player_id]:
             logging.debug('Getting data for game id: %s', game_id)
 
             parameters = {
