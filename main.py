@@ -15,7 +15,6 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(levelname)s: %(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
-# TODO (2025-08-16): Make this more flexible by allowing the user to set the logging level
 logging.disable(logging.CRITICAL)
 
 if __name__ == '__main__':
